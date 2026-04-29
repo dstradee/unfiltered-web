@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNFILTERED ALPHA | The Protocol</title>
+    
+    <!-- Google Fonts as per Brand Book -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- BRAND COLOR PALETTE --- */
+        :root {
+            --obsidian-navy: #0B1A30;
+            --electric-cyan: #00F2FF;
+            --crimson-war: #FF3131;
+            --smoke-white: #F8FAFC;
+            --steel-grey: #94A3B8;
+            --vantablack: #020617;
+        }
+
+        /* --- BASE RESET & SETUP --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            /* STRICT RULE: NO ROUNDED CORNERS */
+            border-radius: 0 !important; 
+        }
+
+        body {
+            background-color: var(--obsidian-navy);
+            color: var(--smoke-white);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- THE BLUEPRINT & NOISE OVERLAY --- */
+        /* Simulates the 5-8% film grain and technical blueprint grid */
+        .blueprint-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            /* Usamos la imagen oficial de Unfiltered Alpha */
+            background-image: url('Gemini_Generated_Image_dofjdbdofjdbdofj.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.15; /* Sutil para no asfixiar la lectura */
+            mix-blend-mode: screen; /* Hace que las líneas blancas/cian resalten sobre el azul oscuro */
+        }
+
+        .noise-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.06;
+            /* Procedural SVG noise for the organic glitch */
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+        }
+
+        /* --- TYPOGRAPHY --- */
+        h1, h2, .logo-text {
+            font-family: 'Bebas Neue', sans-serif;
+            color: var(--smoke-white);
+            letter-spacing: 8px; /* High tracking per manual */
+            text-transform: uppercase;
+            font-weight: normal;
+        }
+
+        .code-data {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            color: var(--electric-cyan);
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        p {
+            color: var(--steel-grey);
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        /* --- LAYOUT STRUCTURE --- */
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- HEADER / LOGO --- */
+        header {
+            padding: 3rem 0;
+            display: flex;
+            justify-content: flex-start;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            font-size: 2rem;
+        }
+
+        .unfiltered-word {
+            border-bottom: 2px solid var(--electric-cyan); /* Minimalist underline */
+            padding-bottom: 2px;
+        }
+
+        /* --- MAIN HERO SECTION --- */
+        main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-bottom: 10vh;
+        }
+
+        .system-status {
+            display: inline-block;
+            background-color: rgba(0, 242, 255, 0.05);
+            border-left: 3px solid var(--electric-cyan);
+            padding: 8px 16px;
+            margin-bottom: 2rem;
+            text-transform: uppercase;
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.1); /* 20% glow rule */
+        }
+
+        .hero-title {
+            font-size: clamp(4rem, 8vw, 7rem);
+            line-height: 0.9;
+            margin-bottom: 1.5rem;
+            text-shadow: 4px 4px 0px var(--vantablack); /* Drop shadow rule */
+        }
+
+        .hero-subtitle {
+            max-width: 600px;
+            margin-bottom: 3rem;
+        }
+
+        /* --- TERMINAL DATA BOX --- */
+        .terminal-box {
+            background-color: var(--vantablack);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            padding: 2rem;
+            max-width: 700px;
+            position: relative;
+        }
+
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .terminal-line {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.8rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+
+        .t-time { color: var(--steel-grey); }
+        .t-action { color: var(--smoke-white); }
+        .t-value { color: var(--electric-cyan); text-shadow: 0 0 5px rgba(0, 242, 255, 0.3); }
+        .t-error { color: var(--crimson-war); }
+
+        .blinking-cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1em;
+            background-color: var(--electric-cyan);
+            animation: blink 1s step-end infinite;
+            vertical-align: text-bottom;
+            margin-left: 5px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* --- PLACEHOLDER BUTTONS (To be expanded later) --- */
+        .action-area {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: transparent;
+            color: var(--electric-cyan);
+            border: 1px solid var(--electric-cyan);
+            box-shadow: inset 0 0 0 rgba(0, 242, 255, 0), 0 0 10px rgba(0, 242, 255, 0.1);
+        }
+
+        .btn-primary:hover {
+            background-color: rgba(0, 242, 255, 0.1);
+            box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.2), 0 0 15px rgba(0, 242, 255, 0.2);
+        }
+
+        .btn-secondary {
+            background-color: var(--vantablack);
+            color: var(--smoke-white);
+            border: 1px solid var(--steel-grey);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--smoke-white);
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Visual Architecture / Backgrounds -->
+    <div class="blueprint-layer"></div>
+    <div class="noise-layer"></div>
+
+    <div class="container">
+        <header>
+            <!-- Minimalist Private Bank Style Logo -->
+            <div class="brand-logo logo-text">
+                <span class="unfiltered-word">UNFILTERED</span> <span>ALPHA</span>
+            </div>
+        </header>
+
+        <main>
+            <!-- System Status Badge -->
+            <div class="system-status code-data">
+                [SYSTEM_INITIALIZED // CONNECTION_SECURED]
+            </div>
+
+            <!-- Hook Title -->
+            <h1 class="hero-title">STOP BEING THE EXIT LIQUIDITY.</h1>
+            
+            <!-- Inter Body Text -->
+            <p class="hero-subtitle">
+                Most traders follow the herd. We follow the code. Every day, the Architect provides the blueprint to survive the market manipulation. Are you reading the code or providing the liquidity?
+            </p>
+
+            <!-- Terminal Interface -->
+            <div class="terminal-box">
+                <div class="terminal-header code-data">
+                    <span>> THE_PROTOCOL_TERMINAL</span>
+                    <span>V.2.0</span>
+                </div>
+                
+                <div class="terminal-body" id="terminal-output">
+                    <div class="terminal-line">
+                        <span class="t-time">[SYS_UPDATE]</span>
+                        <span class="t-action">Protocol V.2.0 initialized. Scanning for retail patterns...</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="t-time">[LOG_08:14]</span>
+                        <span class="t-action">EURUSD Short sequence completed. Target acquired:</span>
+                        <span class="t-value">+3.2R</span>
+                    </div>
+                    <div class="terminal-line">
+                        <span class="t-time">[LOG_11:30]</span>
+                        <span class="t-action">Retail trap verified at 1.0600. Support broken.</span>
+                        <span class="t-error">LIQUIDITY PURGED</span>
+                    </div>
+                    <div class="terminal-line" style="margin-top: 1.5rem;">
+                        <span class="t-value">> C:\Alpha_Feed\Awaiting_Input</span><span class="blinking-cursor"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Placeholder Actions -->
+            <div class="action-area">
+                <a href="#" class="btn btn-primary">[ CALCULATOR ]</a>
+            </div>
+
+        </main>
+    </div>
+
+</body>
+</html>

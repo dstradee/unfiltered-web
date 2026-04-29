@@ -246,6 +246,111 @@
             border-color: var(--smoke-white);
         }
 
+        /* --- MODAL (POP-UP) STYLES --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(2, 6, 23, 0.85); /* Vantablack with opacity */
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--obsidian-navy);
+            border: 1px solid var(--electric-cyan);
+            padding: 2.5rem;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.15);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            color: var(--steel-grey);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-modal:hover {
+            color: var(--crimson-war);
+        }
+
+        .calc-header {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 2.5rem;
+            color: var(--smoke-white);
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+            padding-bottom: 0.5rem;
+        }
+
+        .calc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .calc-group label {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--steel-grey);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .calc-group input {
+            width: 100%;
+            background-color: var(--vantablack);
+            border: 1px solid var(--steel-grey);
+            color: var(--electric-cyan);
+            padding: 0.8rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            outline: none;
+        }
+
+        .calc-group input:focus {
+            border-color: var(--electric-cyan);
+        }
+
+        .calc-result-box {
+            background-color: var(--vantablack);
+            padding: 1.5rem;
+            border-left: 3px solid var(--steel-grey);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .calc-expectancy {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .calc-verdict {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+        }
+
+        .status-positive { color: var(--electric-cyan); border-left-color: var(--electric-cyan); }
+        .status-negative { color: var(--crimson-war); border-left-color: var(--crimson-war); }
+        .status-neutral { color: var(--steel-grey); border-left-color: var(--steel-grey); }
+
     </style>
 </head>
 <body>
@@ -306,11 +411,119 @@
 
             <!-- Placeholder Actions -->
             <div class="action-area">
-                <a href="#" class="btn btn-primary">[ CALCULATOR ]</a>
+                <a href="#" class="btn btn-primary" id="openCalcBtn">[ CALCULATOR ]</a>
             </div>
 
         </main>
     </div>
 
+    <!-- --- MODAL: SYSTEM VALIDATOR (CALCULATOR) --- -->
+    <div class="modal-overlay" id="calcModal">
+        <div class="modal-content">
+            <div class="close-modal" id="closeCalcBtn">[ X ]</div>
+            <div class="calc-header">PROTOCOL VALIDATOR</div>
+            
+            <div class="calc-grid">
+                <div class="calc-group">
+                    <label>> WIN RATE (%)</label>
+                    <input type="number" id="winRate" value="35" min="1" max="100">
+                </div>
+                <div class="calc-group">
+                    <label>> RISK PER TRADE (%)</label>
+                    <input type="number" id="riskPct" value="1" min="0.1" step="0.1">
+                </div>
+                <div class="calc-group" style="grid-column: span 2;">
+                    <label>> REWARD PER TRADE (PROFIT %)</label>
+                    <input type="number" id="rewardPct" value="3" min="0.1" step="0.1">
+                </div>
+            </div>
+
+            <div class="calc-result-box status-neutral" id="resultBox">
+                <div class="calc-expectancy" id="expectancyVal">0.00%</div>
+                <div class="calc-verdict" id="verdictText">AWAITING DATA INPUT</div>
+            </div>
+
+            <!-- Aquí pon tu enlace real de Gumroad en el href -->
+            <a href="https://gumroad.com" target="_blank" class="btn btn-primary" style="width: 100%; text-align: center; display: none;" id="upsellBtn">
+                SECURE THE PROTOCOL NOW ($27)
+            </a>
+        </div>
+    </div>
+
+    <!-- --- JAVASCRIPT FOR LOGIC --- -->
+    <script>
+        // Modal Elements
+        const modal = document.getElementById('calcModal');
+        const openBtn = document.getElementById('openCalcBtn');
+        const closeBtn = document.getElementById('closeCalcBtn');
+
+        // Calculator Elements
+        const winRateInput = document.getElementById('winRate');
+        const riskPctInput = document.getElementById('riskPct');
+        const rewardPctInput = document.getElementById('rewardPct');
+        const expectancyVal = document.getElementById('expectancyVal');
+        const verdictText = document.getElementById('verdictText');
+        const resultBox = document.getElementById('resultBox');
+        const upsellBtn = document.getElementById('upsellBtn');
+
+        // Open/Close Modal Logic
+        openBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            modal.style.display = 'flex';
+            calculateExpectancy(); // Run once on open
+        });
+
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Math Logic: Expectancy = (Win% * Reward) - (Loss% * Risk)
+        function calculateExpectancy() {
+            const winRate = parseFloat(winRateInput.value) / 100;
+            const lossRate = 1 - winRate;
+            const risk = parseFloat(riskPctInput.value);
+            const reward = parseFloat(rewardPctInput.value);
+
+            if (isNaN(winRate) || isNaN(risk) || isNaN(reward)) return;
+
+            const expectancy = (winRate * reward) - (lossRate * risk);
+            
+            expectancyVal.innerText = (expectancy > 0 ? '+' : '') + expectancy.toFixed(2) + '% EV';
+
+            // The "Unfiltered Alpha" Conditional Logic
+            resultBox.className = 'calc-result-box'; // Reset classes
+
+            if (expectancy <= 0) {
+                resultBox.classList.add('status-negative');
+                verdictText.innerText = '[ SYSTEM ERROR // LIQUIDITY CAPTURED ]';
+                upsellBtn.style.display = 'block'; // Show Gumroad button to save them
+                upsellBtn.style.borderColor = 'var(--crimson-war)';
+                upsellBtn.style.color = 'var(--crimson-war)';
+                upsellBtn.innerText = 'STOP BLEEDING. GET THE PROTOCOL ($27)';
+            } else if (expectancy > 0 && expectancy < 0.5) {
+                resultBox.classList.add('status-neutral');
+                verdictText.innerText = '[ LOW ALPHA // VULNERABLE SYSTEM ]';
+                upsellBtn.style.display = 'block';
+                upsellBtn.style.borderColor = 'var(--electric-cyan)';
+                upsellBtn.style.color = 'var(--electric-cyan)';
+                upsellBtn.innerText = 'UPGRADE YOUR EDGE. GET THE PROTOCOL ($27)';
+            } else {
+                resultBox.classList.add('status-positive');
+                verdictText.innerText = '[ PROTOCOL ACTIVE // ALPHA ADVANTAGE ]';
+                upsellBtn.style.display = 'none'; // Hide if they actually have a good system
+            }
+        }
+
+        // Listeners for live typing
+        winRateInput.addEventListener('input', calculateExpectancy);
+        riskPctInput.addEventListener('input', calculateExpectancy);
+        rewardPctInput.addEventListener('input', calculateExpectancy);
+    </script>
 </body>
 </html>

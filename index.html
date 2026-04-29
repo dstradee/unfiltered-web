@@ -112,7 +112,8 @@
         header {
             padding: 3rem 0;
             display: flex;
-            justify-content: flex-start;
+            justify-content: space-between; /* Modificado para espaciar logo y botón Auth */
+            align-items: baseline;
             border-bottom: 1px solid rgba(148, 163, 184, 0.1);
         }
 
@@ -126,6 +127,20 @@
         .unfiltered-word {
             border-bottom: 2px solid var(--electric-cyan); /* Minimalist underline */
             padding-bottom: 2px;
+        }
+
+        /* Sutil link de Auth para el Admin */
+        .auth-link {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--steel-grey);
+            text-decoration: none;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            transition: color 0.2s ease;
+        }
+
+        .auth-link:hover {
+            color: var(--electric-cyan);
         }
 
         /* --- MAIN HERO SECTION --- */
@@ -204,7 +219,7 @@
             50% { opacity: 0; }
         }
 
-        /* --- PLACEHOLDER BUTTONS (To be expanded later) --- */
+        /* --- PLACEHOLDER BUTTONS --- */
         .action-area {
             display: flex;
             gap: 1.5rem;
@@ -365,6 +380,8 @@
             <div class="brand-logo logo-text">
                 <span class="unfiltered-word">UNFILTERED</span> <span>ALPHA</span>
             </div>
+            <!-- Auth Link -->
+            <a href="#" class="auth-link" id="openLoginBtn">[ AUTH ]</a>
         </header>
 
         <main>
@@ -388,23 +405,12 @@
                     <span>V.2.0</span>
                 </div>
                 
+                <!-- DYNAMIC TERMINAL OUTPUT -->
                 <div class="terminal-body" id="terminal-output">
                     <div class="terminal-line">
                         <span class="t-time">[SYS_UPDATE]</span>
-                        <span class="t-action">Protocol V.2.0 initialized. Scanning for retail patterns...</span>
-                    </div>
-                    <div class="terminal-line">
-                        <span class="t-time">[LOG_08:14]</span>
-                        <span class="t-action">EURUSD Short sequence completed. Target acquired:</span>
-                        <span class="t-value">+3.2R</span>
-                    </div>
-                    <div class="terminal-line">
-                        <span class="t-time">[LOG_11:30]</span>
-                        <span class="t-action">Retail trap verified at 1.0600. Support broken.</span>
-                        <span class="t-error">LIQUIDITY PURGED</span>
-                    </div>
-                    <div class="terminal-line" style="margin-top: 1.5rem;">
-                        <span class="t-value">> C:\Alpha_Feed\Awaiting_Input</span><span class="blinking-cursor"></span>
+                        <span class="t-action">Establishing secure connection to The Protocol...</span>
+                        <span class="blinking-cursor"></span>
                     </div>
                 </div>
             </div>
@@ -450,12 +456,41 @@
         </div>
     </div>
 
+    <!-- --- MODAL: ADMIN AUTH (LOGIN) --- -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="close-modal" id="closeLoginBtn">[ X ]</div>
+            <div class="calc-header" style="font-size: 2rem;">VAULT ACCESS</div>
+            
+            <div class="calc-group" style="margin-bottom: 1rem;">
+                <label>> IDENTIFIER (EMAIL)</label>
+                <input type="email" id="adminEmail" placeholder="architect@..." autocomplete="off">
+            </div>
+            <div class="calc-group" style="margin-bottom: 2rem;">
+                <label>> PASSPHRASE</label>
+                <input type="password" id="adminPass" placeholder="••••••••">
+            </div>
+            
+            <a href="#" class="btn btn-primary" style="width: 100%; text-align: center;" id="executeLoginBtn">
+                [ VERIFY CLEARANCE ]
+            </a>
+        </div>
+    </div>
+
     <!-- --- JAVASCRIPT FOR LOGIC --- -->
     <script>
         // Modal Elements
-        const modal = document.getElementById('calcModal');
-        const openBtn = document.getElementById('openCalcBtn');
-        const closeBtn = document.getElementById('closeCalcBtn');
+        const calcModal = document.getElementById('calcModal');
+        const openCalcBtn = document.getElementById('openCalcBtn');
+        const closeCalcBtn = document.getElementById('closeCalcBtn');
+
+        const loginModal = document.getElementById('loginModal');
+        const openLoginBtn = document.getElementById('openLoginBtn');
+        const closeLoginBtn = document.getElementById('closeLoginBtn');
+        const executeLoginBtn = document.getElementById('executeLoginBtn');
+
+        // Terminal Elements
+        const terminalOutput = document.getElementById('terminal-output');
 
         // Calculator Elements
         const winRateInput = document.getElementById('winRate');
@@ -466,24 +501,92 @@
         const resultBox = document.getElementById('resultBox');
         const upsellBtn = document.getElementById('upsellBtn');
 
-        // Open/Close Modal Logic
-        openBtn.addEventListener('click', (e) => {
+        // --- TERMINAL DYNAMIC DATA LOGIC ---
+        // Esta es la lista que luego Supabase nos mandará en vivo
+        const dummyDatabaseLogs = [
+            { time: "[SYS_UPDATE]", action: "Protocol V.2.0 initialized. Scanning for retail patterns...", value: "", type: "neutral" },
+            { time: "[LOG_08:14]", action: "EURUSD Short sequence completed. Target acquired:", value: "+3.2R", type: "positive" },
+            { time: "[LOG_11:30]", action: "Retail trap verified at 1.0600. Support broken.", value: "LIQUIDITY PURGED", type: "negative" }
+        ];
+
+        function renderTerminalLogs(logs) {
+            terminalOutput.innerHTML = ''; // Limpiar el mensaje de carga
+
+            logs.forEach(log => {
+                let valueClass = '';
+                if (log.type === 'positive') valueClass = 't-value';
+                else if (log.type === 'negative') valueClass = 't-error';
+                else valueClass = 't-time'; 
+
+                const logHTML = `
+                    <div class="terminal-line">
+                        <span class="t-time">${log.time}</span>
+                        <span class="t-action">${log.action}</span>
+                        ${log.value ? `<span class="${valueClass}">${log.value}</span>` : ''}
+                    </div>
+                `;
+                terminalOutput.innerHTML += logHTML;
+            });
+
+            // Añadir el input en espera para simular terminal activo
+            terminalOutput.innerHTML += `
+                <div class="terminal-line" style="margin-top: 1.5rem;">
+                    <span class="t-value">> C:\\Alpha_Feed\\Awaiting_Input</span><span class="blinking-cursor"></span>
+                </div>
+            `;
+        }
+
+        // Simular que tarda un poco en cargar de la Base de Datos
+        setTimeout(() => {
+            renderTerminalLogs(dummyDatabaseLogs);
+        }, 1500);
+
+        // --- MODALS LOGIC ---
+        openCalcBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            modal.style.display = 'flex';
+            calcModal.style.display = 'flex';
             calculateExpectancy(); // Run once on open
         });
 
-        closeBtn.addEventListener('click', () => {
-            modal.style.display = 'none';
+        closeCalcBtn.addEventListener('click', () => {
+            calcModal.style.display = 'none';
         });
 
+        openLoginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginModal.style.display = 'flex';
+        });
+
+        closeLoginBtn.addEventListener('click', () => {
+            loginModal.style.display = 'none';
+        });
+
+        // Close when clicking outside of any modal content
         window.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                modal.style.display = 'none';
+            if (e.target === calcModal) {
+                calcModal.style.display = 'none';
+            }
+            if (e.target === loginModal) {
+                loginModal.style.display = 'none';
             }
         });
 
-        // Math Logic: Expectancy = (Win% * Reward) - (Loss% * Risk)
+        // --- AUTH REDIRECT LOGIC ---
+        executeLoginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('adminEmail').value;
+            const pass = document.getElementById('adminPass').value;
+            
+            if(email === "" || pass === "") {
+                alert("[SYS_ERROR] Input required.");
+                return;
+            }
+
+            // Te redirige a tu panel de Admin
+            window.location.href = 'admin.html';
+        });
+
+        // --- CALCULATOR MATH LOGIC ---
         function calculateExpectancy() {
             const winRate = parseFloat(winRateInput.value) / 100;
             const lossRate = 1 - winRate;
@@ -502,7 +605,7 @@
             if (expectancy <= 0) {
                 resultBox.classList.add('status-negative');
                 verdictText.innerText = '[ SYSTEM ERROR // LIQUIDITY CAPTURED ]';
-                upsellBtn.style.display = 'block'; // Show Gumroad button to save them
+                upsellBtn.style.display = 'block'; // Show Gumroad button
                 upsellBtn.style.borderColor = 'var(--crimson-war)';
                 upsellBtn.style.color = 'var(--crimson-war)';
                 upsellBtn.innerText = 'STOP BLEEDING. GET THE PROTOCOL ($27)';
@@ -516,7 +619,7 @@
             } else {
                 resultBox.classList.add('status-positive');
                 verdictText.innerText = '[ PROTOCOL ACTIVE // ALPHA ADVANTAGE ]';
-                upsellBtn.style.display = 'none'; // Hide if they actually have a good system
+                upsellBtn.style.display = 'none'; 
             }
         }
 

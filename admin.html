@@ -31,17 +31,44 @@
             color: var(--smoke-white);
             font-family: 'Inter', sans-serif;
             display: flex;
-            justify-content: center;
-            align-items: flex-start; /* Alineado arriba para el nuevo grid */
+            flex-direction: column;
+            align-items: center; /* Centramos el contenido principal */
             min-height: 100vh;
             background-image: 
                 linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
             background-size: 40px 40px;
-            padding: 3rem 2rem;
+            padding: 2rem;
         }
 
-        /* --- NUEVO LAYOUT SIDE-BY-SIDE --- */
+        /* --- NAVEGACIÓN SUPERIOR --- */
+        .top-nav {
+            width: 100%;
+            max-width: 1400px;
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-back {
+            background: transparent;
+            border: 1px solid var(--steel-grey);
+            color: var(--steel-grey);
+            padding: 0.6rem 1.2rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-back:hover {
+            border-color: var(--electric-cyan);
+            color: var(--electric-cyan);
+            background-color: rgba(0, 242, 255, 0.05);
+        }
+
+        /* --- LAYOUT SIDE-BY-SIDE --- */
         .dashboard-layout {
             display: grid;
             grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
@@ -214,7 +241,7 @@
         /* --- LOG MANAGER --- */
         .logs-container {
             margin-top: 1.5rem;
-            max-height: 550px; /* Aumentado para encajar bien con la caja de la izquierda */
+            max-height: 550px;
             overflow-y: auto;
             border: 1px solid var(--steel-grey);
             background-color: var(--vantablack);
@@ -266,6 +293,11 @@
     </style>
 </head>
 <body>
+
+    <!-- BOTÓN PARA VOLVER A LA WEB PÚBLICA -->
+    <div class="top-nav">
+        <a href="index.html" class="btn-back">[ < VOLVER AL PROTOCOLO PÚBLICO ]</a>
+    </div>
 
     <div class="dashboard-layout">
         <!-- CAJA 1: INYECTOR DE DATOS (IZQUIERDA) -->
@@ -489,14 +521,17 @@
                     .delete()
                     .eq('id', id);
 
-                if (error) throw error;
+                if (error) {
+                    console.error(error);
+                    throw error;
+                }
                 
                 // Si va bien, recargamos la lista
                 loadLogs();
                 
             } catch (err) {
                 console.error("Error al borrar:", err);
-                alert("[ERROR] No se pudo eliminar el registro.");
+                alert("[ERROR] No se pudo eliminar el registro. Revisa la consola.");
             }
         }
 

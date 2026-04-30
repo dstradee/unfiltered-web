@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
     
-    <!-- Librería oficial de Supabase para hablar con la base de datos -->
+    <!-- Librería oficial de Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
@@ -27,7 +27,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
 
         body {
-            background-color: var(--vantablack); /* Fondo ultra oscuro para el admin */
+            background-color: var(--vantablack); 
             color: var(--smoke-white);
             font-family: 'Inter', sans-serif;
             display: flex;
@@ -80,7 +80,14 @@
             padding-bottom: 1rem;
         }
 
-        .form-group { margin-bottom: 1.8rem; }
+        .form-group { margin-bottom: 1.5rem; }
+
+        .optional-group {
+            background-color: rgba(2, 6, 23, 0.5); /* vantablack con opacidad */
+            padding: 1rem;
+            border-left: 2px solid var(--steel-grey);
+            margin-bottom: 1.5rem;
+        }
 
         label {
             display: block;
@@ -91,12 +98,17 @@
             font-weight: 600;
         }
 
+        .optional-label {
+            color: var(--steel-grey);
+            font-size: 0.75rem;
+        }
+
         input {
             width: 100%;
             background-color: var(--vantablack);
             border: 1px solid var(--steel-grey);
             color: var(--electric-cyan);
-            padding: 1rem;
+            padding: 0.8rem 1rem;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.95rem;
             outline: none;
@@ -109,10 +121,10 @@
         }
 
         input::placeholder {
-            color: rgba(148, 163, 184, 0.4);
+            color: rgba(148, 163, 184, 0.3);
         }
 
-        /* --- SELECTORES DE IMPACTO VISUAL (Intuitivos) --- */
+        /* --- SELECTORES DE IMPACTO VISUAL --- */
         .type-selector {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -123,7 +135,7 @@
             background-color: var(--vantablack);
             border: 1px solid var(--steel-grey);
             color: var(--steel-grey);
-            padding: 1rem 0.5rem;
+            padding: 0.8rem 0.5rem;
             text-align: center;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.8rem;
@@ -132,11 +144,8 @@
             user-select: none;
         }
 
-        .type-selector input[type="radio"] {
-            display: none; /* Oculta el circulito del radio real */
-        }
+        .type-selector input[type="radio"] { display: none; }
 
-        /* Estados cuando están seleccionados */
         .type-selector input[type="radio"]:checked + .type-option.opt-cyan {
             border-color: var(--electric-cyan);
             color: var(--electric-cyan);
@@ -176,7 +185,6 @@
             color: var(--vantablack);
         }
 
-        /* Área de notificaciones debajo del botón */
         #feedback {
             margin-top: 1rem;
             text-align: center;
@@ -204,18 +212,35 @@
         </div>
 
         <div class="form-group">
-            <label>> 2. ACCIÓN / MENSAJE PRINCIPAL (Inglés Técnico)</label>
-            <input type="text" id="actionText" placeholder="Ej: EURUSD Short sequence completed..." autocomplete="off">
+            <label>> 2. ACCIÓN / MENSAJE PRINCIPAL</label>
+            <input type="text" id="actionText" placeholder="Ej: Retail trap detected. Check the full report." autocomplete="off">
+        </div>
+
+        <!-- NUEVA SECCIÓN DE ENLACES -->
+        <div class="optional-group">
+            <label style="color: var(--electric-cyan);">> 3. ENLACE OCULTO (Opcional)</label>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.8rem;">
+                <div>
+                    <label class="optional-label">URL del link (Ej: https://x.com/...)</label>
+                    <input type="url" id="linkUrl" placeholder="https://" autocomplete="off">
+                </div>
+                <div>
+                    <label class="optional-label">Palabra a enlazar (Ej: 'full report')</label>
+                    <input type="text" id="linkWord" placeholder="Palabra exacta" autocomplete="off">
+                </div>
+            </div>
+            <p style="font-family: 'Inter', sans-serif; font-size: 0.7rem; color: var(--steel-grey); margin-top: 0.5rem;">
+                *Si la palabra está en tu mensaje, se convertirá en link. Si no, se añadirá al final como un botón [ Palabra ].
+            </p>
         </div>
 
         <div class="form-group">
-            <label>> 3. RESULTADO (Opcional - Lo que resalta)</label>
+            <label>> 4. RESULTADO DESTACADO (Opcional)</label>
             <input type="text" id="valueText" placeholder="Ej: +4.5R  o  LIQUIDITY PURGED" autocomplete="off">
         </div>
 
         <div class="form-group">
-            <label>> 4. IMPACTO VISUAL (Color del mensaje en la web)</label>
-            <!-- Selectores súper intuitivos -->
+            <label>> 5. IMPACTO VISUAL (Color del mensaje)</label>
             <div class="type-selector">
                 <label>
                     <input type="radio" name="logType" value="positive" checked>
@@ -223,11 +248,11 @@
                 </label>
                 <label>
                     <input type="radio" name="logType" value="negative">
-                    <div class="type-option opt-red">[ - ] ERROR RETAIL / ROJO</div>
+                    <div class="type-option opt-red">[ - ] ERROR / ROJO</div>
                 </label>
                 <label>
                     <input type="radio" name="logType" value="neutral">
-                    <div class="type-option opt-grey">[ i ] SISTEMA / GRIS</div>
+                    <div class="type-option opt-grey">[ i ] SYS / GRIS</div>
                 </label>
             </div>
         </div>
@@ -239,41 +264,53 @@
 
     <script>
         // =========================================================================
-        // LAS LLAVES DE PABLO
+        // LLAVES DE SUPABASE DE PABLO
         // =========================================================================
         const SUPABASE_URL = 'https://qtpuipgkytzjnckkkwnl.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_eA2g7-rTvcPcfz_dVl2aWg_Ca5P7t93';
-        // =========================================================================
-
-        // ARREGLO DEL BUG: Cambiado el nombre de la variable para que no colisione con la librería 'window.supabase'
+        
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         async function injectData() {
             const btn = document.getElementById('btnSubmit');
             const feedback = document.getElementById('feedback');
             
-            // Recoger los textos que has escrito en las cajas
+            // Recoger valores
             const logTime = document.getElementById('logTime').value.trim();
-            const actionText = document.getElementById('actionText').value.trim();
+            let actionText = document.getElementById('actionText').value.trim();
             const valueText = document.getElementById('valueText').value.trim();
-            
-            // Ver qué botón de color has seleccionado
             const logType = document.querySelector('input[name="logType"]:checked').value;
+            
+            // Recoger valores del enlace
+            const linkUrl = document.getElementById('linkUrl').value.trim();
+            const linkWord = document.getElementById('linkWord').value.trim();
 
-            // Seguridad: Si te olvidas de poner lo básico, te avisa y no envía nada
             if (!logTime || !actionText) {
                 feedback.className = 'msg-error';
                 feedback.innerText = '[SYSTEM ERROR] Faltan los campos 1 y 2. Son obligatorios.';
                 return;
             }
 
-            // Cambiar aspecto del botón mientras carga (efecto de sistema trabajando)
+            // --- LÓGICA INTELIGENTE DE ENLACES ---
+            // Si has puesto un enlace y una palabra, la IA procesa el texto
+            if (linkUrl && linkWord) {
+                // Creamos la etiqueta HTML con estilos inline (no requiere tocar index.html)
+                const anchorTag = `<a href="${linkUrl}" target="_blank" style="color: var(--electric-cyan); text-decoration: underline; text-underline-offset: 4px; font-weight: bold; cursor: pointer;">${linkWord}</a>`;
+                
+                // Si la palabra está en el texto, la sustituye.
+                if (actionText.includes(linkWord)) {
+                    actionText = actionText.replace(linkWord, anchorTag);
+                } else {
+                    // Si te equivocas y la palabra no está, te añade un botón al final para que no pierdas el link
+                    actionText = actionText + ` <a href="${linkUrl}" target="_blank" style="color: var(--obsidian-navy); background-color: var(--electric-cyan); padding: 2px 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-decoration: none; margin-left: 8px;">[ ${linkWord} ]</a>`;
+                }
+            }
+
             btn.innerText = 'INYECTANDO DATOS...';
             btn.style.pointerEvents = 'none';
             feedback.innerText = '';
 
             try {
-                // Mandar la orden a Supabase usando supabaseClient
                 const { data, error } = await supabaseClient
                     .from('logs')
                     .insert([
@@ -285,23 +322,22 @@
                         }
                     ]);
 
-                // Si Supabase nos devuelve un error, lo "lanzamos" para que el catch lo atrape
                 if (error) throw error;
 
-                // Mensaje de éxito si todo ha ido bien
                 feedback.className = 'msg-success';
-                feedback.innerText = '[SUCCESS] Protocolo actualizado correctamente.';
+                feedback.innerText = '[SUCCESS] Protocolo actualizado. Enlace procesado.';
                 
-                // Limpiar formulario para que puedas meter otro rápido
+                // Limpiar formulario
                 document.getElementById('actionText').value = '';
                 document.getElementById('valueText').value = '';
+                document.getElementById('linkUrl').value = '';
+                document.getElementById('linkWord').value = '';
                 
             } catch (error) {
-                console.error("Error de Supabase:", error);
+                console.error("Error:", error);
                 feedback.className = 'msg-error';
-                feedback.innerText = `[ERROR] No se pudo enviar a la base de datos. Motivo: ${error.message || 'Error desconocido'}`;
+                feedback.innerText = '[ERROR] Hubo un fallo en la inyección de datos.';
             } finally {
-                // Volver a poner el botón normal
                 btn.innerText = '[ INYECTAR AL PROTOCOLO PÚBLICO ]';
                 btn.style.pointerEvents = 'auto';
             }

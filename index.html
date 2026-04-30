@@ -33,7 +33,8 @@
             --vantablack: #020617;
             --hot-pink: #FF007F; 
             --neon-purple: #B026FF;
-            --matrix-green: #00FF41; /* Añadido para el drop */
+            --matrix-green: #00FF41; 
+            --alert-gold: #FFD700;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
@@ -117,6 +118,9 @@
 
         .btn-purple { background-color: transparent; color: var(--neon-purple); border: 1px solid var(--neon-purple); box-shadow: inset 0 0 0 rgba(176, 38, 255, 0), 0 0 10px rgba(176, 38, 255, 0.1); }
         .btn-purple:hover { background-color: rgba(176, 38, 255, 0.1); box-shadow: inset 0 0 10px rgba(176, 38, 255, 0.2), 0 0 15px rgba(176, 38, 255, 0.2); }
+
+        .btn-gold { background-color: transparent; color: var(--alert-gold); border: 1px solid var(--alert-gold); box-shadow: inset 0 0 0 rgba(255, 215, 0, 0), 0 0 10px rgba(255, 215, 0, 0.1); }
+        .btn-gold:hover { background-color: rgba(255, 215, 0, 0.1); box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.2), 0 0 15px rgba(255, 215, 0, 0.2); }
 
         /* Modales */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(4px); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 1rem; }
@@ -249,7 +253,8 @@
 
             <div class="action-area">
                 <a href="#" class="btn btn-primary" id="btn-calculadora">[ CALCULATOR ]</a>
-                <!-- Cambiamos el href a # para que no salte de página y abra el Modal -->
+                <!-- NUEVO BOTÓN VIP -->
+                <a href="#" class="btn btn-gold" id="btn-VIP">[ VIP ACCESS ]</a>
                 <a href="#" class="btn btn-purple" id="btn-drop" style="display: none;">[ DROP ACCESS ]</a>
             </div>
         </main>
@@ -310,14 +315,14 @@
         </div>
     </div>
 
-    <!-- MODAL PARA CÓDIGO DEL DROP (NUEVO) -->
+    <!-- MODAL PARA CÓDIGO DEL DROP -->
     <div class="modal-overlay" id="dropModal">
         <div class="modal-content" style="max-width: 400px; border-color: var(--matrix-green); box-shadow: 0 0 30px rgba(0, 255, 65, 0.15);">
             <div class="close-modal" id="closeDropBtn">[ X ]</div>
             <div class="calc-header" style="font-size: 2rem; color: var(--matrix-green); border-bottom-color: rgba(0, 255, 65, 0.2);">VAULT DECRYPTION</div>
             
             <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--steel-grey); margin-bottom: 1.5rem;">
-                Introduce the secret code.
+                Introduce el código de acceso proporcionado por el Arquitecto para desbloquear el Búnker.
             </p>
 
             <div class="calc-group" style="margin-bottom: 1.5rem;">
@@ -331,6 +336,38 @@
             <a href="#" class="btn" style="width: 100%; text-align: center; background-color: var(--matrix-green); color: var(--vantablack); border: none;" id="executeDropBtn">
                 [ VERIFY CLEARANCE ]
             </a>
+        </div>
+    </div>
+
+    <!-- MODAL VIP LOGIN FAKE (NUEVO) -->
+    <div class="modal-overlay" id="vipModal">
+        <div class="modal-content" style="max-width: 400px; border-color: var(--alert-gold); box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);">
+            <div class="close-modal" id="closeVipBtn">[ X ]</div>
+            <div class="calc-header" style="font-size: 2rem; color: var(--alert-gold); border-bottom-color: rgba(255, 215, 0, 0.2);">VIP DECRYPTION</div>
+            
+            <div class="calc-group" style="margin-bottom: 1rem;">
+                <label style="color: var(--alert-gold);">> IDENTIFIER (EMAIL)</label>
+                <input type="email" id="vipEmail" placeholder="member@..." autocomplete="off" style="border-color: var(--alert-gold); color: var(--alert-gold);">
+            </div>
+            <div class="calc-group" style="margin-bottom: 1.5rem;">
+                <label style="color: var(--alert-gold);">> VIP PASSPHRASE</label>
+                <input type="password" id="vipPass" placeholder="••••••••" style="border-color: var(--alert-gold); color: var(--alert-gold);">
+            </div>
+            
+            <div id="vipErrorMsg" style="color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; margin-bottom: 1rem; text-align: center; display: none; font-weight: bold;">
+                [SYS_ERROR] ACCESS DENIED // NOT A VIP MEMBER.
+            </div>
+
+            <a href="#" class="btn" style="width: 100%; text-align: center; background-color: var(--alert-gold); color: var(--vantablack); border: none; font-weight: 800;" id="executeVipBtn">
+                [ VERIFY CLEARANCE ]
+            </a>
+
+            <div style="text-align: center; margin-top: 1.5rem;">
+                <p style="color: var(--steel-grey); font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 0.5rem;">NOT A VIP MEMBER YET?</p>
+                <a href="https://unfilteredalpha.gumroad.com/l/qoabdg" target="_blank" style="color: var(--electric-cyan); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: bold; text-decoration: underline; text-underline-offset: 4px;">
+                    [ JOIN THE PROTOCOL HERE ]
+                </a>
+            </div>
         </div>
     </div>
 
@@ -591,6 +628,13 @@
         const executeDropBtn = document.getElementById('executeDropBtn');
         const dropErrorMsg = document.getElementById('dropErrorMsg');
 
+        // Modal VIP Fake
+        const vipModal = document.getElementById('vipModal');
+        const openVipBtn = document.getElementById('btn-VIP');
+        const closeVipBtn = document.getElementById('closeVipBtn');
+        const executeVipBtn = document.getElementById('executeVipBtn');
+        const vipErrorMsg = document.getElementById('vipErrorMsg');
+
         const winRateInput = document.getElementById('winRate');
         const riskPctInput = document.getElementById('riskPct');
         const rewardPctInput = document.getElementById('rewardPct');
@@ -608,10 +652,14 @@
         openDropBtn.addEventListener('click', (e) => { e.preventDefault(); dropModal.style.display = 'flex'; dropPinInput.value = ''; dropErrorMsg.style.display = 'none'; });
         closeDropBtn.addEventListener('click', () => { dropModal.style.display = 'none'; });
 
+        openVipBtn.addEventListener('click', (e) => { e.preventDefault(); vipModal.style.display = 'flex'; vipEmail.value = ''; vipPass.value = ''; vipErrorMsg.style.display = 'none'; });
+        closeVipBtn.addEventListener('click', () => { vipModal.style.display = 'none'; });
+
         window.addEventListener('click', (e) => { 
             if (e.target === calcModal) calcModal.style.display = 'none'; 
             if (e.target === loginModal) loginModal.style.display = 'none'; 
             if (e.target === dropModal) dropModal.style.display = 'none';
+            if (e.target === vipModal) vipModal.style.display = 'none';
         });
 
         // --- TRACKEO DE CLICS EN GUMROAD (GA4) ---
@@ -652,6 +700,21 @@
                 loginErrorMsg.innerText = "[SYS_ERROR] Acceso denegado."; loginErrorMsg.style.display = 'block';
                 executeLoginBtn.innerText = originalText; executeLoginBtn.style.pointerEvents = 'auto';
             }
+        });
+
+        // --- LÓGICA VIP FAKE LOGIN ---
+        executeVipBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const originalText = executeVipBtn.innerText;
+            executeVipBtn.innerText = '[ VERIFYING... ]';
+            executeVipBtn.style.pointerEvents = 'none';
+            vipErrorMsg.style.display = 'none';
+
+            setTimeout(() => {
+                vipErrorMsg.style.display = 'block';
+                executeVipBtn.innerText = originalText;
+                executeVipBtn.style.pointerEvents = 'auto';
+            }, 1200);
         });
 
         // --- LÓGICA DE DESBLOQUEO DEL DROP ---

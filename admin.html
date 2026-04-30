@@ -38,243 +38,70 @@
             padding: 2rem;
         }
 
-        .top-nav {
-            width: 100%;
-            max-width: 1400px;
-            display: flex;
-            justify-content: flex-start;
-            margin-bottom: 1.5rem;
-        }
+        .top-nav { width: 100%; max-width: 1400px; display: flex; justify-content: flex-start; margin-bottom: 1.5rem; }
+        .btn-back { background: transparent; border: 1px solid var(--steel-grey); color: var(--steel-grey); padding: 0.6rem 1.2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; text-decoration: none; cursor: pointer; transition: all 0.2s; }
+        .btn-back:hover { border-color: var(--electric-cyan); color: var(--electric-cyan); background-color: rgba(0, 242, 255, 0.05); }
 
-        .btn-back {
-            background: transparent;
-            border: 1px solid var(--steel-grey);
-            color: var(--steel-grey);
-            padding: 0.6rem 1.2rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+        .dashboard-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; width: 100%; max-width: 1400px; align-items: start; }
 
-        .btn-back:hover {
-            border-color: var(--electric-cyan);
-            color: var(--electric-cyan);
-            background-color: rgba(0, 242, 255, 0.05);
-        }
-
-        .dashboard-layout {
-            display: grid;
-            grid-template-columns: 1fr 1fr; 
-            gap: 2rem;
-            width: 100%;
-            max-width: 1400px;
-            align-items: start;
-        }
-
-        @media (max-width: 1024px) {
-            .dashboard-layout { grid-template-columns: 1fr; }
-        }
-
-        .admin-box {
-            background-color: var(--obsidian-navy);
-            border: 1px solid var(--steel-grey);
-            padding: 2.5rem;
-            width: 100%;
-            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
-            position: relative;
-            margin-bottom: 2rem;
-        }
-
-        h1 {
-            font-family: 'Bebas Neue', sans-serif;
-            letter-spacing: 4px;
-            color: var(--smoke-white);
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .status-indicator {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            color: var(--electric-cyan);
-            background: rgba(0, 242, 255, 0.1);
-            padding: 4px 8px;
-            border: 1px solid var(--electric-cyan);
-        }
-
-        .warning-text {
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--steel-grey);
-            font-size: 0.85rem;
-            margin-bottom: 2rem;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-            padding-bottom: 1rem;
-        }
-
+        .admin-box { background-color: var(--obsidian-navy); border: 1px solid var(--steel-grey); padding: 2.5rem; width: 100%; box-shadow: 0 0 40px rgba(0, 0, 0, 0.8); position: relative; margin-bottom: 2rem; }
+        h1 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 4px; color: var(--smoke-white); font-size: 2.5rem; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between; }
+        .status-indicator { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--electric-cyan); background: rgba(0, 242, 255, 0.1); padding: 4px 8px; border: 1px solid var(--electric-cyan); }
+        .warning-text { font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); font-size: 0.85rem; margin-bottom: 2rem; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 1rem; }
         .form-group { margin-bottom: 1.5rem; }
+        .optional-group { background-color: rgba(2, 6, 23, 0.5); padding: 1rem; border-left: 2px solid var(--steel-grey); margin-bottom: 1.5rem; }
+        label { display: block; font-family: 'JetBrains Mono', monospace; color: var(--smoke-white); font-size: 0.85rem; margin-bottom: 0.5rem; font-weight: 600; }
+        .optional-label { color: var(--steel-grey); font-size: 0.75rem; }
+        input { width: 100%; background-color: var(--vantablack); border: 1px solid var(--steel-grey); color: var(--electric-cyan); padding: 0.8rem 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
+        input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+        input:focus { border-color: var(--electric-cyan); box-shadow: inset 0 0 5px rgba(0, 242, 255, 0.1); }
 
-        .optional-group {
-            background-color: rgba(2, 6, 23, 0.5); 
-            padding: 1rem;
-            border-left: 2px solid var(--steel-grey);
-            margin-bottom: 1.5rem;
-        }
-
-        label {
-            display: block;
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--smoke-white);
-            font-size: 0.85rem;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-        }
-
-        .optional-label {
-            color: var(--steel-grey);
-            font-size: 0.75rem;
-        }
-
-        input {
-            width: 100%;
-            background-color: var(--vantablack);
-            border: 1px solid var(--steel-grey);
-            color: var(--electric-cyan);
-            padding: 0.8rem 1rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.95rem;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        input[type="time"]::-webkit-calendar-picker-indicator {
-            filter: invert(1);
-            cursor: pointer;
-        }
-
-        input:focus {
-            border-color: var(--electric-cyan);
-            box-shadow: inset 0 0 5px rgba(0, 242, 255, 0.1);
-        }
-
-        .type-selector {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .type-option {
-            background-color: var(--vantablack);
-            border: 1px solid var(--steel-grey);
-            color: var(--steel-grey);
-            padding: 0.8rem 0.5rem;
-            text-align: center;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            user-select: none;
-        }
-
+        .type-selector { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+        .type-option { background-color: var(--vantablack); border: 1px solid var(--steel-grey); color: var(--steel-grey); padding: 0.8rem 0.5rem; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; user-select: none; }
         .type-selector input[type="radio"] { display: none; }
+        .type-selector input[type="radio"]:checked + .type-option.opt-cyan { border-color: var(--electric-cyan); color: var(--electric-cyan); background-color: rgba(0, 242, 255, 0.05); box-shadow: 0 0 10px rgba(0, 242, 255, 0.2); }
+        .type-selector input[type="radio"]:checked + .type-option.opt-red { border-color: var(--crimson-war); color: var(--crimson-war); background-color: rgba(255, 49, 49, 0.05); box-shadow: 0 0 10px rgba(255, 49, 49, 0.2); }
+        .type-selector input[type="radio"]:checked + .type-option.opt-grey { border-color: var(--smoke-white); color: var(--smoke-white); background-color: rgba(248, 250, 252, 0.05); }
 
-        .type-selector input[type="radio"]:checked + .type-option.opt-cyan {
-            border-color: var(--electric-cyan); color: var(--electric-cyan);
-            background-color: rgba(0, 242, 255, 0.05); box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
-        }
+        .btn-execute { width: 100%; background-color: transparent; color: var(--smoke-white); border: 1px solid var(--smoke-white); padding: 1.2rem; font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 2px; cursor: pointer; margin-top: 1rem; transition: all 0.2s ease; }
+        .btn-execute:hover { background-color: var(--smoke-white); color: var(--vantablack); }
+        .btn-danger { color: var(--crimson-war); border-color: var(--crimson-war); }
+        .btn-danger:hover { background-color: var(--crimson-war); color: var(--smoke-white); }
 
-        .type-selector input[type="radio"]:checked + .type-option.opt-red {
-            border-color: var(--crimson-war); color: var(--crimson-war);
-            background-color: rgba(255, 49, 49, 0.05); box-shadow: 0 0 10px rgba(255, 49, 49, 0.2);
-        }
-
-        .type-selector input[type="radio"]:checked + .type-option.opt-grey {
-            border-color: var(--smoke-white); color: var(--smoke-white);
-            background-color: rgba(248, 250, 252, 0.05);
-        }
-
-        .btn-execute {
-            width: 100%;
-            background-color: transparent;
-            color: var(--smoke-white);
-            border: 1px solid var(--smoke-white);
-            padding: 1.2rem;
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.5rem;
-            letter-spacing: 2px;
-            cursor: pointer;
-            margin-top: 1rem;
-            transition: all 0.2s ease;
-        }
-
-        .btn-execute:hover {
-            background-color: var(--smoke-white);
-            color: var(--vantablack);
-        }
-
-        .btn-danger {
-            color: var(--crimson-war);
-            border-color: var(--crimson-war);
-        }
-        .btn-danger:hover {
-            background-color: var(--crimson-war);
-            color: var(--smoke-white);
-        }
-
-        #feedback, #newsFeedback {
-            margin-top: 1rem;
-            text-align: center;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-            min-height: 20px;
-        }
+        #feedback, #newsFeedback { margin-top: 1rem; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; min-height: 20px; }
         .msg-success { color: var(--electric-cyan); text-shadow: 0 0 5px rgba(0, 242, 255, 0.3); }
         .msg-error { color: var(--crimson-war); }
         .msg-neutral { color: var(--steel-grey); }
 
-        /* --- LOG MANAGER --- */
-        .logs-container {
-            margin-top: 1.5rem;
-            max-height: 550px;
-            overflow-y: auto;
-            border: 1px solid var(--steel-grey);
-            background-color: var(--vantablack);
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-        }
-
+        .logs-container { margin-top: 1.5rem; max-height: 550px; overflow-y: auto; border: 1px solid var(--steel-grey); background-color: var(--vantablack); padding: 1rem; display: flex; flex-direction: column; gap: 0.8rem; }
         .logs-container::-webkit-scrollbar { width: 6px; }
         .logs-container::-webkit-scrollbar-track { background: var(--vantablack); }
         .logs-container::-webkit-scrollbar-thumb { background: var(--steel-grey); }
-
-        .log-item {
-            background-color: rgba(2, 6, 23, 0.8);
-            border-left: 2px solid var(--electric-cyan);
-            padding: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-        }
-
+        .log-item { background-color: rgba(2, 6, 23, 0.8); border-left: 2px solid var(--electric-cyan); padding: 1rem; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
         .log-content { display: flex; gap: 0.8rem; flex-wrap: wrap; max-width: 80%; }
-
-        .btn-delete {
-            background: transparent; border: 1px solid var(--crimson-war);
-            color: var(--crimson-war); padding: 0.4rem 0.8rem;
-            font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
-            cursor: pointer; transition: all 0.2s;
-        }
-
+        .btn-delete { background: transparent; border: 1px solid var(--crimson-war); color: var(--crimson-war); padding: 0.4rem 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; cursor: pointer; transition: all 0.2s; }
         .btn-delete:hover { background: var(--crimson-war); color: var(--smoke-white); }
 
+        /* ========================================= */
+        /* OPTIMIZACIÓN MÓVIL EXTREMA (PABLO'S RULE) */
+        /* ========================================= */
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .dashboard-layout { grid-template-columns: 1fr; gap: 1rem; }
+            .admin-box { padding: 1.5rem 1rem; margin-bottom: 1rem; }
+            h1 { font-size: 1.8rem; flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+            
+            /* El selector de colores en móvil mejor uno encima del otro para que no se aplaste */
+            .type-selector { grid-template-columns: 1fr; gap: 0.5rem;} 
+            
+            /* Los campos opcionales del enlace, uno encima de otro en móvil */
+            .optional-group > div > div { grid-template-columns: 1fr !important; }
+            
+            .logs-container { max-height: 350px; }
+            .log-item { flex-direction: column; align-items: flex-start; gap: 1rem; }
+            .log-content { max-width: 100%; flex-direction: column; gap: 0.3rem;}
+            .btn-delete { width: 100%; text-align: center; }
+        }
     </style>
 </head>
 <body>
@@ -286,7 +113,6 @@
     <div class="dashboard-layout">
         <!-- COLUMNA IZQUIERDA -->
         <div>
-            <!-- CAJA 1: INYECTOR DE DATOS NORMALES -->
             <div class="admin-box">
                 <h1>
                     MASTER TERMINAL 
@@ -326,18 +152,9 @@
                 <div class="form-group">
                     <label>> 5. IMPACTO VISUAL (Color del mensaje)</label>
                     <div class="type-selector">
-                        <label>
-                            <input type="radio" name="logType" value="positive" checked>
-                            <div class="type-option opt-cyan">[ + ] ÉXITO / CYAN</div>
-                        </label>
-                        <label>
-                            <input type="radio" name="logType" value="negative">
-                            <div class="type-option opt-red">[ - ] ERROR / ROJO</div>
-                        </label>
-                        <label>
-                            <input type="radio" name="logType" value="neutral">
-                            <div class="type-option opt-grey">[ i ] SYS / GRIS</div>
-                        </label>
+                        <label><input type="radio" name="logType" value="positive" checked><div class="type-option opt-cyan">[ + ] ÉXITO / CYAN</div></label>
+                        <label><input type="radio" name="logType" value="negative"><div class="type-option opt-red">[ - ] ERROR / ROJO</div></label>
+                        <label><input type="radio" name="logType" value="neutral"><div class="type-option opt-grey">[ i ] SYS / GRIS</div></label>
                     </div>
                 </div>
 
@@ -348,7 +165,6 @@
 
         <!-- COLUMNA DERECHA -->
         <div>
-            <!-- CAJA 2: MODO NOTICIAS (NUEVO) -->
             <div class="admin-box" style="border-color: var(--crimson-war);">
                 <h1 style="color: var(--crimson-war);">[ ! ] MACRO NEWS OVERRIDE</h1>
                 <div class="warning-text" style="color: var(--crimson-war); border-color: rgba(255,49,49,0.2);">
@@ -368,7 +184,6 @@
                 <div id="newsFeedback"></div>
             </div>
 
-            <!-- CAJA 3: GESTOR DE REGISTROS -->
             <div class="admin-box">
                 <h1 style="font-size: 1.8rem; color: var(--steel-grey);">
                     REGISTRO ACTIVO 
@@ -420,72 +235,42 @@
             feedback.innerText = '';
 
             try {
-                const { error } = await supabaseClient
-                    .from('logs')
-                    .insert([{ log_time: logTime, action_text: actionText, value_text: valueText, log_type: logType }]);
-
+                const { error } = await supabaseClient.from('logs').insert([{ log_time: logTime, action_text: actionText, value_text: valueText, log_type: logType }]);
                 if (error) throw error;
-
                 feedback.className = 'msg-success';
                 feedback.innerText = '[SUCCESS] Protocolo actualizado.';
-                
-                document.getElementById('actionText').value = '';
-                document.getElementById('valueText').value = '';
-                document.getElementById('linkUrl').value = '';
-                document.getElementById('linkWord').value = '';
-
+                document.getElementById('actionText').value = ''; document.getElementById('valueText').value = ''; document.getElementById('linkUrl').value = ''; document.getElementById('linkWord').value = '';
                 loadLogs();
             } catch (error) {
-                feedback.className = 'msg-error';
-                feedback.innerText = '[ERROR] Fallo en inyección.';
+                feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Fallo en inyección.';
             } finally {
-                btn.innerText = '[ INYECTAR AL PROTOCOLO PÚBLICO ]';
-                btn.style.pointerEvents = 'auto';
+                btn.innerText = '[ INYECTAR AL PROTOCOLO PÚBLICO ]'; btn.style.pointerEvents = 'auto';
             }
         }
 
-        // --- SISTEMA DE MODO NOTICIAS ---
         async function activateNewsMode() {
             const timeVal = document.getElementById('newsEndTime').value;
             const feedback = document.getElementById('newsFeedback');
             const btn = document.getElementById('btnNews');
 
-            if(!timeVal) {
-                feedback.className = 'msg-error';
-                feedback.innerText = '[ERROR] Introduce la hora de fin.';
-                return;
-            }
+            if(!timeVal) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Introduce la hora de fin.'; return; }
 
             const now = new Date();
             const [hours, minutes] = timeVal.split(':');
             const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0);
 
-            if (endDate.getTime() <= now.getTime()) {
-                feedback.className = 'msg-error';
-                feedback.innerText = '[ERROR] Esa hora ya ha pasado.';
-                return;
-            }
+            if (endDate.getTime() <= now.getTime()) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Esa hora ya ha pasado.'; return; }
 
             btn.innerText = 'ACTIVANDO...';
             
             try {
-                const { error } = await supabaseClient
-                    .from('logs')
-                    .insert([{ 
-                        log_time: '[SYS_EMERGENCY]', 
-                        action_text: 'MACRO EVENT PROTOCOL ACTIVATED', 
-                        value_text: endDate.getTime().toString(), // Guardamos el timestamp
-                        log_type: 'news_alert' // Tipo especial oculto
-                    }]);
-
+                const { error } = await supabaseClient.from('logs').insert([{ log_time: '[SYS_EMERGENCY]', action_text: 'MACRO EVENT PROTOCOL ACTIVATED', value_text: endDate.getTime().toString(), log_type: 'news_alert' }]);
                 if (error) throw error;
-
-                feedback.className = 'msg-error'; // Rojo a propósito
+                feedback.className = 'msg-error'; 
                 feedback.innerText = '[ ! ] MODO NOTICIAS ACTIVADO CON ÉXITO.';
                 loadLogs();
             } catch (error) {
-                feedback.className = 'msg-error';
-                feedback.innerText = '[ERROR] Fallo al activar modo.';
+                feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Fallo al activar modo.';
             } finally {
                 btn.innerText = '[ INICIAR PROTOCOLO DE EMERGENCIA ]';
             }
@@ -494,56 +279,30 @@
         async function deactivateNewsMode() {
             const feedback = document.getElementById('newsFeedback');
             try {
-                // Para apagarlo forzosamente, mandamos un tiempo de "0"
-                const { error } = await supabaseClient
-                    .from('logs')
-                    .insert([{ 
-                        log_time: '[SYS_EMERGENCY]', 
-                        action_text: 'MACRO EVENT PROTOCOL DEACTIVATED', 
-                        value_text: "0", 
-                        log_type: 'news_alert' 
-                    }]);
+                const { error } = await supabaseClient.from('logs').insert([{ log_time: '[SYS_EMERGENCY]', action_text: 'MACRO EVENT PROTOCOL DEACTIVATED', value_text: "0", log_type: 'news_alert' }]);
                 if (error) throw error;
-                feedback.className = 'msg-success';
-                feedback.innerText = '[ OK ] Alerta apagada forzosamente.';
+                feedback.className = 'msg-success'; feedback.innerText = '[ OK ] Alerta apagada forzosamente.';
                 loadLogs();
-            } catch (error) {
-                feedback.innerText = '[ERROR] Fallo al apagar.';
-            }
+            } catch (error) { feedback.innerText = '[ERROR] Fallo al apagar.'; }
         }
 
-        // --- CARGA DE LOGS ---
         async function loadLogs() {
             const container = document.getElementById('logsContainer');
             container.innerHTML = '<div class="msg-neutral" style="text-align:center;">Sincronizando con The Vault...</div>';
-
             try {
-                const { data, error } = await supabaseClient
-                    .from('logs')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
+                const { data, error } = await supabaseClient.from('logs').select('*').order('created_at', { ascending: false });
                 if (error) throw error;
-
-                if (data.length === 0) {
-                    container.innerHTML = '<div class="msg-neutral" style="text-align:center;">[ EMPTY ] No hay registros.</div>';
-                    return;
-                }
-
+                if (data.length === 0) { container.innerHTML = '<div class="msg-neutral" style="text-align:center;">[ EMPTY ] No hay registros.</div>'; return; }
                 container.innerHTML = ''; 
-
                 data.forEach(log => {
-                    let borderColor = 'var(--steel-grey)';
-                    let valueColor = 'var(--steel-grey)';
-                    
+                    let borderColor = 'var(--steel-grey)'; let valueColor = 'var(--steel-grey)';
                     if(log.log_type === 'positive') { borderColor = 'var(--electric-cyan)'; valueColor = 'var(--electric-cyan)'; } 
                     else if (log.log_type === 'negative') { borderColor = 'var(--crimson-war)'; valueColor = 'var(--crimson-war)'; }
-                    else if (log.log_type === 'news_alert') { borderColor = '#FF8C00'; valueColor = '#FF8C00'; } // Naranja para distinguirlo en el admin
+                    else if (log.log_type === 'news_alert') { borderColor = '#FF8C00'; valueColor = '#FF8C00'; } 
 
                     const logEl = document.createElement('div');
                     logEl.className = 'log-item';
                     logEl.style.borderLeftColor = borderColor;
-
                     const displayAction = log.action_text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
                     logEl.innerHTML = `
@@ -556,10 +315,7 @@
                     `;
                     container.appendChild(logEl);
                 });
-
-            } catch (err) {
-                container.innerHTML = '<div class="msg-error" style="text-align:center;">[SYS_ERROR] Fallo al leer.</div>';
-            }
+            } catch (err) { container.innerHTML = '<div class="msg-error" style="text-align:center;">[SYS_ERROR] Fallo al leer.</div>'; }
         }
 
         async function deleteLog(id) {
@@ -568,9 +324,7 @@
                 const { error } = await supabaseClient.from('logs').delete().eq('id', id);
                 if (error) throw error;
                 loadLogs();
-            } catch (err) {
-                alert("[ERROR] No se pudo eliminar el registro. Revisa las policies de Supabase.");
-            }
+            } catch (err) { alert("[ERROR] No se pudo eliminar el registro."); }
         }
 
         loadLogs();

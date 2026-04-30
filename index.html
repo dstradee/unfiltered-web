@@ -5,19 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UNFILTERED ALPHA | The Protocol</title>
     
-    <!-- Favicon / Logo en la pestaña del buscador -->
     <link rel="icon" type="image/png" href="logo.png">
     
-    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
 
-    <!-- Librería oficial de Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        /* --- BRAND COLOR PALETTE --- */
         :root {
             --obsidian-navy: #0B1A30;
             --electric-cyan: #00F2FF;
@@ -27,13 +23,7 @@
             --vantablack: #020617;
         }
 
-        /* --- BASE RESET & SETUP --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            border-radius: 0 !important; 
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
 
         body {
             background-color: var(--obsidian-navy);
@@ -46,23 +36,11 @@
             position: relative;
         }
 
-        /* --- EFECTOS DE EMERGENCIA MACRO (LUCES ROJAS) --- */
         .emergency-vignette {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 50; /* Debajo de los modales pero encima del fondo */
-            display: none;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 50; display: none;
         }
-
-        .emergency-vignette.active {
-            display: block;
-            animation: pulse-red 2s infinite;
-        }
-
+        .emergency-vignette.active { display: block; animation: pulse-red 2s infinite; }
         @keyframes pulse-red {
             0% { box-shadow: inset 0 0 20px rgba(255, 49, 49, 0.1); }
             50% { box-shadow: inset 0 0 120px rgba(255, 49, 49, 0.4); }
@@ -70,348 +48,105 @@
         }
 
         .emergency-banner {
-            background-color: var(--crimson-war);
-            color: var(--smoke-white);
-            text-align: center;
-            padding: 0.8rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1rem;
-            font-weight: 800;
-            letter-spacing: 2px;
-            display: none; /* Oculto por defecto */
-            width: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
+            background-color: var(--crimson-war); color: var(--smoke-white);
+            text-align: center; padding: 0.8rem; font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem; font-weight: 800; letter-spacing: 2px;
+            display: none; width: 100%; position: fixed; top: 0; left: 0; z-index: 1000;
             box-shadow: 0 5px 20px rgba(255, 49, 49, 0.4);
         }
 
-        /* --- THE BLUEPRINT & NOISE OVERLAY --- */
         .blueprint-layer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
             background-image: url('Gemini_Generated_Image_dofjdbdofjdbdofj.jpg');
-            background-size: cover;
-            background-position: center;
-            opacity: 0.15; 
-            mix-blend-mode: screen; 
+            background-size: cover; background-position: center;
+            opacity: 0.15; mix-blend-mode: screen; 
         }
 
         .noise-layer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 1;
-            opacity: 0.06;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 1; opacity: 0.06;
             background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
         }
 
-        /* --- TYPOGRAPHY --- */
-        h1, h2, .logo-text {
-            font-family: 'Bebas Neue', sans-serif;
-            color: var(--smoke-white);
-            letter-spacing: 8px; 
-            text-transform: uppercase;
-            font-weight: normal;
-        }
+        h1, h2, .logo-text { font-family: 'Bebas Neue', sans-serif; color: var(--smoke-white); letter-spacing: 8px; text-transform: uppercase; font-weight: normal; }
+        .code-data { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--electric-cyan); font-size: 0.9rem; letter-spacing: 1px; }
+        p { color: var(--steel-grey); line-height: 1.6; font-size: 1.1rem; }
 
-        .code-data {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 600;
-            color: var(--electric-cyan);
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-        }
+        .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 0 2rem; width: 100%; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        header { padding: 4rem 0 3rem 0; display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid rgba(148, 163, 184, 0.1); }
+        .brand-logo { display: flex; align-items: baseline; gap: 8px; font-size: 2rem; }
+        .unfiltered-word { border-bottom: 2px solid var(--electric-cyan); padding-bottom: 2px; }
+        .auth-link { font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); text-decoration: none; font-size: 0.85rem; letter-spacing: 1px; transition: color 0.2s ease; }
+        .auth-link:hover { color: var(--electric-cyan); }
 
-        p {
-            color: var(--steel-grey);
-            line-height: 1.6;
-            font-size: 1.1rem;
-        }
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; padding-bottom: 10vh; margin-top: 2rem; }
+        .system-status { display: inline-block; background-color: rgba(0, 242, 255, 0.05); border-left: 3px solid var(--electric-cyan); padding: 8px 16px; margin-bottom: 2rem; text-transform: uppercase; align-self: flex-start;}
+        .hero-title { font-size: clamp(3rem, 8vw, 7rem); line-height: 0.9; margin-bottom: 1.5rem; text-shadow: 4px 4px 0px var(--vantablack); }
+        .hero-subtitle { max-width: 600px; margin-bottom: 3rem; }
 
-        /* --- LAYOUT STRUCTURE --- */
-        .container {
-            position: relative;
-            z-index: 10;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* --- HEADER / LOGO --- */
-        header {
-            padding: 4rem 0 3rem 0; /* Padding top aumentado por si sale el banner rojo */
-            display: flex;
-            justify-content: space-between; 
-            align-items: baseline;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-        }
-
-        .brand-logo {
-            display: flex;
-            align-items: baseline;
-            gap: 8px;
-            font-size: 2rem;
-        }
-
-        .unfiltered-word {
-            border-bottom: 2px solid var(--electric-cyan); 
-            padding-bottom: 2px;
-        }
-
-        .auth-link {
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--steel-grey);
-            text-decoration: none;
-            font-size: 0.85rem;
-            letter-spacing: 1px;
-            transition: color 0.2s ease;
-        }
-
-        .auth-link:hover {
-            color: var(--electric-cyan);
-        }
-
-        /* --- MAIN HERO SECTION --- */
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding-bottom: 10vh;
-        }
-
-        .system-status {
-            display: inline-block;
-            background-color: rgba(0, 242, 255, 0.05);
-            border-left: 3px solid var(--electric-cyan);
-            padding: 8px 16px;
-            margin-bottom: 2rem;
-            text-transform: uppercase;
-            box-shadow: 0 0 10px rgba(0, 242, 255, 0.1); 
-        }
-
-        .hero-title {
-            font-size: clamp(4rem, 8vw, 7rem);
-            line-height: 0.9;
-            margin-bottom: 1.5rem;
-            text-shadow: 4px 4px 0px var(--vantablack); 
-        }
-
-        .hero-subtitle {
-            max-width: 600px;
-            margin-bottom: 3rem;
-        }
-
-        /* --- TERMINAL DATA BOXES --- */
-        .terminal-box {
-            background-color: var(--vantablack);
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            padding: 2rem;
-            max-width: 700px;
-            position: relative;
-        }
-
-        .terminal-header {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-            padding-bottom: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .terminal-line {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 0.8rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
-        }
-
+        .terminal-box { background-color: var(--vantablack); border: 1px solid rgba(148, 163, 184, 0.2); padding: 2rem; max-width: 700px; position: relative; }
+        .terminal-header { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+        .terminal-line { display: flex; gap: 1rem; margin-bottom: 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
         .t-time { color: var(--steel-grey); min-width: 90px; }
         .t-action { color: var(--smoke-white); flex: 1;}
         .t-value { color: var(--electric-cyan); text-shadow: 0 0 5px rgba(0, 242, 255, 0.3); font-weight: bold;}
         .t-error { color: var(--crimson-war); font-weight: bold;}
+        .blinking-cursor { display: inline-block; width: 10px; height: 1em; background-color: var(--electric-cyan); animation: blink 1s step-end infinite; vertical-align: text-bottom; margin-left: 5px; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        .blinking-cursor {
-            display: inline-block;
-            width: 10px;
-            height: 1em;
-            background-color: var(--electric-cyan);
-            animation: blink 1s step-end infinite;
-            vertical-align: text-bottom;
-            margin-left: 5px;
-        }
+        .action-area { display: flex; gap: 1.5rem; margin-top: 2rem; }
+        .btn { display: inline-block; padding: 1rem 2rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; text-align: center; }
+        .btn-primary { background-color: transparent; color: var(--electric-cyan); border: 1px solid var(--electric-cyan); box-shadow: inset 0 0 0 rgba(0, 242, 255, 0), 0 0 10px rgba(0, 242, 255, 0.1); }
+        .btn-primary:hover { background-color: rgba(0, 242, 255, 0.1); box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.2), 0 0 15px rgba(0, 242, 255, 0.2); }
 
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
-
-        /* --- BUTTONS --- */
-        .action-area {
-            display: flex;
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 1rem 2rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 800;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-        }
-
-        .btn-primary {
-            background-color: transparent;
-            color: var(--electric-cyan);
-            border: 1px solid var(--electric-cyan);
-            box-shadow: inset 0 0 0 rgba(0, 242, 255, 0), 0 0 10px rgba(0, 242, 255, 0.1);
-        }
-
-        .btn-primary:hover {
-            background-color: rgba(0, 242, 255, 0.1);
-            box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.2), 0 0 15px rgba(0, 242, 255, 0.2);
-        }
-
-        /* --- MODAL (POP-UP) STYLES --- */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(2, 6, 23, 0.85); 
-            backdrop-filter: blur(4px);
-            z-index: 100;
-            display: none; 
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background-color: var(--obsidian-navy);
-            border: 1px solid var(--electric-cyan);
-            padding: 2.5rem;
-            width: 90%;
-            max-width: 600px;
-            box-shadow: 0 0 30px rgba(0, 242, 255, 0.15);
-            position: relative;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 1rem;
-            right: 1.5rem;
-            color: var(--steel-grey);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .close-modal:hover {
-            color: var(--crimson-war);
-        }
-
-        .calc-header {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 2.5rem;
-            color: var(--smoke-white);
-            letter-spacing: 2px;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-            padding-bottom: 0.5rem;
-        }
-
-        .calc-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .calc-group label {
-            display: block;
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--steel-grey);
-            font-size: 0.85rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .calc-group input {
-            width: 100%;
-            background-color: var(--vantablack);
-            border: 1px solid var(--steel-grey);
-            color: var(--electric-cyan);
-            padding: 0.8rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 1.1rem;
-            outline: none;
-        }
-
-        .calc-group input:focus {
-            border-color: var(--electric-cyan);
-        }
-
-        .calc-result-box {
-            background-color: var(--vantablack);
-            padding: 1.5rem;
-            border-left: 3px solid var(--steel-grey);
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .calc-expectancy {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-        }
-
-        .calc-verdict {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.5rem;
-            letter-spacing: 2px;
-        }
-
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(4px); z-index: 100; display: none; justify-content: center; align-items: center; padding: 1rem; }
+        .modal-content { background-color: var(--obsidian-navy); border: 1px solid var(--electric-cyan); padding: 2.5rem; width: 100%; max-width: 600px; box-shadow: 0 0 30px rgba(0, 242, 255, 0.15); position: relative; max-height: 90vh; overflow-y: auto; }
+        .close-modal { position: absolute; top: 1rem; right: 1.5rem; color: var(--steel-grey); font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; cursor: pointer; transition: color 0.2s; }
+        .close-modal:hover { color: var(--crimson-war); }
+        .calc-header { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--smoke-white); letter-spacing: 2px; margin-bottom: 1rem; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 0.5rem; }
+        .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+        .calc-group label { display: block; font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); font-size: 0.85rem; margin-bottom: 0.5rem; }
+        .calc-group input { width: 100%; background-color: var(--vantablack); border: 1px solid var(--steel-grey); color: var(--electric-cyan); padding: 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; outline: none; }
+        .calc-group input:focus { border-color: var(--electric-cyan); }
+        .calc-result-box { background-color: var(--vantablack); padding: 1.5rem; border-left: 3px solid var(--steel-grey); text-align: center; margin-bottom: 1.5rem; }
+        .calc-expectancy { font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; }
+        .calc-verdict { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 2px; }
         .status-positive { color: var(--electric-cyan); border-left-color: var(--electric-cyan); }
         .status-negative { color: var(--crimson-war); border-left-color: var(--crimson-war); }
         .status-neutral { color: var(--steel-grey); border-left-color: var(--steel-grey); }
 
-        #loginError {
-            color: var(--crimson-war);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.8rem;
-            margin-bottom: 1rem;
-            text-align: center;
-            display: none;
-        }
+        #loginError { color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 1rem; text-align: center; display: none; }
 
+        /* ========================================= */
+        /* OPTIMIZACIÓN MÓVIL EXTREMA (PABLO'S RULE) */
+        /* ========================================= */
+        @media (max-width: 768px) {
+            .container { padding: 0 1rem; }
+            header { padding: 5rem 0 2rem 0; flex-direction: column; align-items: flex-start; gap: 1rem;}
+            .emergency-banner { font-size: 0.8rem; padding: 0.5rem; }
+            .hero-title { font-size: 3.5rem; }
+            .hero-subtitle { font-size: 1rem; }
+            
+            .terminal-box { padding: 1.5rem 1rem; }
+            .terminal-line { flex-wrap: wrap; gap: 0.3rem; }
+            .t-time { width: 100%; font-size: 0.75rem; opacity: 0.7; margin-bottom: -0.2rem; }
+            
+            .action-area { flex-direction: column; }
+            .btn { width: 100%; }
+
+            .modal-content { padding: 1.5rem; }
+            .calc-header { font-size: 2rem; }
+            .calc-grid { grid-template-columns: 1fr; gap: 1rem; }
+            .calc-group[style] { grid-column: span 1 !important; } /* Rompe las 2 columnas del Reward */
+            .calc-expectancy { font-size: 1.5rem; }
+            .calc-verdict { font-size: 1.2rem; }
+        }
     </style>
 </head>
 <body>
 
-    <!-- CAPAS VISUALES -->
     <div class="emergency-banner" id="emergencyBanner">[ HIGH IMPACT MACRO EVENT // TRADING RESTRICTED ]</div>
     <div class="emergency-vignette" id="redAlert"></div>
     <div class="blueprint-layer"></div>
@@ -422,7 +157,6 @@
             <div class="brand-logo logo-text">
                 <span class="unfiltered-word">UNFILTERED</span> <span>ALPHA</span>
             </div>
-            <!-- Auth Link Oculto -->
             <a href="#" class="auth-link" id="openLoginBtn">[ AUTH ]</a>
         </header>
 
@@ -437,7 +171,6 @@
                 Most traders follow the herd. We follow the code. Every day, the Architect provides the blueprint to survive the market manipulation. Are you reading the code or providing the liquidity?
             </p>
 
-            <!-- Terminal Interface -->
             <div class="terminal-box">
                 <div class="terminal-header code-data">
                     <span>> THE_PROTOCOL_TERMINAL</span>
@@ -445,7 +178,6 @@
                 </div>
                 
                 <div class="terminal-body" id="terminal-output">
-                    <!-- Esto se llena automáticamente con Supabase -->
                     <div class="terminal-line">
                         <span class="t-time">[SYS_UPDATE]</span>
                         <span class="t-action">Establishing secure connection to The Protocol...</span>
@@ -454,15 +186,13 @@
                 </div>
             </div>
 
-            <!-- Botón de Calculadora -->
             <div class="action-area">
                 <a href="#" class="btn btn-primary" id="openCalcBtn">[ CALCULATOR ]</a>
             </div>
-
         </main>
     </div>
 
-    <!-- --- MODAL: SYSTEM VALIDATOR (CALCULATOR) --- -->
+    <!-- MODAL CALCULATOR -->
     <div class="modal-overlay" id="calcModal">
         <div class="modal-content">
             <div class="close-modal" id="closeCalcBtn">[ X ]</div>
@@ -488,13 +218,13 @@
                 <div class="calc-verdict" id="verdictText">AWAITING DATA INPUT</div>
             </div>
 
-            <a href="https://gumroad.com" target="_blank" class="btn btn-primary" style="width: 100%; text-align: center; display: none;" id="upsellBtn">
+            <a href="https://unfilteredalpha.gumroad.com/l/qoabdg" target="_blank" class="btn btn-primary" style="width: 100%; text-align: center; display: none;" id="upsellBtn">
                 SECURE THE PROTOCOL NOW ($27)
             </a>
         </div>
     </div>
 
-    <!-- --- MODAL: ADMIN AUTH (LOGIN) --- -->
+    <!-- MODAL LOGIN -->
     <div class="modal-overlay" id="loginModal">
         <div class="modal-content" style="max-width: 400px;">
             <div class="close-modal" id="closeLoginBtn">[ X ]</div>
@@ -517,11 +247,7 @@
         </div>
     </div>
 
-    <!-- --- JAVASCRIPT FOR LOGIC --- -->
     <script>
-        // =========================================================================
-        // CONEXIÓN A SUPABASE PARA LEER LAS NOTICIAS Y LOGIN
-        // =========================================================================
         const SUPABASE_URL = 'https://qtpuipgkytzjnckkkwnl.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_eA2g7-rTvcPcfz_dVl2aWg_Ca5P7t93';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -532,19 +258,15 @@
 
         async function fetchTerminalLogs() {
             try {
-                // Seleccionamos logs ordenados por fecha
                 const { data, error } = await supabaseClient
                     .from('logs')
                     .select('*')
                     .order('created_at', { ascending: false })
-                    .limit(10); // Pedimos más por si hay varias alertas ocultas
+                    .limit(10); 
 
                 if (error) throw error;
 
-                // --- LÓGICA DE MODO NOTICIAS ---
                 let isEmergencyActive = false;
-                
-                // Buscamos si el registro más reciente es una alerta de noticia
                 const emergencyLog = data.find(log => log.log_type === 'news_alert');
                 
                 if (emergencyLog && emergencyLog.value_text !== "0") {
@@ -553,7 +275,6 @@
                     
                     if (endTime > now) {
                         isEmergencyActive = true;
-                        // Programamos que se apague solo a la hora estipulada
                         setTimeout(() => {
                             redAlert.classList.remove('active');
                             emergencyBanner.style.display = 'none';
@@ -561,7 +282,6 @@
                     }
                 }
 
-                // Encender o apagar luces
                 if (isEmergencyActive) {
                     redAlert.classList.add('active');
                     emergencyBanner.style.display = 'block';
@@ -570,13 +290,8 @@
                     emergencyBanner.style.display = 'none';
                 }
 
-                // --- RENDERIZADO DEL TERMINAL ---
                 terminalOutput.innerHTML = ''; 
-                
-                // Filtramos los que NO son news_alert para mostrarlos en el terminal, y nos quedamos con los 4 últimos
                 const visibleData = data.filter(log => log.log_type !== 'news_alert').slice(0, 4);
-                
-                // Los invertimos para que el más nuevo salga abajo
                 const sortedData = visibleData.reverse();
 
                 sortedData.forEach(log => {
@@ -602,24 +317,16 @@
                 `;
 
             } catch (err) {
-                console.error("Error al cargar la base de datos:", err);
-                terminalOutput.innerHTML = `
-                    <div class="terminal-line">
-                        <span class="t-error">[SYS_ERROR] Connection to protocol database failed.</span>
-                    </div>
-                `;
+                console.error(err);
+                terminalOutput.innerHTML = `<div class="terminal-line"><span class="t-error">[SYS_ERROR] Database offline.</span></div>`;
             }
         }
 
         fetchTerminalLogs();
 
-        // =========================================================================
-        // LOGICA DE MODALES (CALCULADORA Y LOGIN)
-        // =========================================================================
         const calcModal = document.getElementById('calcModal');
         const openCalcBtn = document.getElementById('openCalcBtn');
         const closeCalcBtn = document.getElementById('closeCalcBtn');
-
         const loginModal = document.getElementById('loginModal');
         const openLoginBtn = document.getElementById('openLoginBtn');
         const closeLoginBtn = document.getElementById('closeLoginBtn');
@@ -634,41 +341,18 @@
         const resultBox = document.getElementById('resultBox');
         const upsellBtn = document.getElementById('upsellBtn');
 
-        openCalcBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            calcModal.style.display = 'flex';
-            calculateExpectancy();
-        });
-
+        openCalcBtn.addEventListener('click', (e) => { e.preventDefault(); calcModal.style.display = 'flex'; calculateExpectancy(); });
         closeCalcBtn.addEventListener('click', () => { calcModal.style.display = 'none'; });
-
-        openLoginBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            loginModal.style.display = 'flex';
-            loginErrorMsg.style.display = 'none'; 
-        });
-
+        openLoginBtn.addEventListener('click', (e) => { e.preventDefault(); loginModal.style.display = 'flex'; loginErrorMsg.style.display = 'none'; });
         closeLoginBtn.addEventListener('click', () => { loginModal.style.display = 'none'; });
+        window.addEventListener('click', (e) => { if (e.target === calcModal) calcModal.style.display = 'none'; if (e.target === loginModal) loginModal.style.display = 'none'; });
 
-        window.addEventListener('click', (e) => {
-            if (e.target === calcModal) calcModal.style.display = 'none';
-            if (e.target === loginModal) loginModal.style.display = 'none';
-        });
-
-        // =========================================================================
-        // LOGIN SEGURO CON SUPABASE AUTH
-        // =========================================================================
         executeLoginBtn.addEventListener('click', async (e) => {
             e.preventDefault();
-            
             const email = document.getElementById('adminEmail').value.trim();
             const pass = document.getElementById('adminPass').value;
             
-            if(!email || !pass) {
-                loginErrorMsg.innerText = "[SYS_ERROR] Introduce credenciales.";
-                loginErrorMsg.style.display = 'block';
-                return;
-            }
+            if(!email || !pass) { loginErrorMsg.innerText = "[SYS_ERROR] Credenciales requeridas."; loginErrorMsg.style.display = 'block'; return; }
 
             const originalText = executeLoginBtn.innerText;
             executeLoginBtn.innerText = '[ VERIFYING... ]';
@@ -676,11 +360,7 @@
             loginErrorMsg.style.display = 'none';
 
             try {
-                const { data, error } = await supabaseClient.auth.signInWithPassword({
-                    email: email,
-                    password: pass
-                });
-
+                const { data, error } = await supabaseClient.auth.signInWithPassword({ email: email, password: pass });
                 if (error) throw error;
 
                 executeLoginBtn.style.borderColor = 'var(--electric-cyan)';
@@ -695,18 +375,11 @@
                 }, 800);
 
             } catch (error) {
-                console.error("Auth error:", error);
-                loginErrorMsg.innerText = "[SYS_ERROR] Acceso denegado.";
-                loginErrorMsg.style.display = 'block';
-                
-                executeLoginBtn.innerText = originalText;
-                executeLoginBtn.style.pointerEvents = 'auto';
+                loginErrorMsg.innerText = "[SYS_ERROR] Acceso denegado."; loginErrorMsg.style.display = 'block';
+                executeLoginBtn.innerText = originalText; executeLoginBtn.style.pointerEvents = 'auto';
             }
         });
 
-        // =========================================================================
-        // MATEMÁTICAS DE LA CALCULADORA
-        // =========================================================================
         function calculateExpectancy() {
             const winRate = parseFloat(winRateInput.value) / 100;
             const lossRate = 1 - winRate;
@@ -716,24 +389,20 @@
             if (isNaN(winRate) || isNaN(risk) || isNaN(reward)) return;
 
             const expectancy = (winRate * reward) - (lossRate * risk);
-            
             expectancyVal.innerText = (expectancy > 0 ? '+' : '') + expectancy.toFixed(2) + '% EV';
-
             resultBox.className = 'calc-result-box'; 
 
             if (expectancy <= 0) {
                 resultBox.classList.add('status-negative');
                 verdictText.innerText = '[ SYSTEM ERROR // LIQUIDITY CAPTURED ]';
                 upsellBtn.style.display = 'block'; 
-                upsellBtn.style.borderColor = 'var(--crimson-war)';
-                upsellBtn.style.color = 'var(--crimson-war)';
+                upsellBtn.style.borderColor = 'var(--crimson-war)'; upsellBtn.style.color = 'var(--crimson-war)';
                 upsellBtn.innerText = 'STOP BLEEDING. GET THE PROTOCOL ($27)';
             } else if (expectancy > 0 && expectancy < 0.5) {
                 resultBox.classList.add('status-neutral');
                 verdictText.innerText = '[ LOW ALPHA // VULNERABLE SYSTEM ]';
                 upsellBtn.style.display = 'block';
-                upsellBtn.style.borderColor = 'var(--electric-cyan)';
-                upsellBtn.style.color = 'var(--electric-cyan)';
+                upsellBtn.style.borderColor = 'var(--electric-cyan)'; upsellBtn.style.color = 'var(--electric-cyan)';
                 upsellBtn.innerText = 'UPGRADE YOUR EDGE. GET THE PROTOCOL ($27)';
             } else {
                 resultBox.classList.add('status-positive');

@@ -66,6 +66,18 @@
         .discount-msg { font-size: 1.1rem; font-weight: 500; }
         .discount-timer { font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 800; background: rgba(0,0,0,0.2); padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.3); }
 
+        /* --- TOAST NOTIFICATION (TIEMPO REAL TIPO WINAMAX) --- */
+        .toast-notification {
+            position: fixed; top: 20px; right: -400px; width: 320px;
+            background-color: var(--obsidian-navy); border: 1px solid var(--electric-cyan);
+            border-left: 4px solid var(--electric-cyan); padding: 1rem;
+            color: var(--smoke-white); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
+            z-index: 9999; box-shadow: 0 5px 15px rgba(0, 242, 255, 0.2);
+            transition: right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .toast-notification.show { right: 20px; }
+        .toast-title { color: var(--electric-cyan); font-weight: bold; margin-bottom: 0.3rem; }
+
         /* Estilos base */
         .blueprint-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; background-image: url('Gemini_Generated_Image_dofjdbdofjdbdofj.jpg'); background-size: cover; background-position: center; opacity: 0.15; mix-blend-mode: screen; }
         .noise-layer { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1; opacity: 0.06; background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E'); }
@@ -147,6 +159,31 @@
     </style>
 </head>
 <body>
+
+    <!-- TOAST NOTIFICATION EN TIEMPO REAL -->
+    <div id="realtimeToast" class="toast-notification">
+        <div class="toast-title">[!] URGENT ALPHA</div>
+        <div id="toastMessage">New institutional trace detected in the terminal.</div>
+    </div>
+
+    <!-- MODAL FOMO (10 SEGUNDOS) -->
+    <div class="modal-overlay" id="fomoModal">
+        <div class="modal-content" style="border-color: var(--crimson-war); box-shadow: 0 0 30px rgba(255, 49, 49, 0.15);">
+            <div class="close-modal" id="closeFomoBtn" style="color: var(--steel-grey);">[ X ]</div>
+            <div class="calc-header" style="color: var(--crimson-war); border-bottom-color: rgba(255,49,49,0.2);">[ SYSTEM ALERT ]</div>
+            
+            <p style="font-family: 'JetBrains Mono', monospace; font-size: 1rem; color: var(--smoke-white); margin-bottom: 1.5rem; line-height: 1.6;">
+                A new high-probability setup has just been deployed to <span style="color: var(--electric-cyan);">The Vault</span>.
+            </p>
+            <p style="font-family: 'Inter', sans-serif; font-size: 0.9rem; color: var(--steel-grey); margin-bottom: 2rem;">
+                Retail traders are currently providing liquidity. VIP operators are executing. You are trading blind.
+            </p>
+
+            <a href="https://unfilteredalpha.gumroad.com/l/qoabdg" target="_blank" class="btn btn-primary" style="width: 100%; text-align: center; border-color: var(--crimson-war); color: var(--crimson-war);" id="fomoUpsellBtn">
+                STOP BLEEDING. ACCESS THE PROTOCOL ($27)
+            </a>
+        </div>
+    </div>
 
     <div class="emergency-banner" id="emergencyBanner">[ HIGH IMPACT MACRO EVENT // TRADING RESTRICTED ]</div>
     <div class="emergency-vignette" id="redAlert"></div>
@@ -355,7 +392,14 @@
 
                 // --- 3. RENDERIZADO DEL TERMINAL NORMAL ---
                 terminalOutput.innerHTML = ''; 
-                const visibleData = data.filter(log => log.log_type !== 'news_alert' && log.log_type !== 'discount_alert').slice(0, 4);
+                
+                // CRUCIAL: Aquí filtramos también 'toast_alert' para que no ensucie la pantalla negra
+                const visibleData = data.filter(log => 
+                    log.log_type !== 'news_alert' && 
+                    log.log_type !== 'discount_alert' && 
+                    log.log_type !== 'toast_alert'
+                ).slice(0, 4);
+                
                 const sortedData = visibleData.reverse();
 
                 sortedData.forEach(log => {
@@ -387,6 +431,62 @@
         }
 
         fetchTerminalLogs();
+
+        // --- SISTEMA DE NOTIFICACIONES EN TIEMPO REAL (SUPABASE REALTIME) ---
+        supabaseClient.channel('public:logs')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'logs' }, payload => {
+                fetchTerminalLogs(); // Refrescar si entra algo nuevo
+                
+                const toast = document.getElementById('realtimeToast');
+                const toastMsg = document.getElementById('toastMessage');
+                
+                if (payload.new && payload.new.log_type === 'news_alert') {
+                    toastMsg.innerText = "CRITICAL: Macro Event Protocol Activated.";
+                } else if (payload.new && payload.new.log_type === 'discount_alert') {
+                    toastMsg.innerText = "FLASH PROTOCOL: Global Discount Activated.";
+                } else if (payload.new && payload.new.log_type === 'toast_alert') {
+                    // PABLO: Aquí cogemos tu mensaje directo del Pop-up y lo ponemos
+                    toastMsg.innerText = payload.new.action_text;
+                } else {
+                    toastMsg.innerText = "New institutional trace deployed to public protocol.";
+                }
+                
+                toast.classList.add('show');
+                
+                // Lo ocultamos a los 5 segundos
+                setTimeout(() => { toast.classList.remove('show'); }, 5000);
+            })
+            .subscribe();
+
+        // --- SISTEMA DE FOMO AUTOMÁTICO (10 SEGUNDOS, 1 VEZ AL DÍA) ---
+        setTimeout(() => {
+            const fomoModal = document.getElementById('fomoModal');
+            const closeFomoBtn = document.getElementById('closeFomoBtn');
+            const fomoUpsellBtn = document.getElementById('fomoUpsellBtn');
+            
+            const lastShown = localStorage.getItem('unfiltered_fomo_date');
+            const now = new Date().getTime();
+            const time24h = 24 * 60 * 60 * 1000;
+
+            if (!lastShown || (now - parseInt(lastShown)) > time24h) {
+                fomoModal.style.display = 'flex';
+                localStorage.setItem('unfiltered_fomo_date', now.toString());
+            }
+
+            closeFomoBtn.addEventListener('click', () => { fomoModal.style.display = 'none'; });
+            
+            fomoUpsellBtn.addEventListener('click', () => {
+                if (typeof gtag === 'function') {
+                    gtag('event', 'purchase_click', { 'event_category': 'conversion', 'event_label': 'FOMO Pop-up Button' });
+                }
+                fomoModal.style.display = 'none';
+            });
+            
+            window.addEventListener('click', (e) => {
+                if (e.target === fomoModal) fomoModal.style.display = 'none';
+            });
+
+        }, 10000);
 
         // --- LÓGICA DE MODALES ---
         const calcModal = document.getElementById('calcModal');

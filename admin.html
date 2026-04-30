@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE VAULT | Panel de Control PRO</title>
+    
+    <!-- Fuentes oficiales de la marca -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Librería oficial de Supabase para hablar con la base de datos -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        /* --- COLORES DE LA MARCA --- */
+        :root {
+            --obsidian-navy: #0B1A30;
+            --electric-cyan: #00F2FF;
+            --crimson-war: #FF3131;
+            --smoke-white: #F8FAFC;
+            --steel-grey: #94A3B8;
+            --vantablack: #020617;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
+
+        body {
+            background-color: var(--vantablack); /* Fondo ultra oscuro para el admin */
+            color: var(--smoke-white);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: 
+                linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            padding: 2rem;
+        }
+
+        .admin-box {
+            background-color: var(--obsidian-navy);
+            border: 1px solid var(--steel-grey);
+            padding: 3rem;
+            width: 100%;
+            max-width: 650px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            letter-spacing: 4px;
+            color: var(--smoke-white);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .status-indicator {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--electric-cyan);
+            background: rgba(0, 242, 255, 0.1);
+            padding: 4px 8px;
+            border: 1px solid var(--electric-cyan);
+        }
+
+        .warning-text {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--steel-grey);
+            font-size: 0.85rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+            padding-bottom: 1rem;
+        }
+
+        .form-group { margin-bottom: 1.8rem; }
+
+        label {
+            display: block;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--smoke-white);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            background-color: var(--vantablack);
+            border: 1px solid var(--steel-grey);
+            color: var(--electric-cyan);
+            padding: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--electric-cyan);
+            box-shadow: inset 0 0 5px rgba(0, 242, 255, 0.1);
+        }
+
+        input::placeholder {
+            color: rgba(148, 163, 184, 0.4);
+        }
+
+        /* --- SELECTORES DE IMPACTO VISUAL (Intuitivos) --- */
+        .type-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .type-option {
+            background-color: var(--vantablack);
+            border: 1px solid var(--steel-grey);
+            color: var(--steel-grey);
+            padding: 1rem 0.5rem;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .type-selector input[type="radio"] {
+            display: none; /* Oculta el circulito del radio real */
+        }
+
+        /* Estados cuando están seleccionados */
+        .type-selector input[type="radio"]:checked + .type-option.opt-cyan {
+            border-color: var(--electric-cyan);
+            color: var(--electric-cyan);
+            background-color: rgba(0, 242, 255, 0.05);
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
+        }
+
+        .type-selector input[type="radio"]:checked + .type-option.opt-red {
+            border-color: var(--crimson-war);
+            color: var(--crimson-war);
+            background-color: rgba(255, 49, 49, 0.05);
+            box-shadow: 0 0 10px rgba(255, 49, 49, 0.2);
+        }
+
+        .type-selector input[type="radio"]:checked + .type-option.opt-grey {
+            border-color: var(--smoke-white);
+            color: var(--smoke-white);
+            background-color: rgba(248, 250, 252, 0.05);
+        }
+
+        .btn-execute {
+            width: 100%;
+            background-color: transparent;
+            color: var(--smoke-white);
+            border: 1px solid var(--smoke-white);
+            padding: 1.2rem;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-execute:hover {
+            background-color: var(--smoke-white);
+            color: var(--vantablack);
+        }
+
+        /* Área de notificaciones debajo del botón */
+        #feedback {
+            margin-top: 1rem;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            min-height: 20px;
+        }
+        .msg-success { color: var(--electric-cyan); text-shadow: 0 0 5px rgba(0, 242, 255, 0.3); }
+        .msg-error { color: var(--crimson-war); }
+
+    </style>
+</head>
+<body>
+
+    <div class="admin-box">
+        <h1>
+            MASTER TERMINAL 
+            <span class="status-indicator" id="dbStatus">DB_READY</span>
+        </h1>
+        <div class="warning-text">PANEL RESTRINGIDO. LO QUE ENVÍES AQUÍ APARECERÁ EN LA WEB PÚBLICA AL INSTANTE.</div>
+
+        <div class="form-group">
+            <label>> 1. ETIQUETA DE TIEMPO / TIPO</label>
+            <input type="text" id="logTime" placeholder="Ej: [LOG_14:30] o [SYS_ALERT]" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+            <label>> 2. ACCIÓN / MENSAJE PRINCIPAL (Inglés Técnico)</label>
+            <input type="text" id="actionText" placeholder="Ej: EURUSD Short sequence completed..." autocomplete="off">
+        </div>
+
+        <div class="form-group">
+            <label>> 3. RESULTADO (Opcional - Lo que resalta)</label>
+            <input type="text" id="valueText" placeholder="Ej: +4.5R  o  LIQUIDITY PURGED" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+            <label>> 4. IMPACTO VISUAL (Color del mensaje en la web)</label>
+            <!-- Selectores súper intuitivos -->
+            <div class="type-selector">
+                <label>
+                    <input type="radio" name="logType" value="positive" checked>
+                    <div class="type-option opt-cyan">[ + ] ÉXITO / CYAN</div>
+                </label>
+                <label>
+                    <input type="radio" name="logType" value="negative">
+                    <div class="type-option opt-red">[ - ] ERROR RETAIL / ROJO</div>
+                </label>
+                <label>
+                    <input type="radio" name="logType" value="neutral">
+                    <div class="type-option opt-grey">[ i ] SISTEMA / GRIS</div>
+                </label>
+            </div>
+        </div>
+
+        <button class="btn-execute" id="btnSubmit" onclick="injectData()">[ INYECTAR AL PROTOCOLO PÚBLICO ]</button>
+        
+        <div id="feedback"></div>
+    </div>
+
+    <script>
+        // =========================================================================
+        // LAS LLAVES DE PABLO
+        // =========================================================================
+        const SUPABASE_URL = 'https://qtpuipgkytzjnckkkwnl.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_eA2g7-rTvcPcfz_dVl2aWg_Ca5P7t93';
+        // =========================================================================
+
+        // ARREGLO DEL BUG: Cambiado el nombre de la variable para que no colisione con la librería 'window.supabase'
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function injectData() {
+            const btn = document.getElementById('btnSubmit');
+            const feedback = document.getElementById('feedback');
+            
+            // Recoger los textos que has escrito en las cajas
+            const logTime = document.getElementById('logTime').value.trim();
+            const actionText = document.getElementById('actionText').value.trim();
+            const valueText = document.getElementById('valueText').value.trim();
+            
+            // Ver qué botón de color has seleccionado
+            const logType = document.querySelector('input[name="logType"]:checked').value;
+
+            // Seguridad: Si te olvidas de poner lo básico, te avisa y no envía nada
+            if (!logTime || !actionText) {
+                feedback.className = 'msg-error';
+                feedback.innerText = '[SYSTEM ERROR] Faltan los campos 1 y 2. Son obligatorios.';
+                return;
+            }
+
+            // Cambiar aspecto del botón mientras carga (efecto de sistema trabajando)
+            btn.innerText = 'INYECTANDO DATOS...';
+            btn.style.pointerEvents = 'none';
+            feedback.innerText = '';
+
+            try {
+                // Mandar la orden a Supabase usando supabaseClient
+                const { data, error } = await supabaseClient
+                    .from('logs')
+                    .insert([
+                        { 
+                            log_time: logTime, 
+                            action_text: actionText, 
+                            value_text: valueText, 
+                            log_type: logType 
+                        }
+                    ]);
+
+                // Si Supabase nos devuelve un error, lo "lanzamos" para que el catch lo atrape
+                if (error) throw error;
+
+                // Mensaje de éxito si todo ha ido bien
+                feedback.className = 'msg-success';
+                feedback.innerText = '[SUCCESS] Protocolo actualizado correctamente.';
+                
+                // Limpiar formulario para que puedas meter otro rápido
+                document.getElementById('actionText').value = '';
+                document.getElementById('valueText').value = '';
+                
+            } catch (error) {
+                console.error("Error de Supabase:", error);
+                feedback.className = 'msg-error';
+                feedback.innerText = `[ERROR] No se pudo enviar a la base de datos. Motivo: ${error.message || 'Error desconocido'}`;
+            } finally {
+                // Volver a poner el botón normal
+                btn.innerText = '[ INYECTAR AL PROTOCOLO PÚBLICO ]';
+                btn.style.pointerEvents = 'auto';
+            }
+        }
+    </script>
+</body>
+</html>

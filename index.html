@@ -110,8 +110,6 @@
 
         .action-area { display: flex; gap: 1.5rem; margin-top: 2rem; flex-wrap: wrap; }
         .btn { display: inline-block; padding: 1rem 2rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; text-align: center; }
-        .action-area { display: flex; gap: 1.5rem; margin-top: 2rem; }
-        .btn { display: inline-block; padding: 1rem 2rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; }
         .btn-primary { background-color: transparent; color: var(--electric-cyan); border: 1px solid var(--electric-cyan); box-shadow: inset 0 0 0 rgba(0, 242, 255, 0), 0 0 10px rgba(0, 242, 255, 0.1); }
         .btn-primary:hover { background-color: rgba(0, 242, 255, 0.1); box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.2), 0 0 15px rgba(0, 242, 255, 0.2); }
 
@@ -315,11 +313,12 @@
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const terminalOutput = document.getElementById('terminal-output');
-        const dynamicButtonsArea = document.getElementById('dynamicButtonsArea');
-        const openCalcBtnHTML = `<a href="#" class="btn btn-primary" id="openCalcBtn">[ CALCULATOR ]</a>`;
         
+        // Elementos de la Alerta Roja
         const redAlert = document.getElementById('redAlert');
         const emergencyBanner = document.getElementById('emergencyBanner');
+        
+        // Elementos del Descuento
         const discountBanner = document.getElementById('discountBanner');
         const discountTitle = document.getElementById('discountTitle');
         const discountMsg = document.getElementById('discountMsg');
@@ -336,22 +335,35 @@
 
                 if (error) throw error;
 
-                // --- LÓGICAS ESPECIALES (ROJO Y ROSA) ---
+                // --- 1. LÓGICA DE MODO NOTICIAS (ROJO) ---
                 let isEmergencyActive = false;
                 const emergencyLog = data.find(log => log.log_type === 'news_alert');
+                
                 if (emergencyLog && emergencyLog.value_text !== "0") {
                     const endTime = parseInt(emergencyLog.value_text);
-                    if (endTime > new Date().getTime()) {
+                    const now = new Date().getTime();
+                    if (endTime > now) {
                         isEmergencyActive = true;
-                        setTimeout(() => { redAlert.classList.remove('active'); emergencyBanner.style.display = 'none'; }, endTime - new Date().getTime());
+                        setTimeout(() => {
+                            redAlert.classList.remove('active');
+                            emergencyBanner.style.display = 'none';
+                        }, endTime - now);
                     }
                 }
-                if (isEmergencyActive) { redAlert.classList.add('active'); emergencyBanner.style.display = 'block'; } 
-                else { redAlert.classList.remove('active'); emergencyBanner.style.display = 'none'; }
 
+                if (isEmergencyActive) {
+                    redAlert.classList.add('active');
+                    emergencyBanner.style.display = 'block';
+                } else {
+                    redAlert.classList.remove('active');
+                    emergencyBanner.style.display = 'none';
+                }
+
+                // --- 2. LÓGICA DE DESCUENTO FLASH (ROSA) ---
                 clearInterval(countdownInterval); 
                 let isDiscountActive = false;
                 const discountLog = data.find(log => log.log_type === 'discount_alert');
+
                 if (discountLog && discountLog.value_text !== "0") {
                     const parts = discountLog.value_text.split('|');
                     const endTime = parseInt(parts[0]);
@@ -362,15 +374,38 @@
                         discountTitle.innerText = `FLASH PROTOCOL: -${pct}% OFF`;
                         discountMsg.innerHTML = discountLog.action_text; 
                         discountBanner.style.display = 'flex';
+
                         countdownInterval = setInterval(() => {
                             const distance = endTime - new Date().getTime();
-                            if (distance < 0) { clearInterval(countdownInterval); discountBanner.style.display = 'none'; return; }
+                            if (distance < 0) {
+                                clearInterval(countdownInterval);
+                                discountBanner.style.display = 'none';
+                                return;
+                            }
                             const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+                            const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                            const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                            const s = Math.floor((distance % (1000 * 60)) / 1000);
+                            
+                            discountTimer.innerText = 
+                                (d < 10 ? "0"+d : d) + "D : " + 
+                                (h < 10 ? "0"+h : h) + "H : " + 
+                                (m < 10 ? "0"+m : m) + "M : " + 
+                                (s < 10 ? "0"+s : s) + "S";
+                        }, 1000);
+                    }
+                }
+
                 if (!isDiscountActive) {
                     discountBanner.style.display = 'none';
                 }
 
                 // --- 2.5 VISIBILIDAD DE BOTONES DINÁMICOS ---
+                
+                // Forzamos al botón de Drop a esconderse por defecto en cada recarga
+                const btnDrop = document.getElementById('btn-drop');
+                if (btnDrop) btnDrop.style.display = 'none';
+
                 const toggleLogs = data.filter(log => log.log_type === 'button_toggle');
                 const buttonStates = {};
                 toggleLogs.forEach(log => {
@@ -407,16 +442,21 @@
                     else if (log.log_type === 'negative') valueClass = 't-error';
                     else valueClass = 't-time'; 
 
-                    terminalOutput.innerHTML += `
+                    const logHTML = `
                         <div class="terminal-line">
                             <span class="t-time">${log.log_time}</span>
                             <span class="t-action">${log.action_text}</span>
                             ${log.value_text ? `<span class="${valueClass}">${log.value_text}</span>` : ''}
                         </div>
                     `;
+                    terminalOutput.innerHTML += logHTML;
                 });
 
-                terminalOutput.innerHTML += `<div class="terminal-line" style="margin-top: 1.5rem;"><span class="t-value">> C:\\Alpha_Feed\\Awaiting_Input</span><span class="blinking-cursor"></span></div>`;
+                terminalOutput.innerHTML += `
+                    <div class="terminal-line" style="margin-top: 1.5rem;">
+                        <span class="t-value">> C:\\Alpha_Feed\\Awaiting_Input</span><span class="blinking-cursor"></span>
+                    </div>
+                `;
 
             } catch (err) {
                 console.error(err);
@@ -426,15 +466,19 @@
 
         fetchTerminalLogs();
 
-        // --- SISTEMA EN TIEMPO REAL: ESCUCHA INSERCIONES Y BORRADOS ---
+        // --- SISTEMA DE NOTIFICACIONES EN TIEMPO REAL (SUPABASE REALTIME) ---
         supabaseClient.channel('public:logs')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'logs' }, payload => {
+                fetchTerminalLogs(); // Refrescar siempre si entra o sale algo
                 
-                // Actualiza siempre para que los botones y textos borrados desaparezcan al instante
-                fetchTerminalLogs(); 
-                
-                // Solo mostrar Pop-Up si es algo NUEVO (INSERT)
+                // Solo si es un INSERT (nuevo evento) evaluamos si hay que lanzar el Pop-Up (Toast)
                 if (payload.eventType === 'INSERT') {
+                    
+                    // Si el admin solo está encendiendo/apagando un botón, CORTAMOS AQUÍ. Cero ruido.
+                    if (payload.new && payload.new.log_type === 'button_toggle') {
+                        return; 
+                    }
+
                     const toast = document.getElementById('realtimeToast');
                     const toastMsg = document.getElementById('toastMessage');
                     const toastTitle = document.getElementById('toastTitle');
@@ -442,34 +486,30 @@
                     toastTitle.style.color = "var(--electric-cyan)";
                     toast.style.borderColor = "var(--electric-cyan)";
                     
-                    if (payload.new.log_type === 'news_alert') {
+                    if (payload.new && payload.new.log_type === 'news_alert') {
                         toastTitle.style.color = "var(--crimson-war)";
-                if (payload.new && payload.new.log_type === 'news_alert') {
-                    toastTitle.style.color = "var(--crimson-war)";
-                    toast.style.borderColor = "var(--crimson-war)";
-                    toastMsg.innerText = "CRITICAL: Macro Event Protocol Activated.";
-                } else if (payload.new && payload.new.log_type === 'discount_alert') {
-                    toastTitle.style.color = "var(--hot-pink)";
-                    toast.style.borderColor = "var(--hot-pink)";
-                    toastMsg.innerText = "FLASH PROTOCOL: Global Discount Activated.";
-                } else if (payload.new && payload.new.log_type === 'toast_alert') {
-                    toastTitle.style.color = "#FFD700"; 
-                    toast.style.borderColor = "#FFD700";
-                    toastMsg.innerText = payload.new.action_text;
-                } else if (payload.new && payload.new.log_type === 'button_toggle') {
-                    // Si solo estás encendiendo un botón, no le tiramos un pop-up a la cara a la gente
-                    return; 
-                } else {
-                    toastMsg.innerText = "New institutional trace deployed to public protocol.";
-                }
-                
-                toast.classList.add('show');
+                        toast.style.borderColor = "var(--crimson-war)";
+                        toastMsg.innerText = "CRITICAL: Macro Event Protocol Activated.";
+                    } else if (payload.new && payload.new.log_type === 'discount_alert') {
+                        toastTitle.style.color = "var(--hot-pink)";
+                        toast.style.borderColor = "var(--hot-pink)";
+                        toastMsg.innerText = "FLASH PROTOCOL: Global Discount Activated.";
+                    } else if (payload.new && payload.new.log_type === 'toast_alert') {
+                        toastTitle.style.color = "#FFD700"; 
+                        toast.style.borderColor = "#FFD700";
+                        toastMsg.innerText = payload.new.action_text;
+                    } else {
+                        toastMsg.innerText = "New institutional trace deployed to public protocol.";
+                    }
+                    
+                    toast.classList.add('show');
+                    
                     setTimeout(() => { toast.classList.remove('show'); }, 5000);
                 }
             })
             .subscribe();
 
-        // --- POP-UP FOMO (10S) ---
+        // --- SISTEMA DE FOMO AUTOMÁTICO (10 SEGUNDOS, 1 VEZ AL DÍA) ---
         setTimeout(() => {
             const fomoModal = document.getElementById('fomoModal');
             const closeFomoBtn = document.getElementById('closeFomoBtn');
@@ -485,11 +525,20 @@
             }
 
             closeFomoBtn.addEventListener('click', () => { fomoModal.style.display = 'none'; });
+            
             fomoUpsellBtn.addEventListener('click', () => {
-                if (typeof gtag === 'function') { gtag('event', 'purchase_click', { 'event_category': 'conversion', 'event_label': 'FOMO Pop-up Button' }); }
+                if (typeof gtag === 'function') {
+                    gtag('event', 'purchase_click', { 'event_category': 'conversion', 'event_label': 'FOMO Pop-up Button' });
+                }
                 fomoModal.style.display = 'none';
             });
-            window.addEventListener('click', (e) => { if (e.target === fomoModal) fomoModal.style.display = 'none'; });
+            
+            window.addEventListener('click', (e) => {
+                if (e.target === fomoModal) fomoModal.style.display = 'none';
+            });
+
+        }, 10000);
+
         // --- LÓGICA DE MODALES ---
         const calcModal = document.getElementById('calcModal');
         const openCalcBtn = document.getElementById('btn-calculadora');
@@ -508,12 +557,20 @@
         const resultBox = document.getElementById('resultBox');
         const upsellBtn = document.getElementById('upsellBtn');
 
+        openCalcBtn.addEventListener('click', (e) => { e.preventDefault(); calcModal.style.display = 'flex'; calculateExpectancy(); });
+        closeCalcBtn.addEventListener('click', () => { calcModal.style.display = 'none'; });
         openLoginBtn.addEventListener('click', (e) => { e.preventDefault(); loginModal.style.display = 'flex'; loginErrorMsg.style.display = 'none'; });
         closeLoginBtn.addEventListener('click', () => { loginModal.style.display = 'none'; });
         window.addEventListener('click', (e) => { if (e.target === calcModal) calcModal.style.display = 'none'; if (e.target === loginModal) loginModal.style.display = 'none'; });
 
+        // --- TRACKEO DE CLICS EN GUMROAD (GA4) ---
         upsellBtn.addEventListener('click', () => {
-            if (typeof gtag === 'function') { gtag('event', 'purchase_click', { 'event_category': 'conversion', 'event_label': 'Gumroad Button' }); }
+            if (typeof gtag === 'function') {
+                gtag('event', 'purchase_click', {
+                  'event_category': 'conversion',
+                  'event_label': 'Gumroad Button'
+                });
+            }
         });
 
         executeLoginBtn.addEventListener('click', async (e) => {
@@ -531,14 +588,22 @@
             try {
                 const { data, error } = await supabaseClient.auth.signInWithPassword({ email: email, password: pass });
                 if (error) throw error;
-                executeLoginBtn.style.borderColor = 'var(--electric-cyan)'; executeLoginBtn.style.color = 'var(--electric-cyan)'; executeLoginBtn.innerText = '[ ACCESS GRANTED ]';
-                setTimeout(() => { window.location.href = 'admin.html'; }, 800);
+
+                executeLoginBtn.style.borderColor = 'var(--electric-cyan)';
+                executeLoginBtn.style.color = 'var(--electric-cyan)';
+                executeLoginBtn.innerText = '[ ACCESS GRANTED ]';
+                
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 800);
+
             } catch (error) {
                 loginErrorMsg.innerText = "[SYS_ERROR] Acceso denegado."; loginErrorMsg.style.display = 'block';
                 executeLoginBtn.innerText = originalText; executeLoginBtn.style.pointerEvents = 'auto';
             }
         });
 
+        // --- CALCULADORA DE RIESGO ---
         function calculateExpectancy() {
             const winRate = parseFloat(winRateInput.value) / 100;
             const lossRate = 1 - winRate;
@@ -554,12 +619,14 @@
             if (expectancy <= 0) {
                 resultBox.classList.add('status-negative');
                 verdictText.innerText = '[ SYSTEM ERROR // LIQUIDITY CAPTURED ]';
-                upsellBtn.style.display = 'block'; upsellBtn.style.borderColor = 'var(--crimson-war)'; upsellBtn.style.color = 'var(--crimson-war)';
+                upsellBtn.style.display = 'block'; 
+                upsellBtn.style.borderColor = 'var(--crimson-war)'; upsellBtn.style.color = 'var(--crimson-war)';
                 upsellBtn.innerText = 'STOP BLEEDING. GET THE PROTOCOL ($27)';
             } else if (expectancy > 0 && expectancy < 0.5) {
                 resultBox.classList.add('status-neutral');
                 verdictText.innerText = '[ LOW ALPHA // VULNERABLE SYSTEM ]';
-                upsellBtn.style.display = 'block'; upsellBtn.style.borderColor = 'var(--electric-cyan)'; upsellBtn.style.color = 'var(--electric-cyan)';
+                upsellBtn.style.display = 'block';
+                upsellBtn.style.borderColor = 'var(--electric-cyan)'; upsellBtn.style.color = 'var(--electric-cyan)';
                 upsellBtn.innerText = 'UPGRADE YOUR EDGE. GET THE PROTOCOL ($27)';
             } else {
                 resultBox.classList.add('status-positive');

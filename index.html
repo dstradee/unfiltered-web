@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UNFILTERED ALPHA | The Protocol</title>
     
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z90RHTXWGV"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-Z90RHTXWGV');
+    </script>
+
     <link rel="icon" type="image/png" href="logo.png">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -401,6 +411,16 @@
         openLoginBtn.addEventListener('click', (e) => { e.preventDefault(); loginModal.style.display = 'flex'; loginErrorMsg.style.display = 'none'; });
         closeLoginBtn.addEventListener('click', () => { loginModal.style.display = 'none'; });
         window.addEventListener('click', (e) => { if (e.target === calcModal) calcModal.style.display = 'none'; if (e.target === loginModal) loginModal.style.display = 'none'; });
+
+        // --- TRACKEO DE CLICS EN GUMROAD (GA4) ---
+        upsellBtn.addEventListener('click', () => {
+            if (typeof gtag === 'function') {
+                gtag('event', 'purchase_click', {
+                  'event_category': 'conversion',
+                  'event_label': 'Gumroad Button'
+                });
+            }
+        });
 
         executeLoginBtn.addEventListener('click', async (e) => {
             e.preventDefault();

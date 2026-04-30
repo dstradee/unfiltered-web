@@ -32,6 +32,7 @@
             --steel-grey: #94A3B8;
             --vantablack: #020617;
             --hot-pink: #FF007F; 
+            --neon-purple: #B026FF;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
@@ -61,12 +62,11 @@
         }
         
         .discount-content { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 1200px; }
-        
         .discount-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 2px; line-height: 1; }
         .discount-msg { font-size: 1.1rem; font-weight: 500; }
         .discount-timer { font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 800; background: rgba(0,0,0,0.2); padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.3); }
 
-        /* --- TOAST NOTIFICATION (TIEMPO REAL TIPO WINAMAX) --- */
+        /* --- TOAST NOTIFICATION (TIEMPO REAL) --- */
         .toast-notification {
             position: fixed; top: 20px; right: -400px; width: 320px;
             background-color: var(--obsidian-navy); border: 1px solid var(--electric-cyan);
@@ -108,10 +108,15 @@
         .blinking-cursor { display: inline-block; width: 10px; height: 1em; background-color: var(--electric-cyan); animation: blink 1s step-end infinite; vertical-align: text-bottom; margin-left: 5px; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
+        .action-area { display: flex; gap: 1.5rem; margin-top: 2rem; flex-wrap: wrap; }
+        .btn { display: inline-block; padding: 1rem 2rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; text-align: center; }
         .action-area { display: flex; gap: 1.5rem; margin-top: 2rem; }
         .btn { display: inline-block; padding: 1rem 2rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; }
         .btn-primary { background-color: transparent; color: var(--electric-cyan); border: 1px solid var(--electric-cyan); box-shadow: inset 0 0 0 rgba(0, 242, 255, 0), 0 0 10px rgba(0, 242, 255, 0.1); }
         .btn-primary:hover { background-color: rgba(0, 242, 255, 0.1); box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.2), 0 0 15px rgba(0, 242, 255, 0.2); }
+
+        .btn-purple { background-color: transparent; color: var(--neon-purple); border: 1px solid var(--neon-purple); box-shadow: inset 0 0 0 rgba(176, 38, 255, 0), 0 0 10px rgba(176, 38, 255, 0.1); }
+        .btn-purple:hover { background-color: rgba(176, 38, 255, 0.1); box-shadow: inset 0 0 10px rgba(176, 38, 255, 0.2), 0 0 15px rgba(176, 38, 255, 0.2); }
 
         /* Modales */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(4px); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 1rem; }
@@ -135,13 +140,11 @@
         #loginError { color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 1rem; text-align: center; display: none; }
 
         /* ============================================================== */
-        /* OPTIMIZACIÓN MÓVIL (CORRECCIÓN DE OVERLAP DEL BANNER ROSA)     */
+        /* OPTIMIZACIÓN MÓVIL (CORRECCIÓN DE OVERLAP Y TOAST)             */
         /* ============================================================== */
         @media (max-width: 768px) {
-            /* Damos muchísimo padding abajo para que haya scroll de sobra */
             main { padding-bottom: 25vh !important; }
             
-            /* Banner rosa más pequeño en móvil */
             .discount-banner { padding: 1rem; }
             .discount-content { flex-direction: column; gap: 0.5rem; text-align: center; }
             .discount-title { font-size: 1.8rem; }
@@ -154,6 +157,15 @@
             .t-time { width: 100%; font-size: 0.75rem; opacity: 0.7; margin-bottom: -0.2rem; }
             .calc-grid { grid-template-columns: 1fr; gap: 1rem; }
             .calc-group[style] { grid-column: span 1 !important; }
+            
+            .btn { width: 100%; }
+
+            /* ARREGLO DEL POP-UP PARA MÓVIL: Entra desde arriba, no desde la derecha */
+            .toast-notification {
+                width: 90%; left: 5%; right: auto; top: -150px; 
+                transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            }
+            .toast-notification.show { top: 20px; right: auto; }
         }
 
     </style>
@@ -162,7 +174,7 @@
 
     <!-- TOAST NOTIFICATION EN TIEMPO REAL -->
     <div id="realtimeToast" class="toast-notification">
-        <div class="toast-title">[!] URGENT ALPHA</div>
+        <div class="toast-title" id="toastTitle">[!] URGENT ALPHA</div>
         <div id="toastMessage">New institutional trace detected in the terminal.</div>
     </div>
 
@@ -188,7 +200,6 @@
     <div class="emergency-banner" id="emergencyBanner">[ HIGH IMPACT MACRO EVENT // TRADING RESTRICTED ]</div>
     <div class="emergency-vignette" id="redAlert"></div>
     
-    <!-- BANNER DE DESCUENTO (Oculto por defecto) -->
     <div class="discount-banner" id="discountBanner">
         <div class="discount-content">
             <div>
@@ -237,7 +248,8 @@
             </div>
 
             <div class="action-area">
-                <a href="#" class="btn btn-primary" id="openCalcBtn">[ CALCULATOR ]</a>
+                <a href="#" class="btn btn-primary" id="btn-calculadora">[ CALCULATOR ]</a>
+                <a href="drop.html" class="btn btn-purple" id="btn-drop" style="display: none;">[ ACCESO AL DROP ]</a>
             </div>
         </main>
     </div>
@@ -303,12 +315,11 @@
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const terminalOutput = document.getElementById('terminal-output');
+        const dynamicButtonsArea = document.getElementById('dynamicButtonsArea');
+        const openCalcBtnHTML = `<a href="#" class="btn btn-primary" id="openCalcBtn">[ CALCULATOR ]</a>`;
         
-        // Elementos de la Alerta Roja
         const redAlert = document.getElementById('redAlert');
         const emergencyBanner = document.getElementById('emergencyBanner');
-        
-        // Elementos del Descuento
         const discountBanner = document.getElementById('discountBanner');
         const discountTitle = document.getElementById('discountTitle');
         const discountMsg = document.getElementById('discountMsg');
@@ -325,35 +336,22 @@
 
                 if (error) throw error;
 
-                // --- 1. LÓGICA DE MODO NOTICIAS (ROJO) ---
+                // --- LÓGICAS ESPECIALES (ROJO Y ROSA) ---
                 let isEmergencyActive = false;
                 const emergencyLog = data.find(log => log.log_type === 'news_alert');
-                
                 if (emergencyLog && emergencyLog.value_text !== "0") {
                     const endTime = parseInt(emergencyLog.value_text);
-                    const now = new Date().getTime();
-                    if (endTime > now) {
+                    if (endTime > new Date().getTime()) {
                         isEmergencyActive = true;
-                        setTimeout(() => {
-                            redAlert.classList.remove('active');
-                            emergencyBanner.style.display = 'none';
-                        }, endTime - now);
+                        setTimeout(() => { redAlert.classList.remove('active'); emergencyBanner.style.display = 'none'; }, endTime - new Date().getTime());
                     }
                 }
+                if (isEmergencyActive) { redAlert.classList.add('active'); emergencyBanner.style.display = 'block'; } 
+                else { redAlert.classList.remove('active'); emergencyBanner.style.display = 'none'; }
 
-                if (isEmergencyActive) {
-                    redAlert.classList.add('active');
-                    emergencyBanner.style.display = 'block';
-                } else {
-                    redAlert.classList.remove('active');
-                    emergencyBanner.style.display = 'none';
-                }
-
-                // --- 2. LÓGICA DE DESCUENTO FLASH (ROSA) ---
                 clearInterval(countdownInterval); 
                 let isDiscountActive = false;
                 const discountLog = data.find(log => log.log_type === 'discount_alert');
-
                 if (discountLog && discountLog.value_text !== "0") {
                     const parts = discountLog.value_text.split('|');
                     const endTime = parseInt(parts[0]);
@@ -364,40 +362,41 @@
                         discountTitle.innerText = `FLASH PROTOCOL: -${pct}% OFF`;
                         discountMsg.innerHTML = discountLog.action_text; 
                         discountBanner.style.display = 'flex';
-
                         countdownInterval = setInterval(() => {
                             const distance = endTime - new Date().getTime();
-                            if (distance < 0) {
-                                clearInterval(countdownInterval);
-                                discountBanner.style.display = 'none';
-                                return;
-                            }
+                            if (distance < 0) { clearInterval(countdownInterval); discountBanner.style.display = 'none'; return; }
                             const d = Math.floor(distance / (1000 * 60 * 60 * 24));
-                            const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                            const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                            const s = Math.floor((distance % (1000 * 60)) / 1000);
-                            
-                            discountTimer.innerText = 
-                                (d < 10 ? "0"+d : d) + "D : " + 
-                                (h < 10 ? "0"+h : h) + "H : " + 
-                                (m < 10 ? "0"+m : m) + "M : " + 
-                                (s < 10 ? "0"+s : s) + "S";
-                        }, 1000);
-                    }
-                }
-
                 if (!isDiscountActive) {
                     discountBanner.style.display = 'none';
+                }
+
+                // --- 2.5 VISIBILIDAD DE BOTONES DINÁMICOS ---
+                const toggleLogs = data.filter(log => log.log_type === 'button_toggle');
+                const buttonStates = {};
+                toggleLogs.forEach(log => {
+                    const btnId = log.action_text;
+                    const state = log.value_text;
+                    if (buttonStates[btnId] === undefined) {
+                        buttonStates[btnId] = state; // Guarda el último estado conocido
+                    }
+                });
+
+                for (const [btnId, state] of Object.entries(buttonStates)) {
+                    const btnElement = document.getElementById(btnId);
+                    if (btnElement) {
+                        btnElement.style.display = state === 'show' ? 'inline-block' : 'none';
+                    }
                 }
 
                 // --- 3. RENDERIZADO DEL TERMINAL NORMAL ---
                 terminalOutput.innerHTML = ''; 
                 
-                // CRUCIAL: Aquí filtramos también 'toast_alert' para que no ensucie la pantalla negra
+                // CRUCIAL: Aquí filtramos también 'button_toggle' para que no ensucie la pantalla
                 const visibleData = data.filter(log => 
                     log.log_type !== 'news_alert' && 
                     log.log_type !== 'discount_alert' && 
-                    log.log_type !== 'toast_alert'
+                    log.log_type !== 'toast_alert' &&
+                    log.log_type !== 'button_toggle'
                 ).slice(0, 4);
                 
                 const sortedData = visibleData.reverse();
@@ -408,21 +407,16 @@
                     else if (log.log_type === 'negative') valueClass = 't-error';
                     else valueClass = 't-time'; 
 
-                    const logHTML = `
+                    terminalOutput.innerHTML += `
                         <div class="terminal-line">
                             <span class="t-time">${log.log_time}</span>
                             <span class="t-action">${log.action_text}</span>
                             ${log.value_text ? `<span class="${valueClass}">${log.value_text}</span>` : ''}
                         </div>
                     `;
-                    terminalOutput.innerHTML += logHTML;
                 });
 
-                terminalOutput.innerHTML += `
-                    <div class="terminal-line" style="margin-top: 1.5rem;">
-                        <span class="t-value">> C:\\Alpha_Feed\\Awaiting_Input</span><span class="blinking-cursor"></span>
-                    </div>
-                `;
+                terminalOutput.innerHTML += `<div class="terminal-line" style="margin-top: 1.5rem;"><span class="t-value">> C:\\Alpha_Feed\\Awaiting_Input</span><span class="blinking-cursor"></span></div>`;
 
             } catch (err) {
                 console.error(err);
@@ -432,33 +426,50 @@
 
         fetchTerminalLogs();
 
-        // --- SISTEMA DE NOTIFICACIONES EN TIEMPO REAL (SUPABASE REALTIME) ---
+        // --- SISTEMA EN TIEMPO REAL: ESCUCHA INSERCIONES Y BORRADOS ---
         supabaseClient.channel('public:logs')
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'logs' }, payload => {
-                fetchTerminalLogs(); // Refrescar si entra algo nuevo
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'logs' }, payload => {
                 
-                const toast = document.getElementById('realtimeToast');
-                const toastMsg = document.getElementById('toastMessage');
+                // Actualiza siempre para que los botones y textos borrados desaparezcan al instante
+                fetchTerminalLogs(); 
                 
+                // Solo mostrar Pop-Up si es algo NUEVO (INSERT)
+                if (payload.eventType === 'INSERT') {
+                    const toast = document.getElementById('realtimeToast');
+                    const toastMsg = document.getElementById('toastMessage');
+                    const toastTitle = document.getElementById('toastTitle');
+                    
+                    toastTitle.style.color = "var(--electric-cyan)";
+                    toast.style.borderColor = "var(--electric-cyan)";
+                    
+                    if (payload.new.log_type === 'news_alert') {
+                        toastTitle.style.color = "var(--crimson-war)";
                 if (payload.new && payload.new.log_type === 'news_alert') {
+                    toastTitle.style.color = "var(--crimson-war)";
+                    toast.style.borderColor = "var(--crimson-war)";
                     toastMsg.innerText = "CRITICAL: Macro Event Protocol Activated.";
                 } else if (payload.new && payload.new.log_type === 'discount_alert') {
+                    toastTitle.style.color = "var(--hot-pink)";
+                    toast.style.borderColor = "var(--hot-pink)";
                     toastMsg.innerText = "FLASH PROTOCOL: Global Discount Activated.";
                 } else if (payload.new && payload.new.log_type === 'toast_alert') {
-                    // PABLO: Aquí cogemos tu mensaje directo del Pop-up y lo ponemos
+                    toastTitle.style.color = "#FFD700"; 
+                    toast.style.borderColor = "#FFD700";
                     toastMsg.innerText = payload.new.action_text;
+                } else if (payload.new && payload.new.log_type === 'button_toggle') {
+                    // Si solo estás encendiendo un botón, no le tiramos un pop-up a la cara a la gente
+                    return; 
                 } else {
                     toastMsg.innerText = "New institutional trace deployed to public protocol.";
                 }
                 
                 toast.classList.add('show');
-                
-                // Lo ocultamos a los 5 segundos
-                setTimeout(() => { toast.classList.remove('show'); }, 5000);
+                    setTimeout(() => { toast.classList.remove('show'); }, 5000);
+                }
             })
             .subscribe();
 
-        // --- SISTEMA DE FOMO AUTOMÁTICO (10 SEGUNDOS, 1 VEZ AL DÍA) ---
+        // --- POP-UP FOMO (10S) ---
         setTimeout(() => {
             const fomoModal = document.getElementById('fomoModal');
             const closeFomoBtn = document.getElementById('closeFomoBtn');
@@ -474,23 +485,14 @@
             }
 
             closeFomoBtn.addEventListener('click', () => { fomoModal.style.display = 'none'; });
-            
             fomoUpsellBtn.addEventListener('click', () => {
-                if (typeof gtag === 'function') {
-                    gtag('event', 'purchase_click', { 'event_category': 'conversion', 'event_label': 'FOMO Pop-up Button' });
-                }
+                if (typeof gtag === 'function') { gtag('event', 'purchase_click', { 'event_category': 'conversion', 'event_label': 'FOMO Pop-up Button' }); }
                 fomoModal.style.display = 'none';
             });
-            
-            window.addEventListener('click', (e) => {
-                if (e.target === fomoModal) fomoModal.style.display = 'none';
-            });
-
-        }, 10000);
-
+            window.addEventListener('click', (e) => { if (e.target === fomoModal) fomoModal.style.display = 'none'; });
         // --- LÓGICA DE MODALES ---
         const calcModal = document.getElementById('calcModal');
-        const openCalcBtn = document.getElementById('openCalcBtn');
+        const openCalcBtn = document.getElementById('btn-calculadora');
         const closeCalcBtn = document.getElementById('closeCalcBtn');
         const loginModal = document.getElementById('loginModal');
         const openLoginBtn = document.getElementById('openLoginBtn');
@@ -506,20 +508,12 @@
         const resultBox = document.getElementById('resultBox');
         const upsellBtn = document.getElementById('upsellBtn');
 
-        openCalcBtn.addEventListener('click', (e) => { e.preventDefault(); calcModal.style.display = 'flex'; calculateExpectancy(); });
-        closeCalcBtn.addEventListener('click', () => { calcModal.style.display = 'none'; });
         openLoginBtn.addEventListener('click', (e) => { e.preventDefault(); loginModal.style.display = 'flex'; loginErrorMsg.style.display = 'none'; });
         closeLoginBtn.addEventListener('click', () => { loginModal.style.display = 'none'; });
         window.addEventListener('click', (e) => { if (e.target === calcModal) calcModal.style.display = 'none'; if (e.target === loginModal) loginModal.style.display = 'none'; });
 
-        // --- TRACKEO DE CLICS EN GUMROAD (GA4) ---
         upsellBtn.addEventListener('click', () => {
-            if (typeof gtag === 'function') {
-                gtag('event', 'purchase_click', {
-                  'event_category': 'conversion',
-                  'event_label': 'Gumroad Button'
-                });
-            }
+            if (typeof gtag === 'function') { gtag('event', 'purchase_click', { 'event_category': 'conversion', 'event_label': 'Gumroad Button' }); }
         });
 
         executeLoginBtn.addEventListener('click', async (e) => {
@@ -537,23 +531,14 @@
             try {
                 const { data, error } = await supabaseClient.auth.signInWithPassword({ email: email, password: pass });
                 if (error) throw error;
-
-                executeLoginBtn.style.borderColor = 'var(--electric-cyan)';
-                executeLoginBtn.style.color = 'var(--electric-cyan)';
-                executeLoginBtn.innerText = '[ ACCESS GRANTED ]';
-                
-                setTimeout(() => {
-                    // PABLO: Lo dejo en location.href para que no te bloquee el móvil
-                    window.location.href = 'admin.html';
-                }, 800);
-
+                executeLoginBtn.style.borderColor = 'var(--electric-cyan)'; executeLoginBtn.style.color = 'var(--electric-cyan)'; executeLoginBtn.innerText = '[ ACCESS GRANTED ]';
+                setTimeout(() => { window.location.href = 'admin.html'; }, 800);
             } catch (error) {
                 loginErrorMsg.innerText = "[SYS_ERROR] Acceso denegado."; loginErrorMsg.style.display = 'block';
                 executeLoginBtn.innerText = originalText; executeLoginBtn.style.pointerEvents = 'auto';
             }
         });
 
-        // --- CALCULADORA DE RIESGO ---
         function calculateExpectancy() {
             const winRate = parseFloat(winRateInput.value) / 100;
             const lossRate = 1 - winRate;
@@ -569,14 +554,12 @@
             if (expectancy <= 0) {
                 resultBox.classList.add('status-negative');
                 verdictText.innerText = '[ SYSTEM ERROR // LIQUIDITY CAPTURED ]';
-                upsellBtn.style.display = 'block'; 
-                upsellBtn.style.borderColor = 'var(--crimson-war)'; upsellBtn.style.color = 'var(--crimson-war)';
+                upsellBtn.style.display = 'block'; upsellBtn.style.borderColor = 'var(--crimson-war)'; upsellBtn.style.color = 'var(--crimson-war)';
                 upsellBtn.innerText = 'STOP BLEEDING. GET THE PROTOCOL ($27)';
             } else if (expectancy > 0 && expectancy < 0.5) {
                 resultBox.classList.add('status-neutral');
                 verdictText.innerText = '[ LOW ALPHA // VULNERABLE SYSTEM ]';
-                upsellBtn.style.display = 'block';
-                upsellBtn.style.borderColor = 'var(--electric-cyan)'; upsellBtn.style.color = 'var(--electric-cyan)';
+                upsellBtn.style.display = 'block'; upsellBtn.style.borderColor = 'var(--electric-cyan)'; upsellBtn.style.color = 'var(--electric-cyan)';
                 upsellBtn.innerText = 'UPGRADE YOUR EDGE. GET THE PROTOCOL ($27)';
             } else {
                 resultBox.classList.add('status-positive');

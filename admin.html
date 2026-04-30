@@ -20,7 +20,8 @@
             --steel-grey: #94A3B8;
             --vantablack: #020617;
             --hot-pink: #FF007F; 
-            --alert-gold: #FFD700; /* Nuevo color para los pop-ups */
+            --alert-gold: #FFD700;
+            --neon-purple: #B026FF; /* Color para pestaña de botones */
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
@@ -50,6 +51,7 @@
         .tab-btn.active.tab-news { border-color: var(--crimson-war); color: var(--crimson-war); background-color: rgba(255, 49, 49, 0.05); box-shadow: 0 -2px 10px rgba(255, 49, 49, 0.1); }
         .tab-btn.active.tab-desc { border-color: var(--hot-pink); color: var(--hot-pink); background-color: rgba(255, 0, 127, 0.05); box-shadow: 0 -2px 10px rgba(255, 0, 127, 0.1); }
         .tab-btn.active.tab-popup { border-color: var(--alert-gold); color: var(--alert-gold); background-color: rgba(255, 215, 0, 0.05); box-shadow: 0 -2px 10px rgba(255, 215, 0, 0.1); }
+        .tab-btn.active.tab-btns { border-color: var(--neon-purple); color: var(--neon-purple); background-color: rgba(176, 38, 255, 0.05); box-shadow: 0 -2px 10px rgba(176, 38, 255, 0.1); }
         .tab-btn.active.tab-logs { border-color: var(--smoke-white); color: var(--smoke-white); background-color: rgba(248, 250, 252, 0.05); box-shadow: 0 -2px 10px rgba(255, 255, 255, 0.1); }
 
         /* Paneles */
@@ -92,7 +94,10 @@
         .btn-pink:hover { background-color: var(--hot-pink); color: var(--smoke-white); }
 
         .btn-gold { color: var(--alert-gold); border-color: var(--alert-gold); }
-        .btn-gold:hover { background-color: var(--alert-gold); color: var(--vantablack); } /* Letra negra para contrastar con el amarillo */
+        .btn-gold:hover { background-color: var(--alert-gold); color: var(--vantablack); } 
+
+        .btn-purple { color: var(--neon-purple); border-color: var(--neon-purple); }
+        .btn-purple:hover { background-color: var(--neon-purple); color: var(--smoke-white); }
 
         .feedback-msg { margin-top: 1rem; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; min-height: 20px; }
         .msg-success { color: var(--electric-cyan); text-shadow: 0 0 5px rgba(0, 242, 255, 0.3); }
@@ -135,6 +140,7 @@
             <button class="tab-btn tab-news" onclick="switchTab('panel-news', this)">[ NOTICIAS ]</button>
             <button class="tab-btn tab-desc" onclick="switchTab('panel-desc', this)">[ DESCUENTO ]</button>
             <button class="tab-btn tab-popup" onclick="switchTab('panel-popup', this)">[ POP-UP ]</button>
+            <button class="tab-btn tab-btns" onclick="switchTab('panel-buttons', this)">[ VISIBILIDAD ]</button>
             <button class="tab-btn tab-logs" onclick="switchTab('panel-logs', this)">[ REGISTROS ]</button>
         </div>
 
@@ -258,7 +264,34 @@
             <div id="popupFeedback" class="feedback-msg"></div>
         </div>
 
-        <!-- PANEL 5: GESTOR DE REGISTROS -->
+        <!-- PANEL 5: VISIBILIDAD DE BOTONES (MODO INTERRUPTOR) -->
+        <div id="panel-buttons" class="admin-box" style="border-color: var(--neon-purple);">
+            <h1 style="color: var(--neon-purple);">[ 🎛️ ] VISIBILIDAD DE BOTONES</h1>
+            <div class="warning-text" style="color: var(--neon-purple); border-color: rgba(176, 38, 255, 0.2);">
+                ENCIENDE O APAGA BOTONES QUE YA EXISTEN EN EL CÓDIGO DE TU PÁGINA PÚBLICA.
+            </div>
+
+            <div class="form-group">
+                <label style="color: var(--neon-purple);">> ID DEL BOTÓN HTML</label>
+                <input type="text" id="btnId" placeholder="Ej: btn-eventos o openCalcBtn" autocomplete="off" style="border-color: var(--neon-purple); color: var(--neon-purple);">
+                <p style="font-family: 'Inter', sans-serif; font-size: 0.7rem; color: var(--steel-grey); margin-top: 0.5rem;">
+                    *Debe coincidir exactamente con el ID que le pongas al botón en tu código de la página pública (index.html).
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label style="color: var(--neon-purple);">> ESTADO DEL BOTÓN</label>
+                <div class="type-selector" style="grid-template-columns: 1fr 1fr;">
+                    <label><input type="radio" name="btnState" value="show" checked><div class="type-option opt-cyan">[ 🟢 ] MOSTRAR</div></label>
+                    <label><input type="radio" name="btnState" value="hide"><div class="type-option opt-red">[ 🔴 ] OCULTAR</div></label>
+                </div>
+            </div>
+
+            <button class="btn-execute btn-purple" id="btnToggleExecute" onclick="toggleButtonState()">[ ACTUALIZAR ESTADO EN TIEMPO REAL ]</button>
+            <div id="btnToggleFeedback" class="feedback-msg"></div>
+        </div>
+
+        <!-- PANEL 6: GESTOR DE REGISTROS -->
         <div id="panel-logs" class="admin-box">
             <h1 style="color: var(--steel-grey);">
                 REGISTRO ACTIVO 
@@ -383,13 +416,7 @@
 
             btn.innerText = 'ENVIANDO...';
             try {
-                // Inyectamos un tipo de log oculto "toast_alert" que la web no pinta en la terminal, solo lo lee para el pop-up
-                const { error } = await supabaseClient.from('logs').insert([{ 
-                    log_time: '[LIVE_ALERT]', 
-                    action_text: msg, 
-                    value_text: "", 
-                    log_type: 'toast_alert' 
-                }]);
+                const { error } = await supabaseClient.from('logs').insert([{ log_time: '[LIVE_ALERT]', action_text: msg, value_text: "", log_type: 'toast_alert' }]);
                 if (error) throw error;
                 
                 feedback.style.color = 'var(--alert-gold)'; 
@@ -397,10 +424,46 @@
                 document.getElementById('popupMsg').value = '';
                 loadLogs();
             } catch (error) { 
-                feedback.className = 'msg-error'; 
-                feedback.innerText = '[ERROR] Fallo al enviar pop-up.'; 
+                feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Fallo al enviar pop-up.'; 
             } finally { 
                 btn.innerText = '[ LANZAR POP-UP A TODOS LOS USUARIOS ]'; 
+            }
+        }
+
+        // --- SISTEMA DE VISIBILIDAD DE BOTONES FÍSICOS ---
+        async function toggleButtonState() {
+            const btnId = document.getElementById('btnId').value.trim();
+            const btnState = document.querySelector('input[name="btnState"]:checked').value;
+            const feedback = document.getElementById('btnToggleFeedback');
+            const btn = document.getElementById('btnToggleExecute');
+
+            if(!btnId) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Introduce el ID del botón.'; return; }
+
+            btn.innerText = 'ACTUALIZANDO...';
+            try {
+                // Primero, eliminamos cualquier estado anterior de ESTE botón para no acumular basura en la base de datos
+                await supabaseClient.from('logs')
+                    .delete()
+                    .eq('log_type', 'button_toggle')
+                    .eq('action_text', btnId);
+                
+                // Luego insertamos la orden nueva ("show" o "hide")
+                const { error } = await supabaseClient.from('logs').insert([{ 
+                    log_time: '[SYS_TOGGLE]', 
+                    action_text: btnId, 
+                    value_text: btnState, 
+                    log_type: 'button_toggle' 
+                }]);
+                if (error) throw error;
+                
+                feedback.style.color = 'var(--neon-purple)'; 
+                feedback.innerText = `[ OK ] Orden enviada. Botón '${btnId}' -> ${btnState.toUpperCase()}.`; 
+                document.getElementById('btnId').value = '';
+                loadLogs();
+            } catch (error) { 
+                feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Fallo al actualizar botón.'; 
+            } finally { 
+                btn.innerText = '[ ACTUALIZAR ESTADO EN TIEMPO REAL ]'; 
             }
         }
 
@@ -428,14 +491,24 @@
                     else if (log.log_type === 'news_alert') { borderColor = '#FF8C00'; valueColor = '#FF8C00'; } 
                     else if (log.log_type === 'discount_alert') { borderColor = 'var(--hot-pink)'; valueColor = 'var(--hot-pink)'; } 
                     else if (log.log_type === 'toast_alert') { borderColor = 'var(--alert-gold)'; valueColor = 'var(--alert-gold)'; } 
+                    else if (log.log_type === 'button_toggle') { borderColor = 'var(--neon-purple)'; valueColor = 'var(--neon-purple)'; } 
 
                     const logEl = document.createElement('div'); logEl.className = 'log-item'; logEl.style.borderLeftColor = borderColor;
-                    const displayAction = log.action_text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    
+                    let displayAction = log.action_text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    let displayValue = log.value_text ? `<span style="color: ${valueColor}; font-weight: bold;">[DATA_STORED]</span>` : '';
+                    
+                    // Si es un log de botón, mostramos claramente qué ha hecho
+                    if (log.log_type === 'button_toggle') {
+                        displayAction = `Interruptor de ID: <strong style="color: var(--smoke-white);">${displayAction}</strong>`;
+                        displayValue = `<span style="color: ${log.value_text === 'show' ? 'var(--electric-cyan)' : 'var(--crimson-war)'}; font-weight: bold;">[ ${log.value_text.toUpperCase()} ]</span>`;
+                    }
+
                     logEl.innerHTML = `
                         <div class="log-content">
                             <span style="color: var(--steel-grey); min-width: 90px;">${log.log_time}</span>
                             <span style="color: var(--smoke-white); flex: 1;">${displayAction}</span>
-                            ${log.value_text ? `<span style="color: ${valueColor}; font-weight: bold;">[DATA_STORED]</span>` : ''}
+                            ${displayValue}
                         </div>
                         <button class="btn-delete" onclick="deleteLog(${log.id})">[ ELIMINAR ]</button>
                     `;

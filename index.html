@@ -175,13 +175,29 @@
             margin-bottom: 3rem;
         }
 
-        /* --- TERMINAL DATA BOX --- */
+        /* --- TERMINAL DATA BOXES (NUEVO GRID SIDE-BY-SIDE) --- */
+        .terminals-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            width: 100%;
+        }
+
+        @media (max-width: 1024px) {
+            .terminals-grid {
+                grid-template-columns: 1fr; /* En móvil se pone uno debajo del otro */
+            }
+        }
+
         .terminal-box {
             background-color: var(--vantablack);
             border: 1px solid rgba(148, 163, 184, 0.2);
             padding: 2rem;
-            max-width: 700px;
+            width: 100%;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
         .terminal-header {
@@ -357,7 +373,6 @@
         .status-negative { color: var(--crimson-war); border-left-color: var(--crimson-war); }
         .status-neutral { color: var(--steel-grey); border-left-color: var(--steel-grey); }
 
-        /* Mensaje de error para el login */
         #loginError {
             color: var(--crimson-war);
             font-family: 'JetBrains Mono', monospace;
@@ -371,7 +386,6 @@
 </head>
 <body>
 
-    <!-- Visual Architecture / Backgrounds -->
     <div class="blueprint-layer"></div>
     <div class="noise-layer"></div>
 
@@ -395,22 +409,54 @@
                 Most traders follow the herd. We follow the code. Every day, the Architect provides the blueprint to survive the market manipulation. Are you reading the code or providing the liquidity?
             </p>
 
-            <!-- Terminal Interface -->
-            <div class="terminal-box">
-                <div class="terminal-header code-data">
-                    <span>> THE_PROTOCOL_TERMINAL</span>
-                    <span>V.2.0</span>
-                </div>
+            <!-- CONTENEDOR GRID PARA LAS DOS CAJAS -->
+            <div class="terminals-grid">
                 
-                <div class="terminal-body" id="terminal-output">
-                    <!-- Esto se llena automáticamente con Supabase -->
-                    <div class="terminal-line">
-                        <span class="t-time">[SYS_UPDATE]</span>
-                        <span class="t-action">Establishing secure connection to The Protocol...</span>
-                        <span class="blinking-cursor"></span>
+                <!-- 1. Terminal Interface (Lectura de base de datos) -->
+                <div class="terminal-box">
+                    <div class="terminal-header code-data">
+                        <span>> THE_PROTOCOL_TERMINAL</span>
+                        <span>V.2.0</span>
+                    </div>
+                    
+                    <div class="terminal-body" id="terminal-output" style="flex: 1; overflow-y: auto; max-height: 350px;">
+                        <!-- Esto se llena automáticamente con Supabase -->
+                        <div class="terminal-line">
+                            <span class="t-time">[SYS_UPDATE]</span>
+                            <span class="t-action">Establishing secure connection to The Protocol...</span>
+                            <span class="blinking-cursor"></span>
+                        </div>
                     </div>
                 </div>
-            </div>
+
+                <!-- 2. NATIVE DEPLOYMENT VIDEO BOX -->
+                <div class="terminal-box">
+                    <div class="terminal-header code-data">
+                        <span>> NATIVE_OS_DEPLOYMENT</span>
+                        <span>[ ACTION REQUIRED ]</span>
+                    </div>
+                    <div class="terminal-body">
+                        <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--steel-grey); margin-bottom: 1.5rem; line-height: 1.5;">
+                            <strong style="color: var(--electric-cyan);">[ INSTRUCTION ]</strong> Eliminate browser latency. Deploy The Protocol directly to your mobile OS home screen as a native terminal. Follow the visual transmission below to establish direct access.
+                        </p>
+                        
+                        <!-- Contenedor Responsive para Video de YouTube -->
+                        <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border: 1px solid rgba(148, 163, 184, 0.2);">
+                            
+                            <!-- PABLO: Aquí está el enlace (src). Forzado a no autoplay y no loop -->
+                            <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+                                    src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&modestbranding=1&autoplay=0" 
+                                    title="Protocol Mobile Deployment" 
+                                    frameborder="0" 
+                                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen>
+                            </iframe>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- Cierre del Grid -->
 
             <!-- Botón de Calculadora -->
             <div class="action-area">
@@ -488,7 +534,6 @@
 
         async function fetchTerminalLogs() {
             try {
-                // Pedimos a Supabase los últimos 4 mensajes
                 const { data, error } = await supabaseClient
                     .from('logs')
                     .select('*')
@@ -556,7 +601,6 @@
         const resultBox = document.getElementById('resultBox');
         const upsellBtn = document.getElementById('upsellBtn');
 
-        // Abrir/Cerrar Modales
         openCalcBtn.addEventListener('click', (e) => {
             e.preventDefault();
             calcModal.style.display = 'flex';
@@ -568,7 +612,7 @@
         openLoginBtn.addEventListener('click', (e) => {
             e.preventDefault();
             loginModal.style.display = 'flex';
-            loginErrorMsg.style.display = 'none'; // reset error
+            loginErrorMsg.style.display = 'none'; 
         });
 
         closeLoginBtn.addEventListener('click', () => { loginModal.style.display = 'none'; });
@@ -593,14 +637,12 @@
                 return;
             }
 
-            // Cambiar texto a comprobando
             const originalText = executeLoginBtn.innerText;
             executeLoginBtn.innerText = '[ VERIFYING... ]';
             executeLoginBtn.style.pointerEvents = 'none';
             loginErrorMsg.style.display = 'none';
 
             try {
-                // Hacer la llamada real a Supabase
                 const { data, error } = await supabaseClient.auth.signInWithPassword({
                     email: email,
                     password: pass
@@ -608,13 +650,17 @@
 
                 if (error) throw error;
 
-                // Si ha ido bien, Supabase ha guardado el token y podemos redirigir
                 executeLoginBtn.style.borderColor = 'var(--electric-cyan)';
                 executeLoginBtn.style.color = 'var(--electric-cyan)';
                 executeLoginBtn.innerText = '[ ACCESS GRANTED ]';
                 
                 setTimeout(() => {
+                    // PABLO: Aquí está el cambio para que abra el admin en otra pestaña
                     window.open('admin.html', '_blank');
+                    // Opcional: cerramos el modal actual después de abrir
+                    loginModal.style.display = 'none';
+                    executeLoginBtn.innerText = originalText;
+                    executeLoginBtn.style.pointerEvents = 'auto';
                 }, 800);
 
             } catch (error) {
@@ -622,7 +668,6 @@
                 loginErrorMsg.innerText = "[SYS_ERROR] Acceso denegado.";
                 loginErrorMsg.style.display = 'block';
                 
-                // Restaurar botón
                 executeLoginBtn.innerText = originalText;
                 executeLoginBtn.style.pointerEvents = 'auto';
             }

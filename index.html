@@ -46,6 +46,47 @@
             position: relative;
         }
 
+        /* --- EFECTOS DE EMERGENCIA MACRO (LUCES ROJAS) --- */
+        .emergency-vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 50; /* Debajo de los modales pero encima del fondo */
+            display: none;
+        }
+
+        .emergency-vignette.active {
+            display: block;
+            animation: pulse-red 2s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { box-shadow: inset 0 0 20px rgba(255, 49, 49, 0.1); }
+            50% { box-shadow: inset 0 0 120px rgba(255, 49, 49, 0.4); }
+            100% { box-shadow: inset 0 0 20px rgba(255, 49, 49, 0.1); }
+        }
+
+        .emergency-banner {
+            background-color: var(--crimson-war);
+            color: var(--smoke-white);
+            text-align: center;
+            padding: 0.8rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            display: none; /* Oculto por defecto */
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 5px 20px rgba(255, 49, 49, 0.4);
+        }
+
         /* --- THE BLUEPRINT & NOISE OVERLAY --- */
         .blueprint-layer {
             position: fixed;
@@ -112,7 +153,7 @@
 
         /* --- HEADER / LOGO --- */
         header {
-            padding: 3rem 0;
+            padding: 4rem 0 3rem 0; /* Padding top aumentado por si sale el banner rojo */
             display: flex;
             justify-content: space-between; 
             align-items: baseline;
@@ -175,29 +216,13 @@
             margin-bottom: 3rem;
         }
 
-        /* --- TERMINAL DATA BOXES (NUEVO GRID SIDE-BY-SIDE) --- */
-        .terminals-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-bottom: 2rem;
-            width: 100%;
-        }
-
-        @media (max-width: 1024px) {
-            .terminals-grid {
-                grid-template-columns: 1fr; /* En móvil se pone uno debajo del otro */
-            }
-        }
-
+        /* --- TERMINAL DATA BOXES --- */
         .terminal-box {
             background-color: var(--vantablack);
             border: 1px solid rgba(148, 163, 184, 0.2);
             padding: 2rem;
-            width: 100%;
+            max-width: 700px;
             position: relative;
-            display: flex;
-            flex-direction: column;
         }
 
         .terminal-header {
@@ -216,10 +241,10 @@
             font-size: 0.85rem;
         }
 
-        .t-time { color: var(--steel-grey); }
-        .t-action { color: var(--smoke-white); }
-        .t-value { color: var(--electric-cyan); text-shadow: 0 0 5px rgba(0, 242, 255, 0.3); }
-        .t-error { color: var(--crimson-war); }
+        .t-time { color: var(--steel-grey); min-width: 90px; }
+        .t-action { color: var(--smoke-white); flex: 1;}
+        .t-value { color: var(--electric-cyan); text-shadow: 0 0 5px rgba(0, 242, 255, 0.3); font-weight: bold;}
+        .t-error { color: var(--crimson-war); font-weight: bold;}
 
         .blinking-cursor {
             display: inline-block;
@@ -386,6 +411,9 @@
 </head>
 <body>
 
+    <!-- CAPAS VISUALES -->
+    <div class="emergency-banner" id="emergencyBanner">[ HIGH IMPACT MACRO EVENT // TRADING RESTRICTED ]</div>
+    <div class="emergency-vignette" id="redAlert"></div>
     <div class="blueprint-layer"></div>
     <div class="noise-layer"></div>
 
@@ -409,54 +437,22 @@
                 Most traders follow the herd. We follow the code. Every day, the Architect provides the blueprint to survive the market manipulation. Are you reading the code or providing the liquidity?
             </p>
 
-            <!-- CONTENEDOR GRID PARA LAS DOS CAJAS -->
-            <div class="terminals-grid">
+            <!-- Terminal Interface -->
+            <div class="terminal-box">
+                <div class="terminal-header code-data">
+                    <span>> THE_PROTOCOL_TERMINAL</span>
+                    <span>V.2.0</span>
+                </div>
                 
-                <!-- 1. Terminal Interface (Lectura de base de datos) -->
-                <div class="terminal-box">
-                    <div class="terminal-header code-data">
-                        <span>> THE_PROTOCOL_TERMINAL</span>
-                        <span>V.2.0</span>
-                    </div>
-                    
-                    <div class="terminal-body" id="terminal-output" style="flex: 1; overflow-y: auto; max-height: 350px;">
-                        <!-- Esto se llena automáticamente con Supabase -->
-                        <div class="terminal-line">
-                            <span class="t-time">[SYS_UPDATE]</span>
-                            <span class="t-action">Establishing secure connection to The Protocol...</span>
-                            <span class="blinking-cursor"></span>
-                        </div>
+                <div class="terminal-body" id="terminal-output">
+                    <!-- Esto se llena automáticamente con Supabase -->
+                    <div class="terminal-line">
+                        <span class="t-time">[SYS_UPDATE]</span>
+                        <span class="t-action">Establishing secure connection to The Protocol...</span>
+                        <span class="blinking-cursor"></span>
                     </div>
                 </div>
-
-                <!-- 2. NATIVE DEPLOYMENT VIDEO BOX -->
-                <div class="terminal-box">
-                    <div class="terminal-header code-data">
-                        <span>> NATIVE_OS_DEPLOYMENT</span>
-                        <span>[ ACTION REQUIRED ]</span>
-                    </div>
-                    <div class="terminal-body">
-                        <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--steel-grey); margin-bottom: 1.5rem; line-height: 1.5;">
-                            <strong style="color: var(--electric-cyan);">[ INSTRUCTION ]</strong> Eliminate browser latency. Deploy The Protocol directly to your mobile OS home screen as a native terminal. Follow the visual transmission below to establish direct access.
-                        </p>
-                        
-                        <!-- Contenedor Responsive para Video de YouTube -->
-                        <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border: 1px solid rgba(148, 163, 184, 0.2);">
-                            
-                            <!-- PABLO: Aquí está el enlace (src). Forzado a no autoplay y no loop -->
-                            <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
-                                    src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&modestbranding=1&autoplay=0" 
-                                    title="Protocol Mobile Deployment" 
-                                    frameborder="0" 
-                                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                    allowfullscreen>
-                            </iframe>
-
-                        </div>
-                    </div>
-                </div>
-
-            </div> <!-- Cierre del Grid -->
+            </div>
 
             <!-- Botón de Calculadora -->
             <div class="action-area">
@@ -531,20 +527,57 @@
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const terminalOutput = document.getElementById('terminal-output');
+        const redAlert = document.getElementById('redAlert');
+        const emergencyBanner = document.getElementById('emergencyBanner');
 
         async function fetchTerminalLogs() {
             try {
+                // Seleccionamos logs ordenados por fecha
                 const { data, error } = await supabaseClient
                     .from('logs')
                     .select('*')
                     .order('created_at', { ascending: false })
-                    .limit(4);
+                    .limit(10); // Pedimos más por si hay varias alertas ocultas
 
                 if (error) throw error;
 
+                // --- LÓGICA DE MODO NOTICIAS ---
+                let isEmergencyActive = false;
+                
+                // Buscamos si el registro más reciente es una alerta de noticia
+                const emergencyLog = data.find(log => log.log_type === 'news_alert');
+                
+                if (emergencyLog && emergencyLog.value_text !== "0") {
+                    const endTime = parseInt(emergencyLog.value_text);
+                    const now = new Date().getTime();
+                    
+                    if (endTime > now) {
+                        isEmergencyActive = true;
+                        // Programamos que se apague solo a la hora estipulada
+                        setTimeout(() => {
+                            redAlert.classList.remove('active');
+                            emergencyBanner.style.display = 'none';
+                        }, endTime - now);
+                    }
+                }
+
+                // Encender o apagar luces
+                if (isEmergencyActive) {
+                    redAlert.classList.add('active');
+                    emergencyBanner.style.display = 'block';
+                } else {
+                    redAlert.classList.remove('active');
+                    emergencyBanner.style.display = 'none';
+                }
+
+                // --- RENDERIZADO DEL TERMINAL ---
                 terminalOutput.innerHTML = ''; 
                 
-                const sortedData = data.reverse();
+                // Filtramos los que NO son news_alert para mostrarlos en el terminal, y nos quedamos con los 4 últimos
+                const visibleData = data.filter(log => log.log_type !== 'news_alert').slice(0, 4);
+                
+                // Los invertimos para que el más nuevo salga abajo
+                const sortedData = visibleData.reverse();
 
                 sortedData.forEach(log => {
                     let valueClass = '';
@@ -655,9 +688,7 @@
                 executeLoginBtn.innerText = '[ ACCESS GRANTED ]';
                 
                 setTimeout(() => {
-                    // PABLO: Aquí está el cambio para que abra el admin en otra pestaña
                     window.open('admin.html', '_blank');
-                    // Opcional: cerramos el modal actual después de abrir
                     loginModal.style.display = 'none';
                     executeLoginBtn.innerText = originalText;
                     executeLoginBtn.style.pointerEvents = 'auto';

@@ -22,7 +22,7 @@
             --hot-pink: #FF007F; 
             --alert-gold: #FFD700;
             --neon-purple: #B026FF; 
-            --matrix-green: #00FF41;
+            --matrix-green: #00FF41; /* Nuevo color para el Drop */
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
@@ -47,6 +47,7 @@
         .tab-btn { background-color: var(--obsidian-navy); border: 1px solid var(--steel-grey); color: var(--steel-grey); padding: 0.8rem 1.2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: all 0.2s; touch-action: manipulation; flex-grow: 1; text-align: center; }
         .tab-btn:hover { background-color: rgba(2, 6, 23, 0.8); }
 
+        /* Estados Activos según el color de cada panel */
         .tab-btn.active.tab-master { border-color: var(--electric-cyan); color: var(--electric-cyan); background-color: rgba(0, 242, 255, 0.05); box-shadow: 0 -2px 10px rgba(0, 242, 255, 0.1); }
         .tab-btn.active.tab-news { border-color: var(--crimson-war); color: var(--crimson-war); background-color: rgba(255, 49, 49, 0.05); box-shadow: 0 -2px 10px rgba(255, 49, 49, 0.1); }
         .tab-btn.active.tab-desc { border-color: var(--hot-pink); color: var(--hot-pink); background-color: rgba(255, 0, 127, 0.05); box-shadow: 0 -2px 10px rgba(255, 0, 127, 0.1); }
@@ -55,6 +56,7 @@
         .tab-btn.active.tab-drop { border-color: var(--matrix-green); color: var(--matrix-green); background-color: rgba(0, 255, 65, 0.05); box-shadow: 0 -2px 10px rgba(0, 255, 65, 0.1); }
         .tab-btn.active.tab-logs { border-color: var(--smoke-white); color: var(--smoke-white); background-color: rgba(248, 250, 252, 0.05); box-shadow: 0 -2px 10px rgba(255, 255, 255, 0.1); }
 
+        /* Paneles */
         .admin-box { background-color: var(--obsidian-navy); border: 1px solid var(--steel-grey); padding: 2rem; width: 100%; box-shadow: 0 0 40px rgba(0, 0, 0, 0.8); display: none; animation: fadeInTab 0.3s ease; }
         .admin-box.active-panel { display: block; }
         
@@ -109,6 +111,7 @@
         .btn-delete { background: transparent; border: 1px solid var(--crimson-war); color: var(--crimson-war); padding: 0.4rem 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; cursor: pointer; transition: all 0.2s; touch-action: manipulation; }
         .btn-delete:hover { background: var(--crimson-war); color: var(--smoke-white); }
 
+        /* Estilos lista de botones guardados */
         .saved-btn-row { background-color: rgba(176, 38, 255, 0.05); border: 1px solid var(--neon-purple); padding: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
         .saved-btn-id { color: var(--neon-purple); font-family: 'JetBrains Mono', monospace; font-weight: bold; font-size: 1.1rem; }
         .action-btn-show { background: transparent; border: 1px solid var(--electric-cyan); color: var(--electric-cyan); padding: 0.5rem 1rem; cursor: pointer; font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; transition: all 0.2s; }
@@ -118,6 +121,7 @@
         .action-btn-del { background: transparent; border: none; color: var(--steel-grey); padding: 0.5rem; cursor: pointer; font-family: monospace; font-weight: bold; font-size: 1.2rem; transition: color 0.2s; }
         .action-btn-del:hover { color: var(--crimson-war); }
 
+        /* ADAPTACIÓN MÓVIL ESTRICTA */
         @media (max-width: 768px) { 
             body { padding: 1rem; }
             .admin-box { padding: 1.5rem; }
@@ -143,6 +147,7 @@
 
     <div class="dashboard-layout">
         
+        <!-- MENÚ DE PESTAÑAS SUPERIOR -->
         <div class="tab-menu">
             <button class="tab-btn tab-master active" onclick="switchTab('panel-master', this)">[ MASTER ]</button>
             <button class="tab-btn tab-news" onclick="switchTab('panel-news', this)">[ NOTICIAS ]</button>
@@ -153,6 +158,7 @@
             <button class="tab-btn tab-logs" onclick="switchTab('panel-logs', this)">[ REGISTROS ]</button>
         </div>
 
+        <!-- PANEL 1: INYECCIÓN NORMAL -->
         <div id="panel-master" class="admin-box active-panel">
             <h1>
                 MASTER TERMINAL 
@@ -202,6 +208,7 @@
             <div id="feedback" class="feedback-msg"></div>
         </div>
 
+        <!-- PANEL 2: MODO NOTICIAS -->
         <div id="panel-news" class="admin-box" style="border-color: var(--crimson-war);">
             <h1 style="color: var(--crimson-war);">[ ! ] MACRO NEWS OVERRIDE</h1>
             <div class="warning-text" style="color: var(--crimson-war); border-color: rgba(255,49,49,0.2);">ACTIVA LA ALERTA ROJA.</div>
@@ -216,6 +223,7 @@
             <div id="newsFeedback" class="feedback-msg"></div>
         </div>
 
+        <!-- PANEL 3: MODO DESCUENTO FLASH -->
         <div id="panel-desc" class="admin-box" style="border-color: var(--hot-pink);">
             <h1 style="color: var(--hot-pink);">[ % ] DESCUENTO FLASH</h1>
             <div class="warning-text" style="color: var(--hot-pink); border-color: rgba(255,0,127,0.2);">ACTIVA UN BANNER CON CUENTA ATRÁS Y VÍDEO.</div>
@@ -254,6 +262,7 @@
             <div id="descFeedback" class="feedback-msg"></div>
         </div>
 
+        <!-- PANEL 4: POP-UP DIRECTO (TIEMPO REAL) -->
         <div id="panel-popup" class="admin-box" style="border-color: var(--alert-gold);">
             <h1 style="color: var(--alert-gold);">[ 🔔 ] ALERTA EN TIEMPO REAL</h1>
             <div class="warning-text" style="color: var(--alert-gold); border-color: rgba(255,215,0,0.2);">
@@ -269,6 +278,7 @@
             <div id="popupFeedback" class="feedback-msg"></div>
         </div>
 
+        <!-- PANEL 5: VISIBILIDAD DE BOTONES -->
         <div id="panel-buttons" class="admin-box" style="border-color: var(--neon-purple);">
             <h1 style="color: var(--neon-purple);">[ 🎛️ ] VISIBILIDAD DE BOTONES</h1>
             <div class="warning-text" style="color: var(--neon-purple); border-color: rgba(176, 38, 255, 0.2);">
@@ -292,17 +302,18 @@
             <div id="btnToggleFeedback" class="feedback-msg" style="margin-top: 2rem;"></div>
         </div>
 
+        <!-- PANEL 6: GESTIÓN DEL DROP SECRETO -->
         <div id="panel-drop" class="admin-box" style="border-color: var(--matrix-green);">
             <h1 style="color: var(--matrix-green);">[ 🔐 ] CONFIGURACIÓN DEL DROP</h1>
             <div class="warning-text" style="color: var(--matrix-green); border-color: rgba(0, 255, 65, 0.2);">
-                ESTABLECE LA CONTRASEÑA ACTUAL PARA EL BÚNKER. SE PEDIRÁ EN UN POP-UP DESDE LA PÁGINA PRINCIPAL.
+                ESTABLECE LA CONTRASEÑA ACTUAL PARA LA PÁGINA DEL BÚNKER (drop.html).
             </div>
 
             <div class="form-group">
                 <label style="color: var(--matrix-green);">> CÓDIGO DE ACCESO (Letras y Números)</label>
                 <input type="text" id="dropCodeInput" placeholder="Ej: ALPHA77" autocomplete="off" style="border-color: var(--matrix-green); color: var(--matrix-green); font-size: 1.5rem; text-transform: uppercase; letter-spacing: 2px;">
                 <p style="font-family: 'Inter', sans-serif; font-size: 0.75rem; color: var(--steel-grey); margin-top: 0.5rem;">
-                    *El código se guardará en la base de datos. Cuando el botón del drop esté visible, la web pedirá esto.
+                    *El código se guardará en la base de datos y la página del Drop lo leerá en tiempo real.
                 </p>
             </div>
 
@@ -310,6 +321,7 @@
             <div id="dropFeedback" class="feedback-msg"></div>
         </div>
 
+        <!-- PANEL 7: GESTOR DE REGISTROS -->
         <div id="panel-logs" class="admin-box">
             <h1 style="color: var(--steel-grey);">
                 REGISTRO ACTIVO 
@@ -429,6 +441,7 @@
             } finally { btn.innerText = '[ LANZAR POP-UP A TODOS LOS USUARIOS ]'; }
         }
 
+        // --- GESTIÓN DE CÓDIGO DEL DROP (NUEVO) ---
         async function updateDropCode() {
             const codeInput = document.getElementById('dropCodeInput').value.trim();
             const feedback = document.getElementById('dropFeedback');
@@ -438,7 +451,10 @@
 
             btn.innerText = 'ACTUALIZANDO...';
             try {
+                // Primero eliminamos el código anterior para no ensuciar
                 await supabaseClient.from('logs').delete().eq('log_type', 'drop_code');
+                
+                // Guardamos el nuevo
                 const { error } = await supabaseClient.from('logs').insert([{ 
                     log_time: '[VAULT_KEY]', action_text: 'Active Drop Code', value_text: codeInput, log_type: 'drop_code' 
                 }]);

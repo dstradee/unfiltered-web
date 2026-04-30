@@ -137,9 +137,6 @@
         .status-neutral { color: var(--steel-grey); border-left-color: var(--steel-grey); }
 
         #loginError { color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 1rem; text-align: center; display: none; }
-        
-        /* Nuevo color para modal de Drop */
-        .matrix-green { color: #00FF41; }
 
         /* ============================================================== */
         /* OPTIMIZACIÓN MÓVIL (CORRECCIÓN DE OVERLAP Y TOAST)             */
@@ -251,7 +248,7 @@
 
             <div class="action-area">
                 <a href="#" class="btn btn-primary" id="btn-calculadora">[ CALCULATOR ]</a>
-                <a href="#" class="btn btn-purple" id="btn-drop" style="display: none;">[ DROP ACCESS ]</a>
+                <a href="drop.html" class="btn btn-purple" id="btn-drop" style="display: none;">[ DROP ACCESS ]</a>
             </div>
         </main>
     </div>
@@ -311,30 +308,6 @@
         </div>
     </div>
 
-    <!-- MODAL PARA CÓDIGO DEL DROP (NUEVO) -->
-    <div class="modal-overlay" id="dropModal">
-        <div class="modal-content" style="max-width: 400px; border-color: #00FF41; box-shadow: 0 0 30px rgba(0, 255, 65, 0.15);">
-            <div class="close-modal" id="closeDropBtn">[ X ]</div>
-            <div class="calc-header" style="font-size: 2rem; color: #00FF41; border-bottom-color: rgba(0, 255, 65, 0.2);">VAULT DECRYPTION</div>
-            
-            <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--steel-grey); margin-bottom: 1.5rem;">
-                Introduce el código de acceso proporcionado por el Arquitecto para desbloquear el Búnker.
-            </p>
-
-            <div class="calc-group" style="margin-bottom: 1.5rem;">
-                <input type="text" id="dropPinInput" placeholder="••••" autocomplete="off" style="text-align: center; font-size: 1.5rem; letter-spacing: 5px; text-transform: uppercase; color: #00FF41; border-color: #00FF41;">
-            </div>
-            
-            <div id="dropErrorMsg" style="color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 1rem; text-align: center; display: none; font-weight: bold;">
-                [SYS_ERROR] ACCESO DENEGADO.
-            </div>
-
-            <a href="#" class="btn" style="width: 100%; text-align: center; background-color: #00FF41; color: var(--vantablack); border: none;" id="executeDropBtn">
-                [ VERIFY CLEARANCE ]
-            </a>
-        </div>
-    </div>
-
     <script>
         const SUPABASE_URL = 'https://qtpuipgkytzjnckkkwnl.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_eA2g7-rTvcPcfz_dVl2aWg_Ca5P7t93';
@@ -352,8 +325,6 @@
         const discountMsg = document.getElementById('discountMsg');
         const discountTimer = document.getElementById('discountTimer');
         let countdownInterval;
-        
-        let currentDropCode = ""; // Aquí guardaremos el código que pongas en el Admin
 
         async function fetchTerminalLogs() {
             try {
@@ -379,14 +350,55 @@
                             emergencyBanner.style.display = 'none';
                         }, endTime - now);
                     }
-                if (!isDiscountActive) {
-                    discountBanner.style.display = 'none';
                 }
 
-                // --- 2.1 RECUPERAR CÓDIGO DEL DROP SECRETO ---
-                const dropCodeLog = data.find(log => log.log_type === 'drop_code');
-                if (dropCodeLog && dropCodeLog.value_text) {
-                    currentDropCode = dropCodeLog.value_text.toUpperCase().trim();
+                if (isEmergencyActive) {
+                    redAlert.classList.add('active');
+                    emergencyBanner.style.display = 'block';
+                } else {
+                    redAlert.classList.remove('active');
+                    emergencyBanner.style.display = 'none';
+                }
+
+                // --- 2. LÓGICA DE DESCUENTO FLASH (ROSA) ---
+                clearInterval(countdownInterval); 
+                let isDiscountActive = false;
+                const discountLog = data.find(log => log.log_type === 'discount_alert');
+
+                if (discountLog && discountLog.value_text !== "0") {
+                    const parts = discountLog.value_text.split('|');
+                    const endTime = parseInt(parts[0]);
+                    const pct = parts[1] || "??";
+                    
+                    if (endTime > new Date().getTime()) {
+                        isDiscountActive = true;
+                        discountTitle.innerText = `FLASH PROTOCOL: -${pct}% OFF`;
+                        discountMsg.innerHTML = discountLog.action_text; 
+                        discountBanner.style.display = 'flex';
+
+                        countdownInterval = setInterval(() => {
+                            const distance = endTime - new Date().getTime();
+                            if (distance < 0) {
+                                clearInterval(countdownInterval);
+                                discountBanner.style.display = 'none';
+                                return;
+                            }
+                            const d = Math.floor(distance / (1000 * 60 * 60 * 24));
+                            const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                            const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                            const s = Math.floor((distance % (1000 * 60)) / 1000);
+                            
+                            discountTimer.innerText = 
+                                (d < 10 ? "0"+d : d) + "D : " + 
+                                (h < 10 ? "0"+h : h) + "H : " + 
+                                (m < 10 ? "0"+m : m) + "M : " + 
+                                (s < 10 ? "0"+s : s) + "S";
+                        }, 1000);
+                    }
+                }
+
+                if (!isDiscountActive) {
+                    discountBanner.style.display = 'none';
                 }
 
                 // --- 2.5 VISIBILIDAD DE BOTONES DINÁMICOS ---
@@ -532,20 +544,11 @@
         const calcModal = document.getElementById('calcModal');
         const openCalcBtn = document.getElementById('btn-calculadora');
         const closeCalcBtn = document.getElementById('closeCalcBtn');
-        
         const loginModal = document.getElementById('loginModal');
         const openLoginBtn = document.getElementById('openLoginBtn');
         const closeLoginBtn = document.getElementById('closeLoginBtn');
         const executeLoginBtn = document.getElementById('executeLoginBtn');
         const loginErrorMsg = document.getElementById('loginError');
-
-        // Modal del Drop
-        const dropModal = document.getElementById('dropModal');
-        const openDropBtn = document.getElementById('btn-drop');
-        const closeDropBtn = document.getElementById('closeDropBtn');
-        const dropPinInput = document.getElementById('dropPinInput');
-        const executeDropBtn = document.getElementById('executeDropBtn');
-        const dropErrorMsg = document.getElementById('dropErrorMsg');
 
         const winRateInput = document.getElementById('winRate');
         const riskPctInput = document.getElementById('riskPct');
@@ -559,15 +562,7 @@
         closeCalcBtn.addEventListener('click', () => { calcModal.style.display = 'none'; });
         openLoginBtn.addEventListener('click', (e) => { e.preventDefault(); loginModal.style.display = 'flex'; loginErrorMsg.style.display = 'none'; });
         closeLoginBtn.addEventListener('click', () => { loginModal.style.display = 'none'; });
-        
-        openDropBtn.addEventListener('click', (e) => { e.preventDefault(); dropModal.style.display = 'flex'; dropPinInput.value = ''; dropErrorMsg.style.display = 'none'; });
-        closeDropBtn.addEventListener('click', () => { dropModal.style.display = 'none'; });
-
-        window.addEventListener('click', (e) => { 
-            if (e.target === calcModal) calcModal.style.display = 'none'; 
-            if (e.target === loginModal) loginModal.style.display = 'none'; 
-            if (e.target === dropModal) dropModal.style.display = 'none'; 
-        });
+        window.addEventListener('click', (e) => { if (e.target === calcModal) calcModal.style.display = 'none'; if (e.target === loginModal) loginModal.style.display = 'none'; });
 
         // --- TRACKEO DE CLICS EN GUMROAD (GA4) ---
         upsellBtn.addEventListener('click', () => {
@@ -607,42 +602,6 @@
             } catch (error) {
                 loginErrorMsg.innerText = "[SYS_ERROR] Acceso denegado."; loginErrorMsg.style.display = 'block';
                 executeLoginBtn.innerText = originalText; executeLoginBtn.style.pointerEvents = 'auto';
-            }
-        });
-
-        // --- LÓGICA DE DESBLOQUEO DEL DROP ---
-        executeDropBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const intento = dropPinInput.value.toUpperCase().trim();
-            
-            // Si el intento es correcto y el código no está vacío
-            if (intento === currentDropCode && currentDropCode !== "") {
-                dropErrorMsg.style.display = 'none';
-                executeDropBtn.innerText = '[ DECRYPTING... ]';
-                executeDropBtn.style.pointerEvents = 'none';
-                
-                // Trackeo en Google Analytics (si existe)
-                if (typeof gtag === 'function') {
-                    gtag('event', 'unlock_drop', { 'event_category': 'engagement', 'event_label': 'Drop Unlocked via Popup' });
-                }
-
-                // Le damos el "Pase de Seguridad" guardándolo temporalmente en la sesión
-                sessionStorage.setItem('vault_auth', 'GRANTED');
-
-                setTimeout(() => {
-                    window.location.href = 'drop.html'; // Lo enviamos al Búnker
-                }, 800);
-            } else {
-                // Fallo
-                dropErrorMsg.style.display = 'block';
-                dropPinInput.value = '';
-            }
-        });
-
-        // Permitir usar la tecla Enter para el Drop
-        dropPinInput.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                executeDropBtn.click();
             }
         });
 

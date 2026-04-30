@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UNFILTERED ALPHA | The Drop</title>
     
+    <!-- Filtro de Seguridad: Expulsar si no vienen desde el Pop-up -->
+    <script>
+        if (sessionStorage.getItem('vault_auth') !== 'GRANTED') {
+            window.location.replace('index.html');
+        }
+    </script>
+
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z90RHTXWGV"></script>
     <script>
@@ -54,35 +61,37 @@
         .brand-logo { display: flex; align-items: baseline; gap: 8px; font-size: 2rem; }
         .unfiltered-word { border-bottom: 2px solid var(--electric-cyan); padding-bottom: 2px; }
         
-        /* PUNTITO ROSA PARPADEANTE */
-        .discount-indicator {
-            display: flex; align-items: center; gap: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--steel-grey); text-decoration: none;
-            opacity: 0; transition: opacity 0.3s;
+        /* PUNTITOS DE ALERTAS */
+        .header-controls { display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center; }
+        .alert-indicator {
+            display: flex; align-items: center; gap: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-decoration: none;
+            display: none; /* Oculto por defecto */
         }
-        .discount-indicator.active { opacity: 1; }
+        
         .pink-dot { width: 10px; height: 10px; background-color: var(--hot-pink); border-radius: 50% !important; animation: pulse-pink 1.5s infinite; }
         @keyframes pulse-pink { 0% { box-shadow: 0 0 0 0 rgba(255, 0, 127, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 0, 127, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 0, 127, 0); } }
 
+        .red-dot { width: 10px; height: 10px; background-color: var(--crimson-war); border-radius: 50% !important; animation: pulse-red 1.5s infinite; }
+        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(255, 49, 49, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 49, 49, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 49, 49, 0); } }
+
+        .auth-link { font-family: 'JetBrains Mono', monospace; color: var(--matrix-green); text-decoration: none; font-size: 0.85rem; letter-spacing: 1px; transition: color 0.2s ease; }
+        .auth-link:hover { color: var(--smoke-white); }
+
         main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-bottom: 15vh; } 
         
-        .terminal-box { background-color: var(--vantablack); border: 1px solid rgba(148, 163, 184, 0.2); padding: 2rem; width: 100%; max-width: 500px; position: relative; transition: all 0.3s ease; }
+        .terminal-box { background-color: var(--vantablack); border: 1px solid rgba(148, 163, 184, 0.2); padding: 2rem; width: 100%; position: relative; }
         .terminal-header { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 1rem; margin-bottom: 1.5rem; }
         
         .btn { display: inline-block; padding: 1rem 2rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; text-align: center; width: 100%; }
-        .btn-purple { background-color: transparent; color: var(--neon-purple); border: 1px solid var(--neon-purple); box-shadow: inset 0 0 0 rgba(176, 38, 255, 0), 0 0 10px rgba(176, 38, 255, 0.1); }
-        .btn-purple:hover { background-color: rgba(176, 38, 255, 0.1); box-shadow: inset 0 0 10px rgba(176, 38, 255, 0.2), 0 0 15px rgba(176, 38, 255, 0.2); }
 
-        .pin-input { width: 100%; background: var(--obsidian-navy); border: 1px solid var(--steel-grey); color: var(--electric-cyan); padding: 1.2rem; font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; text-align: center; letter-spacing: 5px; outline: none; margin-bottom: 1.5rem; text-transform: uppercase; }
-        .pin-input:focus { border-color: var(--neon-purple); box-shadow: inset 0 0 10px rgba(176, 38, 255, 0.2); }
-
-        /* Contenido Secreto Oculto */
-        #secretContent { display: none; width: 100%; max-width: 800px; animation: fadeIn 1s ease; }
+        /* Contenido Secreto */
+        #secretContent { width: 100%; max-width: 800px; animation: fadeIn 1s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
 
         @media (max-width: 768px) {
             header { flex-direction: column; align-items: flex-start; gap: 1.5rem; padding: 3rem 0 2rem 0;}
+            .header-controls { flex-direction: column; align-items: flex-start; gap: 1rem; }
             .terminal-box { padding: 1.5rem 1rem; }
-            .pin-input { font-size: 1.2rem; letter-spacing: 2px; }
         }
     </style>
 </head>
@@ -96,36 +105,26 @@
             <div class="brand-logo logo-text">
                 <span class="unfiltered-word">UNFILTERED</span> <span>ALPHA</span>
             </div>
-            <!-- Indicador Rosa de Descuento (Solo se enciende si hay descuento activo) -->
-            <a href="index.html" class="discount-indicator" id="discountDot">
-                <div class="pink-dot"></div>
-                [ REVERT TO MAIN ]
-            </a>
+            
+            <div class="header-controls">
+                <!-- Indicador Rojo de Noticias -->
+                <a href="index.html" class="alert-indicator" id="newsDot" style="color: var(--crimson-war);">
+                    <div class="red-dot"></div>
+                    [ MACRO ALERT ]
+                </a>
+                
+                <!-- Indicador Rosa de Descuento -->
+                <a href="index.html" class="alert-indicator" id="discountDot" style="color: var(--hot-pink);">
+                    <div class="pink-dot"></div>
+                    [ FLASH DISCOUNT ]
+                </a>
+
+                <a href="index.html" class="auth-link">[ < REVERT TO MAIN ]</a>
+            </div>
         </header>
 
         <main>
-            <!-- CAJA DE SEGURIDAD (MÁQUINA ENIGMA) -->
-            <div class="terminal-box" id="vaultContainer" style="border-color: var(--neon-purple);">
-                <div class="terminal-header code-data" style="color: var(--smoke-white);">
-                    <span>> THE_VAULT_ENCRYPTION</span>
-                </div>
-                
-                <div style="text-align: center;">
-                    <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--steel-grey); margin-bottom: 2rem; line-height: 1.5;">
-                        Introduce el código de acceso alfanumérico para desencriptar el protocolo reservado.
-                    </p>
-                    
-                    <input type="text" id="pinInput" class="pin-input" placeholder="CODE" autocomplete="off">
-                    
-                    <div id="pinError" style="color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 1rem; display: none; font-weight: bold;">
-                        [SYS_ERROR] LIQUIDITY DETECTED. ACCESO DENEGADO.
-                    </div>
-
-                    <button class="btn btn-purple" id="btnUnlock">[ DESENCRIPTAR ]</button>
-                </div>
-            </div>
-
-            <!-- CONTENIDO SECRETO (Se muestra al acertar) -->
+            <!-- CONTENIDO SECRETO -->
             <div id="secretContent">
                 <div class="terminal-box" style="border-color: var(--matrix-green); max-width: 100%;">
                     <div class="terminal-header code-data" style="color: var(--matrix-green);">
@@ -134,7 +133,7 @@
                     </div>
                     
                     <p style="margin-bottom: 1.5rem; color: var(--smoke-white); font-family: 'Inter', sans-serif; line-height: 1.6;">
-                        El algoritmo retail ha sido purgado. Aquí tienes el acceso a la transmisión privada.
+                        El algoritmo retail ha sido purgado. Aquí tienes el acceso a la transmisión privada de esta semana.
                     </p>
                     
                     <!-- PABLO: Aquí pones tu vídeo o tu enlace real. Yo te dejo un vídeo de YT de ejemplo -->
@@ -146,7 +145,7 @@
                     </div>
 
                     <a href="https://unfilteredalpha.gumroad.com/l/qoabdg" target="_blank" class="btn" style="background-color: var(--matrix-green); color: var(--vantablack); border: none;">
-                        [ APPLY PROTOCOL ($27) ]
+                        [ APPLY FULL PROTOCOL ($27) ]
                     </a>
                 </div>
             </div>
@@ -158,10 +157,7 @@
         const SUPABASE_KEY = 'sb_publishable_eA2g7-rTvcPcfz_dVl2aWg_Ca5P7t93';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let currentValidCode = "ALPHA"; // Código por defecto por si falla la BDD
-
-        // 1. Verificar si hay un descuento activo para encender el puntito rosa
-        // 2. Traer el Código Secreto actual de la Base de Datos
+        // Controlar los puntitos de la cabecera
         async function fetchSystemState() {
             try {
                 const { data, error } = await supabaseClient
@@ -171,20 +167,23 @@
 
                 if (error) throw error;
 
-                // --- Puntito Rosa ---
+                // --- Puntito Rojo (Noticias) ---
+                const emergencyLog = data.find(log => log.log_type === 'news_alert');
+                if (emergencyLog && emergencyLog.value_text !== "0") {
+                    const endTime = parseInt(emergencyLog.value_text);
+                    if (endTime > new Date().getTime()) {
+                        document.getElementById('newsDot').style.display = 'flex';
+                    }
+                }
+
+                // --- Puntito Rosa (Descuentos) ---
                 const discountLog = data.find(log => log.log_type === 'discount_alert');
                 if (discountLog && discountLog.value_text !== "0") {
                     const parts = discountLog.value_text.split('|');
                     const endTime = parseInt(parts[0]);
                     if (endTime > new Date().getTime()) {
-                        document.getElementById('discountDot').classList.add('active');
+                        document.getElementById('discountDot').style.display = 'flex';
                     }
-                }
-
-                // --- Código Secreto ---
-                const codeLog = data.find(log => log.log_type === 'drop_code');
-                if (codeLog && codeLog.value_text) {
-                    currentValidCode = codeLog.value_text.toUpperCase().trim();
                 }
 
             } catch (err) {
@@ -194,55 +193,13 @@
 
         fetchSystemState();
 
-        // LÓGICA DE DESENCRIPTACIÓN
-        const btnUnlock = document.getElementById('btnUnlock');
-        const pinInput = document.getElementById('pinInput');
-        const pinError = document.getElementById('pinError');
-        const vaultContainer = document.getElementById('vaultContainer');
-        const secretContent = document.getElementById('secretContent');
-
-        function tryUnlock() {
-            const intento = pinInput.value.toUpperCase().trim();
+        // Escuchar cambios en vivo para apagar/encender puntitos si estás dentro
+        supabaseClient.channel('drop_header')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'logs' }, payload => {
+                fetchSystemState();
+            })
+            .subscribe();
             
-            if (intento === currentValidCode) {
-                // ÉXITO
-                pinError.style.display = 'none';
-                btnUnlock.innerText = '[ DECRYPTING... ]';
-                btnUnlock.style.pointerEvents = 'none';
-                vaultContainer.style.borderColor = 'var(--matrix-green)';
-                
-                // Trackeo en Google Analytics (si existe) de que alguien ha descifrado el código
-                if (typeof gtag === 'function') {
-                    gtag('event', 'unlock_drop', { 'event_category': 'engagement', 'event_label': 'Drop Unlocked' });
-                }
-
-                setTimeout(() => {
-                    vaultContainer.style.display = 'none'; 
-                    secretContent.style.display = 'block'; 
-                }, 800);
-            } else {
-                // FALLO
-                pinError.style.display = 'block';
-                pinInput.value = '';
-                
-                // Efecto de parpadeo rojo (Glitch)
-                vaultContainer.style.borderColor = 'var(--crimson-war)';
-                vaultContainer.style.boxShadow = '0 0 30px rgba(255, 49, 49, 0.2)';
-                setTimeout(() => {
-                    vaultContainer.style.borderColor = 'var(--neon-purple)';
-                    vaultContainer.style.boxShadow = 'none';
-                }, 400);
-            }
-        }
-
-        btnUnlock.addEventListener('click', tryUnlock);
-        
-        // Permitir darle a "Enter" en el teclado para mayor rapidez
-        pinInput.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                tryUnlock();
-            }
-        });
     </script>
 </body>
 </html>

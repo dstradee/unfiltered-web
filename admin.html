@@ -36,24 +36,30 @@
         .btn-back { background: transparent; border: 1px solid var(--steel-grey); color: var(--steel-grey); padding: 0.6rem 1.2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; text-decoration: none; cursor: pointer; transition: all 0.2s; touch-action: manipulation; }
         .btn-back:hover { border-color: var(--electric-cyan); color: var(--electric-cyan); background-color: rgba(0, 242, 255, 0.05); }
 
-        /* SISTEMA DE CAJONES - LAYOUT DE 1 COLUMNA PARA NO SATURAR */
-        .dashboard-layout { display: flex; flex-direction: column; gap: 1.5rem; width: 100%; max-width: 900px; margin: 0 auto; }
+        .dashboard-layout { display: flex; flex-direction: column; width: 100%; max-width: 900px; margin: 0 auto; }
 
-        .admin-box { background-color: var(--obsidian-navy); border: 1px solid var(--steel-grey); padding: 2rem; width: 100%; box-shadow: 0 0 40px rgba(0, 0, 0, 0.8); position: relative; transition: all 0.3s ease; }
+        /* --- SISTEMA DE PESTAÑAS (TABS) --- */
+        .tab-menu { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; justify-content: center; }
         
-        /* CABECERAS CLICKABLES (CAJONES) */
-        .drawer-header { cursor: pointer; user-select: none; -webkit-tap-highlight-color: transparent; }
-        .drawer-icon { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; font-weight: bold; }
-        .drawer-content { display: none; margin-top: 1.5rem; border-top: 1px solid rgba(148, 163, 184, 0.2); padding-top: 1.5rem; animation: fadeIn 0.3s ease; }
-        .drawer-content.active { display: block; }
+        .tab-btn { background-color: var(--obsidian-navy); border: 1px solid var(--steel-grey); color: var(--steel-grey); padding: 0.8rem 1.2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: all 0.2s; touch-action: manipulation; flex-grow: 1; text-align: center; }
+        .tab-btn:hover { background-color: rgba(2, 6, 23, 0.8); }
+
+        /* Estados Activos según el color de cada panel */
+        .tab-btn.active.tab-master { border-color: var(--electric-cyan); color: var(--electric-cyan); background-color: rgba(0, 242, 255, 0.05); box-shadow: 0 -2px 10px rgba(0, 242, 255, 0.1); }
+        .tab-btn.active.tab-news { border-color: var(--crimson-war); color: var(--crimson-war); background-color: rgba(255, 49, 49, 0.05); box-shadow: 0 -2px 10px rgba(255, 49, 49, 0.1); }
+        .tab-btn.active.tab-desc { border-color: var(--hot-pink); color: var(--hot-pink); background-color: rgba(255, 0, 127, 0.05); box-shadow: 0 -2px 10px rgba(255, 0, 127, 0.1); }
+        .tab-btn.active.tab-logs { border-color: var(--smoke-white); color: var(--smoke-white); background-color: rgba(248, 250, 252, 0.05); box-shadow: 0 -2px 10px rgba(255, 255, 255, 0.1); }
+
+        /* Paneles */
+        .admin-box { background-color: var(--obsidian-navy); border: 1px solid var(--steel-grey); padding: 2rem; width: 100%; box-shadow: 0 0 40px rgba(0, 0, 0, 0.8); display: none; animation: fadeInTab 0.3s ease; }
+        .admin-box.active-panel { display: block; }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
+        @keyframes fadeInTab {
+            from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        h1 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 4px; color: var(--smoke-white); font-size: 2.2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-        .h1-title-group { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+        h1 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 4px; color: var(--smoke-white); font-size: 2.5rem; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
         
         .status-indicator { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; letter-spacing: normal; color: var(--electric-cyan); background: rgba(0, 242, 255, 0.1); padding: 4px 8px; border: 1px solid var(--electric-cyan); }
         .warning-text { font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); font-size: 0.85rem; margin-bottom: 2rem; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 1rem; }
@@ -88,7 +94,7 @@
         .msg-error { color: var(--crimson-war); }
         .msg-neutral { color: var(--steel-grey); }
 
-        .logs-container { max-height: 400px; overflow-y: auto; border: 1px solid var(--steel-grey); background-color: var(--vantablack); padding: 1rem; display: flex; flex-direction: column; gap: 0.8rem; }
+        .logs-container { max-height: 500px; overflow-y: auto; border: 1px solid var(--steel-grey); background-color: var(--vantablack); padding: 1rem; display: flex; flex-direction: column; gap: 0.8rem; margin-top: 1.5rem;}
         .logs-container::-webkit-scrollbar { width: 6px; }
         .logs-container::-webkit-scrollbar-track { background: var(--vantablack); }
         .logs-container::-webkit-scrollbar-thumb { background: var(--steel-grey); }
@@ -101,10 +107,10 @@
         @media (max-width: 768px) { 
             body { padding: 1rem; }
             .admin-box { padding: 1.5rem; }
-            h1 { font-size: 1.7rem; }
+            h1 { font-size: 1.8rem; }
+            .tab-btn { font-size: 0.75rem; padding: 0.6rem 0.5rem; }
             .type-selector { grid-template-columns: 1fr; gap: 0.5rem; }
-            .optional-group > div { grid-template-columns: 1fr; }
-            .drawer-icon { font-size: 1.2rem; }
+            .optional-group > div { grid-template-columns: 1fr !important; }
             .log-item { flex-direction: column; align-items: flex-start; gap: 1rem; }
             .log-content { max-width: 100%; }
         }
@@ -118,151 +124,126 @@
 
     <div class="dashboard-layout">
         
-        <!-- CAJÓN 1: INYECCIÓN NORMAL -->
-        <div class="admin-box">
-            <div class="drawer-header" onclick="toggleDrawer('drawer-master', 'icon-master')">
-                <h1>
-                    <span class="h1-title-group">
-                        MASTER TERMINAL 
-                        <span class="status-indicator" id="dbStatus">DB_READY</span>
-                    </span>
-                    <span class="drawer-icon" id="icon-master" style="color: var(--electric-cyan);">[ - ]</span>
-                </h1>
-            </div>
-
-            <div class="drawer-content active" id="drawer-master">
-                <div class="warning-text">INYECCIÓN DE DATOS DE TRADING AL PROTOCOLO PÚBLICO.</div>
-
-                <div class="form-group">
-                    <label>> 1. ETIQUETA DE TIEMPO / TIPO</label>
-                    <input type="text" id="logTime" placeholder="Ej: [LOG_14:30] o [SYS_ALERT]" autocomplete="off">
-                </div>
-
-                <div class="form-group">
-                    <label>> 2. ACCIÓN / MENSAJE PRINCIPAL</label>
-                    <input type="text" id="actionText" placeholder="Ej: Retail trap detected. Check the full report." autocomplete="off">
-                </div>
-
-                <div class="optional-group">
-                    <label style="color: var(--electric-cyan);">> 3. ENLACE OCULTO (Opcional)</label>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.8rem;">
-                        <div>
-                            <label class="optional-label">URL del link (Ej: https://x.com/...)</label>
-                            <input type="url" id="linkUrl" placeholder="https://" autocomplete="off">
-                        </div>
-                        <div>
-                            <label class="optional-label">Palabra a enlazar (Ej: 'full report')</label>
-                            <input type="text" id="linkWord" placeholder="Palabra exacta" autocomplete="off">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>> 4. RESULTADO DESTACADO (Opcional)</label>
-                    <input type="text" id="valueText" placeholder="Ej: +4.5R  o  LIQUIDITY PURGED" autocomplete="off">
-                </div>
-
-                <div class="form-group">
-                    <label>> 5. IMPACTO VISUAL</label>
-                    <div class="type-selector">
-                        <label><input type="radio" name="logType" value="positive" checked><div class="type-option opt-cyan">[ + ] ÉXITO / CYAN</div></label>
-                        <label><input type="radio" name="logType" value="negative"><div class="type-option opt-red">[ - ] ERROR / ROJO</div></label>
-                        <label><input type="radio" name="logType" value="neutral"><div class="type-option opt-grey">[ i ] SYS / GRIS</div></label>
-                    </div>
-                </div>
-
-                <button class="btn-execute" id="btnSubmit" onclick="injectData()">[ INYECTAR AL PROTOCOLO ]</button>
-                <div id="feedback" class="feedback-msg"></div>
-            </div>
+        <!-- MENÚ DE PESTAÑAS SUPERIOR -->
+        <div class="tab-menu">
+            <button class="tab-btn tab-master active" onclick="switchTab('panel-master', this)">[ MASTER ]</button>
+            <button class="tab-btn tab-news" onclick="switchTab('panel-news', this)">[ NOTICIAS ]</button>
+            <button class="tab-btn tab-desc" onclick="switchTab('panel-desc', this)">[ DESCUENTO ]</button>
+            <button class="tab-btn tab-logs" onclick="switchTab('panel-logs', this)">[ REGISTROS ]</button>
         </div>
 
-        <!-- CAJÓN 2: MODO NOTICIAS -->
-        <div class="admin-box" style="border-color: var(--crimson-war);">
-            <div class="drawer-header" onclick="toggleDrawer('drawer-news', 'icon-news')">
-                <h1 style="color: var(--crimson-war);">
-                    <span class="h1-title-group">[ ! ] MACRO NEWS OVERRIDE</span>
-                    <span class="drawer-icon" id="icon-news">[ + ]</span>
-                </h1>
+        <!-- PANEL 1: INYECCIÓN NORMAL -->
+        <div id="panel-master" class="admin-box active-panel">
+            <h1>
+                MASTER TERMINAL 
+                <span class="status-indicator" id="dbStatus">DB_READY</span>
+            </h1>
+            <div class="warning-text">INYECCIÓN DE DATOS DE TRADING AL PROTOCOLO PÚBLICO.</div>
+
+            <div class="form-group">
+                <label>> 1. ETIQUETA DE TIEMPO / TIPO</label>
+                <input type="text" id="logTime" placeholder="Ej: [LOG_14:30] o [SYS_ALERT]" autocomplete="off">
             </div>
 
-            <div class="drawer-content" id="drawer-news">
-                <div class="warning-text" style="color: var(--crimson-war); border-color: rgba(255,49,49,0.2);">ACTIVA LA ALERTA ROJA.</div>
-
-                <div class="form-group">
-                    <label style="color: var(--crimson-war);">> HORA DE FIN DE LA ALERTA</label>
-                    <input type="time" id="newsEndTime" style="border-color: var(--crimson-war); color: var(--crimson-war);">
-                </div>
-
-                <button class="btn-execute btn-danger" id="btnNews" onclick="activateNewsMode()">[ INICIAR ALERTA ROJA ]</button>
-                <button class="btn-execute" style="font-size: 1rem; padding: 0.8rem; margin-top: 0.5rem;" onclick="deactivateSpecialMode('news_alert')">[ APAGAR ALERTA ROJA ]</button>
-                <div id="newsFeedback" class="feedback-msg"></div>
-            </div>
-        </div>
-
-        <!-- CAJÓN 3: MODO DESCUENTO FLASH -->
-        <div class="admin-box" style="border-color: var(--hot-pink);">
-            <div class="drawer-header" onclick="toggleDrawer('drawer-discount', 'icon-desc')">
-                <h1 style="color: var(--hot-pink);">
-                    <span class="h1-title-group">[ % ] DESCUENTO FLASH</span>
-                    <span class="drawer-icon" id="icon-desc">[ + ]</span>
-                </h1>
+            <div class="form-group">
+                <label>> 2. ACCIÓN / MENSAJE PRINCIPAL</label>
+                <input type="text" id="actionText" placeholder="Ej: Retail trap detected. Check the full report." autocomplete="off">
             </div>
 
-            <div class="drawer-content" id="drawer-discount">
-                <div class="warning-text" style="color: var(--hot-pink); border-color: rgba(255,0,127,0.2);">ACTIVA UN BANNER CON CUENTA ATRÁS Y VÍDEO.</div>
-
-                <div class="optional-group" style="border-color: var(--hot-pink); display: grid; grid-template-columns: 1fr 2fr; gap: 1rem; margin-bottom: 1.5rem; background-color: transparent; padding: 0;">
+            <div class="optional-group">
+                <label style="color: var(--electric-cyan);">> 3. ENLACE OCULTO (Opcional)</label>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.8rem;">
                     <div>
-                        <label style="color: var(--hot-pink);">> % DTO</label>
-                        <input type="number" id="descPct" placeholder="Ej: 50" style="border-color: var(--hot-pink); color: var(--hot-pink);">
+                        <label class="optional-label">URL del link (Ej: https://x.com/...)</label>
+                        <input type="url" id="linkUrl" placeholder="https://" autocomplete="off">
                     </div>
                     <div>
-                        <label style="color: var(--hot-pink);">> FECHA Y HORA FIN</label>
-                        <input type="datetime-local" id="descEndTime" style="border-color: var(--hot-pink); color: var(--hot-pink);">
+                        <label class="optional-label">Palabra a enlazar (Ej: 'full report')</label>
+                        <input type="text" id="linkWord" placeholder="Palabra exacta" autocomplete="off">
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <label style="color: var(--hot-pink);">> MENSAJE (El código está en el vídeo)</label>
-                    <input type="text" id="descMsg" placeholder="Ej: Nuevo vídeo. Encuentra el código dentro." autocomplete="off" style="border-color: var(--hot-pink); color: var(--hot-pink);">
-                </div>
-
-                <div class="optional-group" style="border-color: var(--hot-pink);">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                        <div>
-                            <label class="optional-label" style="color: var(--hot-pink);">URL (TikTok/YouTube)</label>
-                            <input type="url" id="descUrl" placeholder="https://" autocomplete="off" style="border-color: var(--hot-pink); color: var(--hot-pink);">
-                        </div>
-                        <div>
-                            <label class="optional-label" style="color: var(--hot-pink);">Palabra a enlazar</label>
-                            <input type="text" id="descWord" placeholder="Ej: vídeo" autocomplete="off" style="border-color: var(--hot-pink); color: var(--hot-pink);">
-                        </div>
-                    </div>
-                </div>
-
-                <button class="btn-execute btn-pink" id="btnDesc" onclick="activateDiscountMode()">[ ACTIVAR DESCUENTO GLOBAL ]</button>
-                <button class="btn-execute" style="font-size: 1rem; padding: 0.8rem; margin-top: 0.5rem;" onclick="deactivateSpecialMode('discount_alert')">[ APAGAR DESCUENTO ]</button>
-                <div id="descFeedback" class="feedback-msg"></div>
             </div>
+
+            <div class="form-group">
+                <label>> 4. RESULTADO DESTACADO (Opcional)</label>
+                <input type="text" id="valueText" placeholder="Ej: +4.5R  o  LIQUIDITY PURGED" autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label>> 5. IMPACTO VISUAL</label>
+                <div class="type-selector">
+                    <label><input type="radio" name="logType" value="positive" checked><div class="type-option opt-cyan">[ + ] ÉXITO / CYAN</div></label>
+                    <label><input type="radio" name="logType" value="negative"><div class="type-option opt-red">[ - ] ERROR / ROJO</div></label>
+                    <label><input type="radio" name="logType" value="neutral"><div class="type-option opt-grey">[ i ] SYS / GRIS</div></label>
+                </div>
+            </div>
+
+            <button class="btn-execute" id="btnSubmit" onclick="injectData()">[ INYECTAR AL PROTOCOLO ]</button>
+            <div id="feedback" class="feedback-msg"></div>
         </div>
 
-        <!-- CAJÓN 4: GESTOR DE REGISTROS -->
-        <div class="admin-box">
-            <div class="drawer-header" onclick="toggleDrawer('drawer-logs', 'icon-logs')">
-                <h1 style="color: var(--steel-grey);">
-                    <span class="h1-title-group">
-                        REGISTRO ACTIVO 
-                        <!-- Paramos la propagación aquí para que el botón de refrescar no abra/cierre el cajón por error -->
-                        <span class="status-indicator" style="color: var(--steel-grey); border-color: var(--steel-grey); background: transparent; cursor:pointer;" onclick="event.stopPropagation(); loadLogs()">[ REFRESCAR ]</span>
-                    </span>
-                    <span class="drawer-icon" id="icon-logs">[ + ]</span>
-                </h1>
+        <!-- PANEL 2: MODO NOTICIAS -->
+        <div id="panel-news" class="admin-box" style="border-color: var(--crimson-war);">
+            <h1 style="color: var(--crimson-war);">[ ! ] MACRO NEWS OVERRIDE</h1>
+            <div class="warning-text" style="color: var(--crimson-war); border-color: rgba(255,49,49,0.2);">ACTIVA LA ALERTA ROJA.</div>
+
+            <div class="form-group">
+                <label style="color: var(--crimson-war);">> HORA DE FIN DE LA ALERTA</label>
+                <input type="time" id="newsEndTime" style="border-color: var(--crimson-war); color: var(--crimson-war);">
             </div>
 
-            <div class="drawer-content" id="drawer-logs">
-                <div id="logsContainer" class="logs-container">
-                    <div class="msg-neutral" style="text-align: center;">Sincronizando...</div>
+            <button class="btn-execute btn-danger" id="btnNews" onclick="activateNewsMode()">[ INICIAR ALERTA ROJA ]</button>
+            <button class="btn-execute" style="font-size: 1rem; padding: 0.8rem; margin-top: 0.5rem;" onclick="deactivateSpecialMode('news_alert')">[ APAGAR ALERTA ROJA ]</button>
+            <div id="newsFeedback" class="feedback-msg"></div>
+        </div>
+
+        <!-- PANEL 3: MODO DESCUENTO FLASH -->
+        <div id="panel-desc" class="admin-box" style="border-color: var(--hot-pink);">
+            <h1 style="color: var(--hot-pink);">[ % ] DESCUENTO FLASH</h1>
+            <div class="warning-text" style="color: var(--hot-pink); border-color: rgba(255,0,127,0.2);">ACTIVA UN BANNER CON CUENTA ATRÁS Y VÍDEO.</div>
+
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <div>
+                    <label style="color: var(--hot-pink);">> % DTO</label>
+                    <input type="number" id="descPct" placeholder="Ej: 50" style="border-color: var(--hot-pink); color: var(--hot-pink);">
                 </div>
+                <div>
+                    <label style="color: var(--hot-pink);">> FECHA Y HORA FIN</label>
+                    <input type="datetime-local" id="descEndTime" style="border-color: var(--hot-pink); color: var(--hot-pink);">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label style="color: var(--hot-pink);">> MENSAJE (El código está en el vídeo)</label>
+                <input type="text" id="descMsg" placeholder="Ej: Nuevo vídeo. Encuentra el código dentro." autocomplete="off" style="border-color: var(--hot-pink); color: var(--hot-pink);">
+            </div>
+
+            <div class="optional-group" style="border-color: var(--hot-pink); background-color: transparent;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <label class="optional-label" style="color: var(--hot-pink);">URL (TikTok/YouTube)</label>
+                        <input type="url" id="descUrl" placeholder="https://" autocomplete="off" style="border-color: var(--hot-pink); color: var(--hot-pink);">
+                    </div>
+                    <div>
+                        <label class="optional-label" style="color: var(--hot-pink);">Palabra a enlazar</label>
+                        <input type="text" id="descWord" placeholder="Ej: vídeo" autocomplete="off" style="border-color: var(--hot-pink); color: var(--hot-pink);">
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-execute btn-pink" id="btnDesc" onclick="activateDiscountMode()">[ ACTIVAR DESCUENTO GLOBAL ]</button>
+            <button class="btn-execute" style="font-size: 1rem; padding: 0.8rem; margin-top: 0.5rem;" onclick="deactivateSpecialMode('discount_alert')">[ APAGAR DESCUENTO ]</button>
+            <div id="descFeedback" class="feedback-msg"></div>
+        </div>
+
+        <!-- PANEL 4: GESTOR DE REGISTROS -->
+        <div id="panel-logs" class="admin-box">
+            <h1 style="color: var(--steel-grey);">
+                REGISTRO ACTIVO 
+                <span class="status-indicator" style="color: var(--smoke-white); border-color: var(--smoke-white); background: transparent; cursor:pointer;" onclick="loadLogs()">[ REFRESCAR ]</span>
+            </h1>
+            <div id="logsContainer" class="logs-container">
+                <div class="msg-neutral" style="text-align: center;">Sincronizando...</div>
             </div>
         </div>
 
@@ -273,20 +254,24 @@
         const SUPABASE_KEY = 'sb_publishable_eA2g7-rTvcPcfz_dVl2aWg_Ca5P7t93';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // --- SISTEMA DE CAJONES (NUEVO) ---
-        function toggleDrawer(drawerId, iconId) {
-            const content = document.getElementById(drawerId);
-            const icon = document.getElementById(iconId);
-            const isOpening = !content.classList.contains('active');
+        // --- SISTEMA DE PESTAÑAS (TABS) ---
+        function switchTab(panelId, btnElement) {
+            // Oculta todos los paneles
+            document.querySelectorAll('.admin-box').forEach(panel => {
+                panel.classList.remove('active-panel');
+            });
+            // Quita la clase activa de todos los botones
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
 
-            // 1. Cierra todos los cajones para no saturar pantalla
-            document.querySelectorAll('.drawer-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.drawer-icon').forEach(el => el.innerText = '[ + ]');
-
-            // 2. Abre el cajón clicado (si no estaba ya abierto)
-            if (isOpening) {
-                content.classList.add('active');
-                icon.innerText = '[ - ]';
+            // Muestra el panel seleccionado y activa su botón
+            document.getElementById(panelId).classList.add('active-panel');
+            btnElement.classList.add('active');
+            
+            // Si entra a logs, refresca automáticamente
+            if (panelId === 'panel-logs') {
+                loadLogs();
             }
         }
 
@@ -355,7 +340,6 @@
             if (endDate <= new Date().getTime()) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Fecha ya pasada.'; return; }
 
             if (linkUrl && linkWord) {
-                // Color blanco para el enlace en el banner rosa
                 const anchorTag = `<a href="${linkUrl}" target="_blank" style="color: #FFFFFF; text-decoration: underline; text-underline-offset: 4px; font-weight: bold; cursor: pointer;">${linkWord}</a>`;
                 if (msg.includes(linkWord)) { msg = msg.replace(linkWord, anchorTag); } 
                 else { msg += ` <a href="${linkUrl}" target="_blank" style="color: var(--hot-pink); background-color: #FFFFFF; padding: 2px 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-decoration: none; margin-left: 8px;">[ ${linkWord} ]</a>`; }
@@ -363,7 +347,6 @@
 
             btn.innerText = 'ACTIVANDO...';
             try {
-                // Guardamos el Timestamp y el Porcentaje juntos en value_text, separados por un palito "|"
                 const valuePayload = `${endDate}|${pct}`;
                 const { error } = await supabaseClient.from('logs').insert([{ log_time: '[DISCOUNT]', action_text: msg, value_text: valuePayload, log_type: 'discount_alert' }]);
                 if (error) throw error;

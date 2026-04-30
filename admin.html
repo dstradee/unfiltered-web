@@ -5,16 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>THE VAULT | Panel de Control PRO</title>
     
-    <!-- Fuentes oficiales de la marca -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
     
-    <!-- Librería oficial de Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        /* --- COLORES DE LA MARCA --- */
         :root {
             --obsidian-navy: #0B1A30;
             --electric-cyan: #00F2FF;
@@ -32,7 +29,7 @@
             font-family: 'Inter', sans-serif;
             display: flex;
             flex-direction: column;
-            align-items: center; /* Centramos el contenido principal */
+            align-items: center; 
             min-height: 100vh;
             background-image: 
                 linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px),
@@ -41,7 +38,6 @@
             padding: 2rem;
         }
 
-        /* --- NAVEGACIÓN SUPERIOR --- */
         .top-nav {
             width: 100%;
             max-width: 1400px;
@@ -68,10 +64,9 @@
             background-color: rgba(0, 242, 255, 0.05);
         }
 
-        /* --- LAYOUT SIDE-BY-SIDE --- */
         .dashboard-layout {
             display: grid;
-            grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+            grid-template-columns: 1fr 1fr; 
             gap: 2rem;
             width: 100%;
             max-width: 1400px;
@@ -79,9 +74,7 @@
         }
 
         @media (max-width: 1024px) {
-            .dashboard-layout {
-                grid-template-columns: 1fr; /* Vuelve a 1 columna en pantallas pequeñas */
-            }
+            .dashboard-layout { grid-template-columns: 1fr; }
         }
 
         .admin-box {
@@ -91,6 +84,7 @@
             width: 100%;
             box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
             position: relative;
+            margin-bottom: 2rem;
         }
 
         h1 {
@@ -157,16 +151,16 @@
             transition: border-color 0.2s;
         }
 
+        input[type="time"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
+
         input:focus {
             border-color: var(--electric-cyan);
             box-shadow: inset 0 0 5px rgba(0, 242, 255, 0.1);
         }
 
-        input::placeholder {
-            color: rgba(148, 163, 184, 0.3);
-        }
-
-        /* --- SELECTORES DE IMPACTO VISUAL --- */
         .type-selector {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -189,22 +183,17 @@
         .type-selector input[type="radio"] { display: none; }
 
         .type-selector input[type="radio"]:checked + .type-option.opt-cyan {
-            border-color: var(--electric-cyan);
-            color: var(--electric-cyan);
-            background-color: rgba(0, 242, 255, 0.05);
-            box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
+            border-color: var(--electric-cyan); color: var(--electric-cyan);
+            background-color: rgba(0, 242, 255, 0.05); box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
         }
 
         .type-selector input[type="radio"]:checked + .type-option.opt-red {
-            border-color: var(--crimson-war);
-            color: var(--crimson-war);
-            background-color: rgba(255, 49, 49, 0.05);
-            box-shadow: 0 0 10px rgba(255, 49, 49, 0.2);
+            border-color: var(--crimson-war); color: var(--crimson-war);
+            background-color: rgba(255, 49, 49, 0.05); box-shadow: 0 0 10px rgba(255, 49, 49, 0.2);
         }
 
         .type-selector input[type="radio"]:checked + .type-option.opt-grey {
-            border-color: var(--smoke-white);
-            color: var(--smoke-white);
+            border-color: var(--smoke-white); color: var(--smoke-white);
             background-color: rgba(248, 250, 252, 0.05);
         }
 
@@ -227,7 +216,16 @@
             color: var(--vantablack);
         }
 
-        #feedback {
+        .btn-danger {
+            color: var(--crimson-war);
+            border-color: var(--crimson-war);
+        }
+        .btn-danger:hover {
+            background-color: var(--crimson-war);
+            color: var(--smoke-white);
+        }
+
+        #feedback, #newsFeedback {
             margin-top: 1rem;
             text-align: center;
             font-family: 'JetBrains Mono', monospace;
@@ -251,7 +249,6 @@
             gap: 0.8rem;
         }
 
-        /* Scrollbar styles */
         .logs-container::-webkit-scrollbar { width: 6px; }
         .logs-container::-webkit-scrollbar-track { background: var(--vantablack); }
         .logs-container::-webkit-scrollbar-thumb { background: var(--steel-grey); }
@@ -267,126 +264,130 @@
             font-size: 0.8rem;
         }
 
-        .log-content {
-            display: flex;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-            max-width: 80%;
-        }
+        .log-content { display: flex; gap: 0.8rem; flex-wrap: wrap; max-width: 80%; }
 
         .btn-delete {
-            background: transparent;
-            border: 1px solid var(--crimson-war);
-            color: var(--crimson-war);
-            padding: 0.4rem 0.8rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem;
-            cursor: pointer;
-            transition: all 0.2s;
+            background: transparent; border: 1px solid var(--crimson-war);
+            color: var(--crimson-war); padding: 0.4rem 0.8rem;
+            font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
+            cursor: pointer; transition: all 0.2s;
         }
 
-        .btn-delete:hover {
-            background: var(--crimson-war);
-            color: var(--smoke-white);
-        }
+        .btn-delete:hover { background: var(--crimson-war); color: var(--smoke-white); }
 
     </style>
 </head>
 <body>
 
-    <!-- BOTÓN PARA VOLVER A LA WEB PÚBLICA -->
     <div class="top-nav">
         <a href="index.html" class="btn-back">[ < VOLVER AL PROTOCOLO PÚBLICO ]</a>
     </div>
 
     <div class="dashboard-layout">
-        <!-- CAJA 1: INYECTOR DE DATOS (IZQUIERDA) -->
-        <div class="admin-box">
-            <h1>
-                MASTER TERMINAL 
-                <span class="status-indicator" id="dbStatus">DB_READY</span>
-            </h1>
-            <div class="warning-text">PANEL RESTRINGIDO. LO QUE ENVÍES AQUÍ APARECERÁ EN LA WEB PÚBLICA AL INSTANTE.</div>
+        <!-- COLUMNA IZQUIERDA -->
+        <div>
+            <!-- CAJA 1: INYECTOR DE DATOS NORMALES -->
+            <div class="admin-box">
+                <h1>
+                    MASTER TERMINAL 
+                    <span class="status-indicator" id="dbStatus">DB_READY</span>
+                </h1>
+                <div class="warning-text">PANEL RESTRINGIDO. LO QUE ENVÍES AQUÍ APARECERÁ EN LA WEB PÚBLICA AL INSTANTE.</div>
 
-            <div class="form-group">
-                <label>> 1. ETIQUETA DE TIEMPO / TIPO</label>
-                <input type="text" id="logTime" placeholder="Ej: [LOG_14:30] o [SYS_ALERT]" autocomplete="off">
-            </div>
+                <div class="form-group">
+                    <label>> 1. ETIQUETA DE TIEMPO / TIPO</label>
+                    <input type="text" id="logTime" placeholder="Ej: [LOG_14:30] o [SYS_ALERT]" autocomplete="off">
+                </div>
 
-            <div class="form-group">
-                <label>> 2. ACCIÓN / MENSAJE PRINCIPAL</label>
-                <input type="text" id="actionText" placeholder="Ej: Retail trap detected. Check the full report." autocomplete="off">
-            </div>
+                <div class="form-group">
+                    <label>> 2. ACCIÓN / MENSAJE PRINCIPAL</label>
+                    <input type="text" id="actionText" placeholder="Ej: Retail trap detected. Check the full report." autocomplete="off">
+                </div>
 
-            <div class="optional-group">
-                <label style="color: var(--electric-cyan);">> 3. ENLACE OCULTO (Opcional)</label>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.8rem;">
-                    <div>
-                        <label class="optional-label">URL del link (Ej: https://x.com/...)</label>
-                        <input type="url" id="linkUrl" placeholder="https://" autocomplete="off">
-                    </div>
-                    <div>
-                        <label class="optional-label">Palabra a enlazar (Ej: 'full report')</label>
-                        <input type="text" id="linkWord" placeholder="Palabra exacta" autocomplete="off">
+                <div class="optional-group">
+                    <label style="color: var(--electric-cyan);">> 3. ENLACE OCULTO (Opcional)</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.8rem;">
+                        <div>
+                            <label class="optional-label">URL del link (Ej: https://x.com/...)</label>
+                            <input type="url" id="linkUrl" placeholder="https://" autocomplete="off">
+                        </div>
+                        <div>
+                            <label class="optional-label">Palabra a enlazar (Ej: 'full report')</label>
+                            <input type="text" id="linkWord" placeholder="Palabra exacta" autocomplete="off">
+                        </div>
                     </div>
                 </div>
-                <p style="font-family: 'Inter', sans-serif; font-size: 0.7rem; color: var(--steel-grey); margin-top: 0.5rem;">
-                    *Si la palabra está en tu mensaje, se convertirá en link. Si no, se añadirá al final como un botón [ Palabra ].
-                </p>
-            </div>
 
-            <div class="form-group">
-                <label>> 4. RESULTADO DESTACADO (Opcional)</label>
-                <input type="text" id="valueText" placeholder="Ej: +4.5R  o  LIQUIDITY PURGED" autocomplete="off">
-            </div>
-
-            <div class="form-group">
-                <label>> 5. IMPACTO VISUAL (Color del mensaje)</label>
-                <div class="type-selector">
-                    <label>
-                        <input type="radio" name="logType" value="positive" checked>
-                        <div class="type-option opt-cyan">[ + ] ÉXITO / CYAN</div>
-                    </label>
-                    <label>
-                        <input type="radio" name="logType" value="negative">
-                        <div class="type-option opt-red">[ - ] ERROR / ROJO</div>
-                    </label>
-                    <label>
-                        <input type="radio" name="logType" value="neutral">
-                        <div class="type-option opt-grey">[ i ] SYS / GRIS</div>
-                    </label>
+                <div class="form-group">
+                    <label>> 4. RESULTADO DESTACADO (Opcional)</label>
+                    <input type="text" id="valueText" placeholder="Ej: +4.5R  o  LIQUIDITY PURGED" autocomplete="off">
                 </div>
-            </div>
 
-            <button class="btn-execute" id="btnSubmit" onclick="injectData()">[ INYECTAR AL PROTOCOLO PÚBLICO ]</button>
-            
-            <div id="feedback"></div>
+                <div class="form-group">
+                    <label>> 5. IMPACTO VISUAL (Color del mensaje)</label>
+                    <div class="type-selector">
+                        <label>
+                            <input type="radio" name="logType" value="positive" checked>
+                            <div class="type-option opt-cyan">[ + ] ÉXITO / CYAN</div>
+                        </label>
+                        <label>
+                            <input type="radio" name="logType" value="negative">
+                            <div class="type-option opt-red">[ - ] ERROR / ROJO</div>
+                        </label>
+                        <label>
+                            <input type="radio" name="logType" value="neutral">
+                            <div class="type-option opt-grey">[ i ] SYS / GRIS</div>
+                        </label>
+                    </div>
+                </div>
+
+                <button class="btn-execute" id="btnSubmit" onclick="injectData()">[ INYECTAR AL PROTOCOLO PÚBLICO ]</button>
+                <div id="feedback"></div>
+            </div>
         </div>
 
-        <!-- CAJA 2: GESTOR DE REGISTROS (DERECHA) -->
-        <div class="admin-box">
-            <h1 style="font-size: 1.8rem; color: var(--steel-grey);">
-                REGISTRO ACTIVO 
-                <span class="status-indicator" style="color: var(--steel-grey); border-color: var(--steel-grey); background: transparent;" onclick="loadLogs()" style="cursor:pointer">[ REFRESCAR ]</span>
-            </h1>
-            <div class="warning-text" style="margin-bottom: 1rem;">GESTIONA EL HISTORIAL DE LA BASE DE DATOS.</div>
-            
-            <div id="logsContainer" class="logs-container">
-                <div class="msg-neutral" style="text-align: center;">Iniciando conexión con The Vault...</div>
+        <!-- COLUMNA DERECHA -->
+        <div>
+            <!-- CAJA 2: MODO NOTICIAS (NUEVO) -->
+            <div class="admin-box" style="border-color: var(--crimson-war);">
+                <h1 style="color: var(--crimson-war);">[ ! ] MACRO NEWS OVERRIDE</h1>
+                <div class="warning-text" style="color: var(--crimson-war); border-color: rgba(255,49,49,0.2);">
+                    ACTIVA EL MODO NOTICIAS. LA WEB PARPADEARÁ EN ROJO.
+                </div>
+
+                <div class="form-group">
+                    <label style="color: var(--crimson-war);">> HORA DE FIN DE LA ALERTA</label>
+                    <input type="time" id="newsEndTime" style="border-color: var(--crimson-war); color: var(--crimson-war);">
+                    <p style="font-family: 'Inter', sans-serif; font-size: 0.7rem; color: var(--steel-grey); margin-top: 0.5rem;">
+                        *El sistema apagará la alerta roja automáticamente a esta hora. Los usuarios no verán este temporizador.
+                    </p>
+                </div>
+
+                <button class="btn-execute btn-danger" id="btnNews" onclick="activateNewsMode()">[ INICIAR PROTOCOLO DE EMERGENCIA ]</button>
+                <button class="btn-execute" style="font-size: 1rem; padding: 0.8rem; margin-top: 0.5rem;" onclick="deactivateNewsMode()">[ FORZAR APAGADO DE ALERTA ]</button>
+                <div id="newsFeedback"></div>
+            </div>
+
+            <!-- CAJA 3: GESTOR DE REGISTROS -->
+            <div class="admin-box">
+                <h1 style="font-size: 1.8rem; color: var(--steel-grey);">
+                    REGISTRO ACTIVO 
+                    <span class="status-indicator" style="color: var(--steel-grey); border-color: var(--steel-grey); background: transparent; cursor:pointer;" onclick="loadLogs()">[ REFRESCAR ]</span>
+                </h1>
+                <div class="warning-text" style="margin-bottom: 1rem;">GESTIONA EL HISTORIAL DE LA BASE DE DATOS.</div>
+                
+                <div id="logsContainer" class="logs-container">
+                    <div class="msg-neutral" style="text-align: center;">Iniciando conexión con The Vault...</div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // =========================================================================
-        // LLAVES DE SUPABASE DE PABLO
-        // =========================================================================
         const SUPABASE_URL = 'https://qtpuipgkytzjnckkkwnl.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_eA2g7-rTvcPcfz_dVl2aWg_Ca5P7t93';
-        
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // --- FUNCIÓN PARA INYECTAR DATOS ---
         async function injectData() {
             const btn = document.getElementById('btnSubmit');
             const feedback = document.getElementById('feedback');
@@ -401,13 +402,12 @@
 
             if (!logTime || !actionText) {
                 feedback.className = 'msg-error';
-                feedback.innerText = '[SYSTEM ERROR] Faltan los campos 1 y 2. Son obligatorios.';
+                feedback.innerText = '[SYSTEM ERROR] Faltan los campos 1 y 2.';
                 return;
             }
 
             if (linkUrl && linkWord) {
                 const anchorTag = `<a href="${linkUrl}" target="_blank" style="color: var(--electric-cyan); text-decoration: underline; text-underline-offset: 4px; font-weight: bold; cursor: pointer;">${linkWord}</a>`;
-                
                 if (actionText.includes(linkWord)) {
                     actionText = actionText.replace(linkWord, anchorTag);
                 } else {
@@ -415,42 +415,104 @@
                 }
             }
 
-            btn.innerText = 'INYECTANDO DATOS...';
+            btn.innerText = 'INYECTANDO...';
             btn.style.pointerEvents = 'none';
             feedback.innerText = '';
 
             try {
-                const { data, error } = await supabaseClient
+                const { error } = await supabaseClient
                     .from('logs')
-                    .insert([
-                        { log_time: logTime, action_text: actionText, value_text: valueText, log_type: logType }
-                    ]);
+                    .insert([{ log_time: logTime, action_text: actionText, value_text: valueText, log_type: logType }]);
 
                 if (error) throw error;
 
                 feedback.className = 'msg-success';
-                feedback.innerText = '[SUCCESS] Protocolo actualizado. Enlace procesado.';
+                feedback.innerText = '[SUCCESS] Protocolo actualizado.';
                 
-                // Limpiar formulario
                 document.getElementById('actionText').value = '';
                 document.getElementById('valueText').value = '';
                 document.getElementById('linkUrl').value = '';
                 document.getElementById('linkWord').value = '';
 
-                // Recargar la lista de abajo automáticamente
                 loadLogs();
-                
             } catch (error) {
-                console.error("Error:", error);
                 feedback.className = 'msg-error';
-                feedback.innerText = '[ERROR] Hubo un fallo en la inyección de datos.';
+                feedback.innerText = '[ERROR] Fallo en inyección.';
             } finally {
                 btn.innerText = '[ INYECTAR AL PROTOCOLO PÚBLICO ]';
                 btn.style.pointerEvents = 'auto';
             }
         }
 
-        // --- FUNCIÓN PARA LEER EL REGISTRO HISTÓRICO ---
+        // --- SISTEMA DE MODO NOTICIAS ---
+        async function activateNewsMode() {
+            const timeVal = document.getElementById('newsEndTime').value;
+            const feedback = document.getElementById('newsFeedback');
+            const btn = document.getElementById('btnNews');
+
+            if(!timeVal) {
+                feedback.className = 'msg-error';
+                feedback.innerText = '[ERROR] Introduce la hora de fin.';
+                return;
+            }
+
+            const now = new Date();
+            const [hours, minutes] = timeVal.split(':');
+            const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0);
+
+            if (endDate.getTime() <= now.getTime()) {
+                feedback.className = 'msg-error';
+                feedback.innerText = '[ERROR] Esa hora ya ha pasado.';
+                return;
+            }
+
+            btn.innerText = 'ACTIVANDO...';
+            
+            try {
+                const { error } = await supabaseClient
+                    .from('logs')
+                    .insert([{ 
+                        log_time: '[SYS_EMERGENCY]', 
+                        action_text: 'MACRO EVENT PROTOCOL ACTIVATED', 
+                        value_text: endDate.getTime().toString(), // Guardamos el timestamp
+                        log_type: 'news_alert' // Tipo especial oculto
+                    }]);
+
+                if (error) throw error;
+
+                feedback.className = 'msg-error'; // Rojo a propósito
+                feedback.innerText = '[ ! ] MODO NOTICIAS ACTIVADO CON ÉXITO.';
+                loadLogs();
+            } catch (error) {
+                feedback.className = 'msg-error';
+                feedback.innerText = '[ERROR] Fallo al activar modo.';
+            } finally {
+                btn.innerText = '[ INICIAR PROTOCOLO DE EMERGENCIA ]';
+            }
+        }
+
+        async function deactivateNewsMode() {
+            const feedback = document.getElementById('newsFeedback');
+            try {
+                // Para apagarlo forzosamente, mandamos un tiempo de "0"
+                const { error } = await supabaseClient
+                    .from('logs')
+                    .insert([{ 
+                        log_time: '[SYS_EMERGENCY]', 
+                        action_text: 'MACRO EVENT PROTOCOL DEACTIVATED', 
+                        value_text: "0", 
+                        log_type: 'news_alert' 
+                    }]);
+                if (error) throw error;
+                feedback.className = 'msg-success';
+                feedback.innerText = '[ OK ] Alerta apagada forzosamente.';
+                loadLogs();
+            } catch (error) {
+                feedback.innerText = '[ERROR] Fallo al apagar.';
+            }
+        }
+
+        // --- CARGA DE LOGS ---
         async function loadLogs() {
             const container = document.getElementById('logsContainer');
             container.innerHTML = '<div class="msg-neutral" style="text-align:center;">Sincronizando con The Vault...</div>';
@@ -464,38 +526,31 @@
                 if (error) throw error;
 
                 if (data.length === 0) {
-                    container.innerHTML = '<div class="msg-neutral" style="text-align:center;">[ EMPTY ] No hay registros en el sistema.</div>';
+                    container.innerHTML = '<div class="msg-neutral" style="text-align:center;">[ EMPTY ] No hay registros.</div>';
                     return;
                 }
 
-                container.innerHTML = ''; // Limpiamos
+                container.innerHTML = ''; 
 
                 data.forEach(log => {
-                    // Colores según el tipo
                     let borderColor = 'var(--steel-grey)';
                     let valueColor = 'var(--steel-grey)';
                     
-                    if(log.log_type === 'positive') {
-                        borderColor = 'var(--electric-cyan)';
-                        valueColor = 'var(--electric-cyan)';
-                    } else if (log.log_type === 'negative') {
-                        borderColor = 'var(--crimson-war)';
-                        valueColor = 'var(--crimson-war)';
-                    }
+                    if(log.log_type === 'positive') { borderColor = 'var(--electric-cyan)'; valueColor = 'var(--electric-cyan)'; } 
+                    else if (log.log_type === 'negative') { borderColor = 'var(--crimson-war)'; valueColor = 'var(--crimson-war)'; }
+                    else if (log.log_type === 'news_alert') { borderColor = '#FF8C00'; valueColor = '#FF8C00'; } // Naranja para distinguirlo en el admin
 
                     const logEl = document.createElement('div');
                     logEl.className = 'log-item';
                     logEl.style.borderLeftColor = borderColor;
 
-                    // Escapamos un poco el HTML para no romper la tabla visualmente, 
-                    // pero mantenemos los tags <a> para que veas que tiene enlace.
                     const displayAction = log.action_text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
                     logEl.innerHTML = `
                         <div class="log-content">
                             <span style="color: var(--steel-grey); min-width: 90px;">${log.log_time}</span>
                             <span style="color: var(--smoke-white); flex: 1;">${displayAction}</span>
-                            ${log.value_text ? `<span style="color: ${valueColor}; font-weight: bold;">${log.value_text}</span>` : ''}
+                            ${log.value_text ? `<span style="color: ${valueColor}; font-weight: bold;">${log.log_type === 'news_alert' && log.value_text.length > 5 ? 'TS: ' + log.value_text : log.value_text}</span>` : ''}
                         </div>
                         <button class="btn-delete" onclick="deleteLog(${log.id})">[ ELIMINAR ]</button>
                     `;
@@ -503,41 +558,22 @@
                 });
 
             } catch (err) {
-                console.error("Error al cargar logs:", err);
-                container.innerHTML = '<div class="msg-error" style="text-align:center;">[SYS_ERROR] Fallo al leer la base de datos.</div>';
+                container.innerHTML = '<div class="msg-error" style="text-align:center;">[SYS_ERROR] Fallo al leer.</div>';
             }
         }
 
-        // --- FUNCIÓN PARA BORRAR DATOS ---
         async function deleteLog(id) {
-            // Confirmación de seguridad
-            if(!confirm("⚠️ ¿CONFIRMAS PURGA DE DATOS?\nEsto lo borrará de la base de datos y de la web pública de forma irreversible.")) {
-                return; 
-            }
-
+            if(!confirm("⚠️ ¿CONFIRMAS PURGA DE DATOS?")) return; 
             try {
-                const { error } = await supabaseClient
-                    .from('logs')
-                    .delete()
-                    .eq('id', id);
-
-                if (error) {
-                    console.error(error);
-                    throw error;
-                }
-                
-                // Si va bien, recargamos la lista
+                const { error } = await supabaseClient.from('logs').delete().eq('id', id);
+                if (error) throw error;
                 loadLogs();
-                
             } catch (err) {
-                console.error("Error al borrar:", err);
-                alert("[ERROR] No se pudo eliminar el registro. Revisa la consola.");
+                alert("[ERROR] No se pudo eliminar el registro. Revisa las policies de Supabase.");
             }
         }
 
-        // Cargar los logs al abrir la página
         loadLogs();
-
     </script>
 </body>
 </html>

@@ -113,6 +113,16 @@
         .btn-delete { background: transparent; border: 1px solid var(--crimson-war); color: var(--crimson-war); padding: 0.4rem 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; cursor: pointer; transition: all 0.2s; touch-action: manipulation; }
         .btn-delete:hover { background: var(--crimson-war); color: var(--smoke-white); }
 
+        /* Estilos lista de botones guardados */
+        .saved-btn-row { background-color: rgba(176, 38, 255, 0.05); border: 1px solid var(--neon-purple); padding: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        .saved-btn-id { color: var(--neon-purple); font-family: 'JetBrains Mono', monospace; font-weight: bold; font-size: 1.1rem; }
+        .action-btn-show { background: transparent; border: 1px solid var(--electric-cyan); color: var(--electric-cyan); padding: 0.5rem 1rem; cursor: pointer; font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; transition: all 0.2s; }
+        .action-btn-show:hover { background-color: rgba(0,242,255,0.1); }
+        .action-btn-hide { background: transparent; border: 1px solid var(--crimson-war); color: var(--crimson-war); padding: 0.5rem 1rem; cursor: pointer; font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; transition: all 0.2s; }
+        .action-btn-hide:hover { background-color: rgba(255,49,49,0.1); }
+        .action-btn-del { background: transparent; border: none; color: var(--steel-grey); padding: 0.5rem; cursor: pointer; font-family: monospace; font-weight: bold; font-size: 1.2rem; transition: color 0.2s; }
+        .action-btn-del:hover { color: var(--crimson-war); }
+
         /* ADAPTACIÓN MÓVIL ESTRICTA */
         @media (max-width: 768px) { 
             body { padding: 1rem; }
@@ -123,6 +133,12 @@
             .optional-group > div { grid-template-columns: 1fr !important; }
             .log-item { flex-direction: column; align-items: flex-start; gap: 1rem; }
             .log-content { max-width: 100%; }
+            
+            /* Ajustes para la pestaña de visibilidad */
+            .flex-row-mobile { flex-direction: column !important; align-items: stretch !important; gap: 0.5rem !important; }
+            .flex-row-mobile button { width: 100%; margin-top: 0.5rem; }
+            .saved-btn-row { flex-direction: column; align-items: flex-start; }
+            .saved-btn-actions { display: flex; width: 100%; justify-content: space-between; }
         }
     </style>
 </head>
@@ -264,31 +280,31 @@
             <div id="popupFeedback" class="feedback-msg"></div>
         </div>
 
-        <!-- PANEL 5: VISIBILIDAD DE BOTONES (MODO INTERRUPTOR) -->
+        <!-- PANEL 5: VISIBILIDAD DE BOTONES CON LISTA GUARDADA -->
         <div id="panel-buttons" class="admin-box" style="border-color: var(--neon-purple);">
             <h1 style="color: var(--neon-purple);">[ 🎛️ ] VISIBILIDAD DE BOTONES</h1>
             <div class="warning-text" style="color: var(--neon-purple); border-color: rgba(176, 38, 255, 0.2);">
-                ENCIENDE O APAGA BOTONES QUE YA EXISTEN EN EL CÓDIGO DE TU PÁGINA PÚBLICA.
+                GESTIONA TUS BOTONES RÁPIDAMENTE SIN TENER QUE ESCRIBIR EL ID CADA VEZ.
             </div>
 
-            <div class="form-group">
-                <label style="color: var(--neon-purple);">> ID DEL BOTÓN HTML</label>
-                <input type="text" id="btnId" placeholder="Ej: btn-eventos o openCalcBtn" autocomplete="off" style="border-color: var(--neon-purple); color: var(--neon-purple);">
-                <p style="font-family: 'Inter', sans-serif; font-size: 0.7rem; color: var(--steel-grey); margin-top: 0.5rem;">
-                    *Debe coincidir exactamente con el ID que le pongas al botón en tu código de la página pública (index.html).
-                </p>
-            </div>
-
-            <div class="form-group">
-                <label style="color: var(--neon-purple);">> ESTADO DEL BOTÓN</label>
-                <div class="type-selector" style="grid-template-columns: 1fr 1fr;">
-                    <label><input type="radio" name="btnState" value="show" checked><div class="type-option opt-cyan">[ 🟢 ] MOSTRAR</div></label>
-                    <label><input type="radio" name="btnState" value="hide"><div class="type-option opt-red">[ 🔴 ] OCULTAR</div></label>
+            <!-- Añadir a la lista (Se guarda localmente) -->
+            <div class="form-group flex-row-mobile" style="display: flex; gap: 1rem; align-items: flex-end;">
+                <div style="flex: 1;">
+                    <label style="color: var(--neon-purple);">> AÑADIR NUEVO ID A LA LISTA</label>
+                    <input type="text" id="newBtnId" placeholder="Ej: btn-drop o btn-calculadora" autocomplete="off" style="border-color: var(--neon-purple); color: var(--neon-purple);">
                 </div>
+                <button class="btn-execute btn-purple" style="width: auto; margin-top: 0; padding: 0.8rem 1.5rem; font-size: 1.2rem;" onclick="addSavedButton()">[ AÑADIR ]</button>
             </div>
 
-            <button class="btn-execute btn-purple" id="btnToggleExecute" onclick="toggleButtonState()">[ ACTUALIZAR ESTADO EN TIEMPO REAL ]</button>
-            <div id="btnToggleFeedback" class="feedback-msg"></div>
+            <hr style="border: none; border-top: 1px solid rgba(148, 163, 184, 0.2); margin: 2rem 0;">
+
+            <!-- Contenedor dinámico de botones -->
+            <label style="color: var(--smoke-white);">> BOTONES REGISTRADOS (Controles Rápidos)</label>
+            <div id="savedButtonsContainer" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.8rem;">
+                <!-- Aquí se inyectan las filas desde JavaScript -->
+            </div>
+
+            <div id="btnToggleFeedback" class="feedback-msg" style="margin-top: 2rem;"></div>
         </div>
 
         <!-- PANEL 6: GESTOR DE REGISTROS -->
@@ -430,42 +446,75 @@
             }
         }
 
-        // --- SISTEMA DE VISIBILIDAD DE BOTONES FÍSICOS ---
-        async function toggleButtonState() {
-            const btnId = document.getElementById('btnId').value.trim();
-            const btnState = document.querySelector('input[name="btnState"]:checked').value;
+        // --- SISTEMA DE VISIBILIDAD GUARDADA (LOCALSTORAGE) ---
+        let savedButtons = JSON.parse(localStorage.getItem('admin_saved_buttons')) || [];
+
+        function renderSavedButtons() {
+            const container = document.getElementById('savedButtonsContainer');
+            container.innerHTML = '';
+            
+            if(savedButtons.length === 0) {
+                container.innerHTML = '<div style="color: var(--steel-grey); font-family: monospace; font-size: 0.85rem; text-align: center; border: 1px dashed var(--steel-grey); padding: 2rem;">No hay botones guardados. Añade uno arriba.</div>';
+                return;
+            }
+            
+            savedButtons.forEach(btnId => {
+                container.innerHTML += `
+                    <div class="saved-btn-row">
+                        <span class="saved-btn-id">> ID: ${btnId}</span>
+                        <div class="saved-btn-actions">
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="action-btn-show" onclick="quickToggle('${btnId}', 'show')">[ 🟢 MOSTRAR ]</button>
+                                <button class="action-btn-hide" onclick="quickToggle('${btnId}', 'hide')">[ 🔴 OCULTAR ]</button>
+                            </div>
+                            <button class="action-btn-del" onclick="removeSavedButton('${btnId}')" title="Quitar de esta lista">X</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function addSavedButton() {
+            const input = document.getElementById('newBtnId');
+            const val = input.value.trim();
+            if(val && !savedButtons.includes(val)) {
+                savedButtons.push(val);
+                localStorage.setItem('admin_saved_buttons', JSON.stringify(savedButtons));
+                input.value = '';
+                renderSavedButtons();
+            }
+        }
+
+        function removeSavedButton(btnId) {
+            savedButtons = savedButtons.filter(id => id !== btnId);
+            localStorage.setItem('admin_saved_buttons', JSON.stringify(savedButtons));
+            renderSavedButtons();
+        }
+
+        async function quickToggle(btnId, btnState) {
             const feedback = document.getElementById('btnToggleFeedback');
-            const btn = document.getElementById('btnToggleExecute');
-
-            if(!btnId) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Introduce el ID del botón.'; return; }
-
-            btn.innerText = 'ACTUALIZANDO...';
+            feedback.style.color = 'var(--neon-purple)';
+            feedback.innerText = `Enviando orden a ${btnId}...`;
+            
             try {
-                // Primero, eliminamos cualquier estado anterior de ESTE botón para no acumular basura en la base de datos
-                await supabaseClient.from('logs')
-                    .delete()
-                    .eq('log_type', 'button_toggle')
-                    .eq('action_text', btnId);
+                // Borramos estado anterior para no ensuciar BD
+                await supabaseClient.from('logs').delete().eq('log_type', 'button_toggle').eq('action_text', btnId);
                 
-                // Luego insertamos la orden nueva ("show" o "hide")
+                // Insertamos nuevo estado
                 const { error } = await supabaseClient.from('logs').insert([{ 
-                    log_time: '[SYS_TOGGLE]', 
-                    action_text: btnId, 
-                    value_text: btnState, 
-                    log_type: 'button_toggle' 
+                    log_time: '[SYS_TOGGLE]', action_text: btnId, value_text: btnState, log_type: 'button_toggle' 
                 }]);
-                if (error) throw error;
                 
-                feedback.style.color = 'var(--neon-purple)'; 
+                if (error) throw error;
                 feedback.innerText = `[ OK ] Orden enviada. Botón '${btnId}' -> ${btnState.toUpperCase()}.`; 
-                document.getElementById('btnId').value = '';
                 loadLogs();
             } catch (error) { 
                 feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Fallo al actualizar botón.'; 
-            } finally { 
-                btn.innerText = '[ ACTUALIZAR ESTADO EN TIEMPO REAL ]'; 
             }
         }
+
+        // Llamada inicial para pintar la lista de botones
+        renderSavedButtons();
 
         // --- APAGADOS FORZOSOS ---
         async function deactivateSpecialMode(type) {

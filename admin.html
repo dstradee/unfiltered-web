@@ -19,27 +19,21 @@
             --smoke-white: #F8FAFC;
             --steel-grey: #94A3B8;
             --vantablack: #020617;
+            --hot-pink: #FF007F; /* El Rosa Chicle/Cyberpunk */
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
 
         body {
-            background-color: var(--vantablack); 
-            color: var(--smoke-white);
-            font-family: 'Inter', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center; 
-            min-height: 100vh;
-            background-image: 
-                linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            padding: 2rem;
+            background-color: var(--vantablack); color: var(--smoke-white);
+            font-family: 'Inter', sans-serif; display: flex; flex-direction: column; align-items: center; 
+            min-height: 100vh; overflow-x: hidden;
+            background-image: linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px; padding: 2rem;
         }
 
         .top-nav { width: 100%; max-width: 1400px; display: flex; justify-content: flex-start; margin-bottom: 1.5rem; }
-        .btn-back { background: transparent; border: 1px solid var(--steel-grey); color: var(--steel-grey); padding: 0.6rem 1.2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; text-decoration: none; cursor: pointer; transition: all 0.2s; }
+        .btn-back { background: transparent; border: 1px solid var(--steel-grey); color: var(--steel-grey); padding: 0.6rem 1.2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; text-decoration: none; cursor: pointer; transition: all 0.2s; touch-action: manipulation; }
         .btn-back:hover { border-color: var(--electric-cyan); color: var(--electric-cyan); background-color: rgba(0, 242, 255, 0.05); }
 
         .dashboard-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; width: 100%; max-width: 1400px; align-items: start; }
@@ -48,60 +42,47 @@
         h1 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 4px; color: var(--smoke-white); font-size: 2.5rem; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between; }
         .status-indicator { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--electric-cyan); background: rgba(0, 242, 255, 0.1); padding: 4px 8px; border: 1px solid var(--electric-cyan); }
         .warning-text { font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); font-size: 0.85rem; margin-bottom: 2rem; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 1rem; }
+        
         .form-group { margin-bottom: 1.5rem; }
         .optional-group { background-color: rgba(2, 6, 23, 0.5); padding: 1rem; border-left: 2px solid var(--steel-grey); margin-bottom: 1.5rem; }
         label { display: block; font-family: 'JetBrains Mono', monospace; color: var(--smoke-white); font-size: 0.85rem; margin-bottom: 0.5rem; font-weight: 600; }
         .optional-label { color: var(--steel-grey); font-size: 0.75rem; }
-        input { width: 100%; background-color: var(--vantablack); border: 1px solid var(--steel-grey); color: var(--electric-cyan); padding: 0.8rem 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
-        input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+        
+        input { width: 100%; background-color: var(--vantablack); border: 1px solid var(--steel-grey); color: var(--electric-cyan); padding: 0.8rem 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; outline: none; transition: border-color 0.2s; touch-action: manipulation; }
+        input[type="time"]::-webkit-calendar-picker-indicator, input[type="datetime-local"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
         input:focus { border-color: var(--electric-cyan); box-shadow: inset 0 0 5px rgba(0, 242, 255, 0.1); }
 
         .type-selector { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
-        .type-option { background-color: var(--vantablack); border: 1px solid var(--steel-grey); color: var(--steel-grey); padding: 0.8rem 0.5rem; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; user-select: none; }
+        .type-option { background-color: var(--vantablack); border: 1px solid var(--steel-grey); color: var(--steel-grey); padding: 0.8rem 0.5rem; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; user-select: none; touch-action: manipulation; }
         .type-selector input[type="radio"] { display: none; }
         .type-selector input[type="radio"]:checked + .type-option.opt-cyan { border-color: var(--electric-cyan); color: var(--electric-cyan); background-color: rgba(0, 242, 255, 0.05); box-shadow: 0 0 10px rgba(0, 242, 255, 0.2); }
         .type-selector input[type="radio"]:checked + .type-option.opt-red { border-color: var(--crimson-war); color: var(--crimson-war); background-color: rgba(255, 49, 49, 0.05); box-shadow: 0 0 10px rgba(255, 49, 49, 0.2); }
         .type-selector input[type="radio"]:checked + .type-option.opt-grey { border-color: var(--smoke-white); color: var(--smoke-white); background-color: rgba(248, 250, 252, 0.05); }
 
-        .btn-execute { width: 100%; background-color: transparent; color: var(--smoke-white); border: 1px solid var(--smoke-white); padding: 1.2rem; font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 2px; cursor: pointer; margin-top: 1rem; transition: all 0.2s ease; }
+        .btn-execute { width: 100%; background-color: transparent; color: var(--smoke-white); border: 1px solid var(--smoke-white); padding: 1.2rem; font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 2px; cursor: pointer; margin-top: 1rem; transition: all 0.2s ease; touch-action: manipulation; }
         .btn-execute:hover { background-color: var(--smoke-white); color: var(--vantablack); }
+        
         .btn-danger { color: var(--crimson-war); border-color: var(--crimson-war); }
         .btn-danger:hover { background-color: var(--crimson-war); color: var(--smoke-white); }
+        
+        .btn-pink { color: var(--hot-pink); border-color: var(--hot-pink); }
+        .btn-pink:hover { background-color: var(--hot-pink); color: var(--smoke-white); }
 
-        #feedback, #newsFeedback { margin-top: 1rem; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; min-height: 20px; }
+        .feedback-msg { margin-top: 1rem; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; min-height: 20px; }
         .msg-success { color: var(--electric-cyan); text-shadow: 0 0 5px rgba(0, 242, 255, 0.3); }
         .msg-error { color: var(--crimson-war); }
         .msg-neutral { color: var(--steel-grey); }
 
-        .logs-container { margin-top: 1.5rem; max-height: 550px; overflow-y: auto; border: 1px solid var(--steel-grey); background-color: var(--vantablack); padding: 1rem; display: flex; flex-direction: column; gap: 0.8rem; }
+        .logs-container { margin-top: 1.5rem; max-height: 400px; overflow-y: auto; border: 1px solid var(--steel-grey); background-color: var(--vantablack); padding: 1rem; display: flex; flex-direction: column; gap: 0.8rem; }
         .logs-container::-webkit-scrollbar { width: 6px; }
         .logs-container::-webkit-scrollbar-track { background: var(--vantablack); }
         .logs-container::-webkit-scrollbar-thumb { background: var(--steel-grey); }
         .log-item { background-color: rgba(2, 6, 23, 0.8); border-left: 2px solid var(--electric-cyan); padding: 1rem; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
         .log-content { display: flex; gap: 0.8rem; flex-wrap: wrap; max-width: 80%; }
-        .btn-delete { background: transparent; border: 1px solid var(--crimson-war); color: var(--crimson-war); padding: 0.4rem 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; cursor: pointer; transition: all 0.2s; }
+        .btn-delete { background: transparent; border: 1px solid var(--crimson-war); color: var(--crimson-war); padding: 0.4rem 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; cursor: pointer; transition: all 0.2s; touch-action: manipulation; }
         .btn-delete:hover { background: var(--crimson-war); color: var(--smoke-white); }
 
-        /* ========================================= */
-        /* OPTIMIZACIÓN MÓVIL EXTREMA (PABLO'S RULE) */
-        /* ========================================= */
-        @media (max-width: 768px) {
-            body { padding: 1rem; }
-            .dashboard-layout { grid-template-columns: 1fr; gap: 1rem; }
-            .admin-box { padding: 1.5rem 1rem; margin-bottom: 1rem; }
-            h1 { font-size: 1.8rem; flex-direction: column; align-items: flex-start; gap: 0.5rem; }
-            
-            /* El selector de colores en móvil mejor uno encima del otro para que no se aplaste */
-            .type-selector { grid-template-columns: 1fr; gap: 0.5rem;} 
-            
-            /* Los campos opcionales del enlace, uno encima de otro en móvil */
-            .optional-group > div > div { grid-template-columns: 1fr !important; }
-            
-            .logs-container { max-height: 350px; }
-            .log-item { flex-direction: column; align-items: flex-start; gap: 1rem; }
-            .log-content { max-width: 100%; flex-direction: column; gap: 0.3rem;}
-            .btn-delete { width: 100%; text-align: center; }
-        }
+        @media (max-width: 1024px) { .dashboard-layout { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -118,7 +99,7 @@
                     MASTER TERMINAL 
                     <span class="status-indicator" id="dbStatus">DB_READY</span>
                 </h1>
-                <div class="warning-text">PANEL RESTRINGIDO. LO QUE ENVÍES AQUÍ APARECERÁ EN LA WEB PÚBLICA AL INSTANTE.</div>
+                <div class="warning-text">INYECCIÓN DE DATOS DE TRADING AL PROTOCOLO PÚBLICO.</div>
 
                 <div class="form-group">
                     <label>> 1. ETIQUETA DE TIEMPO / TIPO</label>
@@ -150,7 +131,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>> 5. IMPACTO VISUAL (Color del mensaje)</label>
+                    <label>> 5. IMPACTO VISUAL</label>
                     <div class="type-selector">
                         <label><input type="radio" name="logType" value="positive" checked><div class="type-option opt-cyan">[ + ] ÉXITO / CYAN</div></label>
                         <label><input type="radio" name="logType" value="negative"><div class="type-option opt-red">[ - ] ERROR / ROJO</div></label>
@@ -158,41 +139,72 @@
                     </div>
                 </div>
 
-                <button class="btn-execute" id="btnSubmit" onclick="injectData()">[ INYECTAR AL PROTOCOLO PÚBLICO ]</button>
-                <div id="feedback"></div>
+                <button class="btn-execute" id="btnSubmit" onclick="injectData()">[ INYECTAR AL PROTOCOLO ]</button>
+                <div id="feedback" class="feedback-msg"></div>
             </div>
         </div>
 
         <!-- COLUMNA DERECHA -->
         <div>
+            <!-- CAJA MODO NOTICIAS -->
             <div class="admin-box" style="border-color: var(--crimson-war);">
                 <h1 style="color: var(--crimson-war);">[ ! ] MACRO NEWS OVERRIDE</h1>
-                <div class="warning-text" style="color: var(--crimson-war); border-color: rgba(255,49,49,0.2);">
-                    ACTIVA EL MODO NOTICIAS. LA WEB PARPADEARÁ EN ROJO.
-                </div>
+                <div class="warning-text" style="color: var(--crimson-war); border-color: rgba(255,49,49,0.2);">ACTIVA LA ALERTA ROJA.</div>
 
                 <div class="form-group">
                     <label style="color: var(--crimson-war);">> HORA DE FIN DE LA ALERTA</label>
                     <input type="time" id="newsEndTime" style="border-color: var(--crimson-war); color: var(--crimson-war);">
-                    <p style="font-family: 'Inter', sans-serif; font-size: 0.7rem; color: var(--steel-grey); margin-top: 0.5rem;">
-                        *El sistema apagará la alerta roja automáticamente a esta hora. Los usuarios no verán este temporizador.
-                    </p>
                 </div>
 
-                <button class="btn-execute btn-danger" id="btnNews" onclick="activateNewsMode()">[ INICIAR PROTOCOLO DE EMERGENCIA ]</button>
-                <button class="btn-execute" style="font-size: 1rem; padding: 0.8rem; margin-top: 0.5rem;" onclick="deactivateNewsMode()">[ FORZAR APAGADO DE ALERTA ]</button>
-                <div id="newsFeedback"></div>
+                <button class="btn-execute btn-danger" id="btnNews" onclick="activateNewsMode()">[ INICIAR ALERTA ROJA ]</button>
+                <button class="btn-execute" style="font-size: 1rem; padding: 0.8rem; margin-top: 0.5rem;" onclick="deactivateSpecialMode('news_alert')">[ APAGAR ALERTA ROJA ]</button>
+                <div id="newsFeedback" class="feedback-msg"></div>
             </div>
 
+            <!-- NUEVA CAJA: MODO DESCUENTO FLASH -->
+            <div class="admin-box" style="border-color: var(--hot-pink);">
+                <h1 style="color: var(--hot-pink);">[ % ] DESCUENTO FLASH</h1>
+                <div class="warning-text" style="color: var(--hot-pink); border-color: rgba(255,0,127,0.2);">ACTIVA UN BANNER CON CUENTA ATRÁS Y VÍDEO.</div>
+
+                <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <label style="color: var(--hot-pink);">> % DTO</label>
+                        <input type="number" id="descPct" placeholder="Ej: 50" style="border-color: var(--hot-pink); color: var(--hot-pink);">
+                    </div>
+                    <div>
+                        <label style="color: var(--hot-pink);">> FECHA Y HORA FIN</label>
+                        <input type="datetime-local" id="descEndTime" style="border-color: var(--hot-pink); color: var(--hot-pink);">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label style="color: var(--hot-pink);">> MENSAJE (El código está en el vídeo)</label>
+                    <input type="text" id="descMsg" placeholder="Ej: Nuevo vídeo. Encuentra el código dentro." autocomplete="off" style="border-color: var(--hot-pink); color: var(--hot-pink);">
+                </div>
+
+                <div class="optional-group" style="border-color: var(--hot-pink);">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <div>
+                            <label class="optional-label" style="color: var(--hot-pink);">URL (TikTok/YouTube)</label>
+                            <input type="url" id="descUrl" placeholder="https://" autocomplete="off" style="border-color: var(--hot-pink); color: var(--hot-pink);">
+                        </div>
+                        <div>
+                            <label class="optional-label" style="color: var(--hot-pink);">Palabra a enlazar</label>
+                            <input type="text" id="descWord" placeholder="Ej: vídeo" autocomplete="off" style="border-color: var(--hot-pink); color: var(--hot-pink);">
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn-execute btn-pink" id="btnDesc" onclick="activateDiscountMode()">[ ACTIVAR DESCUENTO GLOBAL ]</button>
+                <button class="btn-execute" style="font-size: 1rem; padding: 0.8rem; margin-top: 0.5rem;" onclick="deactivateSpecialMode('discount_alert')">[ APAGAR DESCUENTO ]</button>
+                <div id="descFeedback" class="feedback-msg"></div>
+            </div>
+
+            <!-- GESTOR DE REGISTROS -->
             <div class="admin-box">
-                <h1 style="font-size: 1.8rem; color: var(--steel-grey);">
-                    REGISTRO ACTIVO 
-                    <span class="status-indicator" style="color: var(--steel-grey); border-color: var(--steel-grey); background: transparent; cursor:pointer;" onclick="loadLogs()">[ REFRESCAR ]</span>
-                </h1>
-                <div class="warning-text" style="margin-bottom: 1rem;">GESTIONA EL HISTORIAL DE LA BASE DE DATOS.</div>
-                
+                <h1 style="font-size: 1.8rem; color: var(--steel-grey);">REGISTRO ACTIVO <span class="status-indicator" style="color: var(--steel-grey); border-color: var(--steel-grey); background: transparent; cursor:pointer;" onclick="loadLogs()">[ REFRESCAR ]</span></h1>
                 <div id="logsContainer" class="logs-container">
-                    <div class="msg-neutral" style="text-align: center;">Iniciando conexión con The Vault...</div>
+                    <div class="msg-neutral" style="text-align: center;">Sincronizando...</div>
                 </div>
             </div>
         </div>
@@ -203,92 +215,100 @@
         const SUPABASE_KEY = 'sb_publishable_eA2g7-rTvcPcfz_dVl2aWg_Ca5P7t93';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+        // --- INYECTOR NORMAL ---
         async function injectData() {
-            const btn = document.getElementById('btnSubmit');
-            const feedback = document.getElementById('feedback');
-            
+            const btn = document.getElementById('btnSubmit'); const feedback = document.getElementById('feedback');
             const logTime = document.getElementById('logTime').value.trim();
             let actionText = document.getElementById('actionText').value.trim();
             const valueText = document.getElementById('valueText').value.trim();
             const logType = document.querySelector('input[name="logType"]:checked').value;
-            
             const linkUrl = document.getElementById('linkUrl').value.trim();
             const linkWord = document.getElementById('linkWord').value.trim();
 
-            if (!logTime || !actionText) {
-                feedback.className = 'msg-error';
-                feedback.innerText = '[SYSTEM ERROR] Faltan los campos 1 y 2.';
-                return;
-            }
+            if (!logTime || !actionText) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Faltan campos.'; return; }
 
             if (linkUrl && linkWord) {
                 const anchorTag = `<a href="${linkUrl}" target="_blank" style="color: var(--electric-cyan); text-decoration: underline; text-underline-offset: 4px; font-weight: bold; cursor: pointer;">${linkWord}</a>`;
-                if (actionText.includes(linkWord)) {
-                    actionText = actionText.replace(linkWord, anchorTag);
-                } else {
-                    actionText = actionText + ` <a href="${linkUrl}" target="_blank" style="color: var(--obsidian-navy); background-color: var(--electric-cyan); padding: 2px 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-decoration: none; margin-left: 8px;">[ ${linkWord} ]</a>`;
-                }
+                if (actionText.includes(linkWord)) { actionText = actionText.replace(linkWord, anchorTag); } 
+                else { actionText += ` <a href="${linkUrl}" target="_blank" style="color: var(--obsidian-navy); background-color: var(--electric-cyan); padding: 2px 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-decoration: none; margin-left: 8px;">[ ${linkWord} ]</a>`; }
             }
 
-            btn.innerText = 'INYECTANDO...';
-            btn.style.pointerEvents = 'none';
-            feedback.innerText = '';
-
+            btn.innerText = 'INYECTANDO...'; btn.style.pointerEvents = 'none'; feedback.innerText = '';
             try {
                 const { error } = await supabaseClient.from('logs').insert([{ log_time: logTime, action_text: actionText, value_text: valueText, log_type: logType }]);
                 if (error) throw error;
-                feedback.className = 'msg-success';
-                feedback.innerText = '[SUCCESS] Protocolo actualizado.';
+                feedback.className = 'msg-success'; feedback.innerText = '[SUCCESS] Actualizado.';
                 document.getElementById('actionText').value = ''; document.getElementById('valueText').value = ''; document.getElementById('linkUrl').value = ''; document.getElementById('linkWord').value = '';
                 loadLogs();
-            } catch (error) {
-                feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Fallo en inyección.';
-            } finally {
-                btn.innerText = '[ INYECTAR AL PROTOCOLO PÚBLICO ]'; btn.style.pointerEvents = 'auto';
-            }
+            } catch (error) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Fallo en inyección.'; } 
+            finally { btn.innerText = '[ INYECTAR AL PROTOCOLO ]'; btn.style.pointerEvents = 'auto'; }
         }
 
+        // --- MODO NOTICIAS ---
         async function activateNewsMode() {
             const timeVal = document.getElementById('newsEndTime').value;
             const feedback = document.getElementById('newsFeedback');
             const btn = document.getElementById('btnNews');
-
-            if(!timeVal) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Introduce la hora de fin.'; return; }
-
-            const now = new Date();
-            const [hours, minutes] = timeVal.split(':');
+            if(!timeVal) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Pon hora fin.'; return; }
+            
+            const now = new Date(); const [hours, minutes] = timeVal.split(':');
             const endDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hours, minutes, 0);
-
-            if (endDate.getTime() <= now.getTime()) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Esa hora ya ha pasado.'; return; }
+            if (endDate.getTime() <= now.getTime()) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Hora pasada.'; return; }
 
             btn.innerText = 'ACTIVANDO...';
-            
             try {
                 const { error } = await supabaseClient.from('logs').insert([{ log_time: '[SYS_EMERGENCY]', action_text: 'MACRO EVENT PROTOCOL ACTIVATED', value_text: endDate.getTime().toString(), log_type: 'news_alert' }]);
                 if (error) throw error;
-                feedback.className = 'msg-error'; 
-                feedback.innerText = '[ ! ] MODO NOTICIAS ACTIVADO CON ÉXITO.';
-                loadLogs();
-            } catch (error) {
-                feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Fallo al activar modo.';
-            } finally {
-                btn.innerText = '[ INICIAR PROTOCOLO DE EMERGENCIA ]';
+                feedback.className = 'msg-error'; feedback.innerText = '[ ! ] ALERTA ROJA ACTIVADA.'; loadLogs();
+            } catch (error) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Fallo al activar.'; } 
+            finally { btn.innerText = '[ INICIAR ALERTA ROJA ]'; }
+        }
+
+        // --- MODO DESCUENTO ---
+        async function activateDiscountMode() {
+            const pct = document.getElementById('descPct').value;
+            const endTimeVal = document.getElementById('descEndTime').value;
+            let msg = document.getElementById('descMsg').value.trim();
+            const linkUrl = document.getElementById('descUrl').value.trim();
+            const linkWord = document.getElementById('descWord').value.trim();
+            const feedback = document.getElementById('descFeedback');
+            const btn = document.getElementById('btnDesc');
+
+            if(!pct || !endTimeVal || !msg) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Faltan %, Fecha o Mensaje.'; return; }
+
+            const endDate = new Date(endTimeVal).getTime();
+            if (endDate <= new Date().getTime()) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Fecha ya pasada.'; return; }
+
+            if (linkUrl && linkWord) {
+                // Color blanco para el enlace en el banner rosa
+                const anchorTag = `<a href="${linkUrl}" target="_blank" style="color: #FFFFFF; text-decoration: underline; text-underline-offset: 4px; font-weight: bold; cursor: pointer;">${linkWord}</a>`;
+                if (msg.includes(linkWord)) { msg = msg.replace(linkWord, anchorTag); } 
+                else { msg += ` <a href="${linkUrl}" target="_blank" style="color: var(--hot-pink); background-color: #FFFFFF; padding: 2px 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-decoration: none; margin-left: 8px;">[ ${linkWord} ]</a>`; }
             }
-        }
 
-        async function deactivateNewsMode() {
-            const feedback = document.getElementById('newsFeedback');
+            btn.innerText = 'ACTIVANDO...';
             try {
-                const { error } = await supabaseClient.from('logs').insert([{ log_time: '[SYS_EMERGENCY]', action_text: 'MACRO EVENT PROTOCOL DEACTIVATED', value_text: "0", log_type: 'news_alert' }]);
+                // Guardamos el Timestamp y el Porcentaje juntos en value_text, separados por un palito "|"
+                const valuePayload = `${endDate}|${pct}`;
+                const { error } = await supabaseClient.from('logs').insert([{ log_time: '[DISCOUNT]', action_text: msg, value_text: valuePayload, log_type: 'discount_alert' }]);
                 if (error) throw error;
-                feedback.className = 'msg-success'; feedback.innerText = '[ OK ] Alerta apagada forzosamente.';
-                loadLogs();
-            } catch (error) { feedback.innerText = '[ERROR] Fallo al apagar.'; }
+                feedback.style.color = 'var(--hot-pink)'; feedback.innerText = '[ % ] DESCUENTO ACTIVADO EN LA WEB.'; loadLogs();
+            } catch (error) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Fallo al activar.'; } 
+            finally { btn.innerText = '[ ACTIVAR DESCUENTO GLOBAL ]'; }
         }
 
+        // --- APAGADOS FORZOSOS ---
+        async function deactivateSpecialMode(type) {
+            try {
+                const { error } = await supabaseClient.from('logs').insert([{ log_time: '[SYS_OVERRIDE]', action_text: 'MODE DEACTIVATED', value_text: "0", log_type: type }]);
+                if (error) throw error;
+                alert(`[OK] El modo ${type} se ha forzado a apagarse.`); loadLogs();
+            } catch (error) { alert('[ERROR] Fallo al apagar.'); }
+        }
+
+        // --- CARGAR LOGS ---
         async function loadLogs() {
             const container = document.getElementById('logsContainer');
-            container.innerHTML = '<div class="msg-neutral" style="text-align:center;">Sincronizando con The Vault...</div>';
             try {
                 const { data, error } = await supabaseClient.from('logs').select('*').order('created_at', { ascending: false });
                 if (error) throw error;
@@ -299,17 +319,15 @@
                     if(log.log_type === 'positive') { borderColor = 'var(--electric-cyan)'; valueColor = 'var(--electric-cyan)'; } 
                     else if (log.log_type === 'negative') { borderColor = 'var(--crimson-war)'; valueColor = 'var(--crimson-war)'; }
                     else if (log.log_type === 'news_alert') { borderColor = '#FF8C00'; valueColor = '#FF8C00'; } 
+                    else if (log.log_type === 'discount_alert') { borderColor = 'var(--hot-pink)'; valueColor = 'var(--hot-pink)'; } 
 
-                    const logEl = document.createElement('div');
-                    logEl.className = 'log-item';
-                    logEl.style.borderLeftColor = borderColor;
+                    const logEl = document.createElement('div'); logEl.className = 'log-item'; logEl.style.borderLeftColor = borderColor;
                     const displayAction = log.action_text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
                     logEl.innerHTML = `
                         <div class="log-content">
                             <span style="color: var(--steel-grey); min-width: 90px;">${log.log_time}</span>
                             <span style="color: var(--smoke-white); flex: 1;">${displayAction}</span>
-                            ${log.value_text ? `<span style="color: ${valueColor}; font-weight: bold;">${log.log_type === 'news_alert' && log.value_text.length > 5 ? 'TS: ' + log.value_text : log.value_text}</span>` : ''}
+                            ${log.value_text ? `<span style="color: ${valueColor}; font-weight: bold;">[DATA_STORED]</span>` : ''}
                         </div>
                         <button class="btn-delete" onclick="deleteLog(${log.id})">[ ELIMINAR ]</button>
                     `;
@@ -320,11 +338,8 @@
 
         async function deleteLog(id) {
             if(!confirm("⚠️ ¿CONFIRMAS PURGA DE DATOS?")) return; 
-            try {
-                const { error } = await supabaseClient.from('logs').delete().eq('id', id);
-                if (error) throw error;
-                loadLogs();
-            } catch (err) { alert("[ERROR] No se pudo eliminar el registro."); }
+            try { const { error } = await supabaseClient.from('logs').delete().eq('id', id); if (error) throw error; loadLogs(); } 
+            catch (err) { alert("[ERROR] Revisa las policies de Supabase."); }
         }
 
         loadLogs();

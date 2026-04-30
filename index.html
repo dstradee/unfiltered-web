@@ -5,10 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UNFILTERED ALPHA | The Protocol</title>
     
-    <!-- Google Fonts as per Brand Book -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <!-- Librería oficial de Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
         /* --- BRAND COLOR PALETTE --- */
@@ -26,7 +29,6 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            /* STRICT RULE: NO ROUNDED CORNERS */
             border-radius: 0 !important; 
         }
 
@@ -42,7 +44,6 @@
         }
 
         /* --- THE BLUEPRINT & NOISE OVERLAY --- */
-        /* Simulates the 5-8% film grain and technical blueprint grid */
         .blueprint-layer {
             position: fixed;
             top: 0;
@@ -51,12 +52,11 @@
             height: 100%;
             pointer-events: none;
             z-index: 0;
-            /* Usamos la imagen oficial de Unfiltered Alpha */
             background-image: url('Gemini_Generated_Image_dofjdbdofjdbdofj.jpg');
             background-size: cover;
             background-position: center;
-            opacity: 0.15; /* Sutil para no asfixiar la lectura */
-            mix-blend-mode: screen; /* Hace que las líneas blancas/cian resalten sobre el azul oscuro */
+            opacity: 0.15; 
+            mix-blend-mode: screen; 
         }
 
         .noise-layer {
@@ -68,7 +68,6 @@
             pointer-events: none;
             z-index: 1;
             opacity: 0.06;
-            /* Procedural SVG noise for the organic glitch */
             background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
         }
 
@@ -76,7 +75,7 @@
         h1, h2, .logo-text {
             font-family: 'Bebas Neue', sans-serif;
             color: var(--smoke-white);
-            letter-spacing: 8px; /* High tracking per manual */
+            letter-spacing: 8px; 
             text-transform: uppercase;
             font-weight: normal;
         }
@@ -112,7 +111,7 @@
         header {
             padding: 3rem 0;
             display: flex;
-            justify-content: space-between; /* Modificado para espaciar logo y botón Auth */
+            justify-content: space-between; 
             align-items: baseline;
             border-bottom: 1px solid rgba(148, 163, 184, 0.1);
         }
@@ -125,11 +124,10 @@
         }
 
         .unfiltered-word {
-            border-bottom: 2px solid var(--electric-cyan); /* Minimalist underline */
+            border-bottom: 2px solid var(--electric-cyan); 
             padding-bottom: 2px;
         }
 
-        /* Sutil link de Auth para el Admin */
         .auth-link {
             font-family: 'JetBrains Mono', monospace;
             color: var(--steel-grey);
@@ -159,14 +157,14 @@
             padding: 8px 16px;
             margin-bottom: 2rem;
             text-transform: uppercase;
-            box-shadow: 0 0 10px rgba(0, 242, 255, 0.1); /* 20% glow rule */
+            box-shadow: 0 0 10px rgba(0, 242, 255, 0.1); 
         }
 
         .hero-title {
             font-size: clamp(4rem, 8vw, 7rem);
             line-height: 0.9;
             margin-bottom: 1.5rem;
-            text-shadow: 4px 4px 0px var(--vantablack); /* Drop shadow rule */
+            text-shadow: 4px 4px 0px var(--vantablack); 
         }
 
         .hero-subtitle {
@@ -219,7 +217,7 @@
             50% { opacity: 0; }
         }
 
-        /* --- PLACEHOLDER BUTTONS --- */
+        /* --- BUTTONS --- */
         .action-area {
             display: flex;
             gap: 1.5rem;
@@ -251,16 +249,6 @@
             box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.2), 0 0 15px rgba(0, 242, 255, 0.2);
         }
 
-        .btn-secondary {
-            background-color: var(--vantablack);
-            color: var(--smoke-white);
-            border: 1px solid var(--steel-grey);
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--smoke-white);
-        }
-
         /* --- MODAL (POP-UP) STYLES --- */
         .modal-overlay {
             position: fixed;
@@ -268,10 +256,10 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: rgba(2, 6, 23, 0.85); /* Vantablack with opacity */
+            background-color: rgba(2, 6, 23, 0.85); 
             backdrop-filter: blur(4px);
             z-index: 100;
-            display: none; /* Hidden by default */
+            display: none; 
             justify-content: center;
             align-items: center;
         }
@@ -366,6 +354,16 @@
         .status-negative { color: var(--crimson-war); border-left-color: var(--crimson-war); }
         .status-neutral { color: var(--steel-grey); border-left-color: var(--steel-grey); }
 
+        /* Mensaje de error para el login */
+        #loginError {
+            color: var(--crimson-war);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            display: none;
+        }
+
     </style>
 </head>
 <body>
@@ -376,24 +374,20 @@
 
     <div class="container">
         <header>
-            <!-- Minimalist Private Bank Style Logo -->
             <div class="brand-logo logo-text">
                 <span class="unfiltered-word">UNFILTERED</span> <span>ALPHA</span>
             </div>
-            <!-- Auth Link -->
+            <!-- Auth Link Oculto -->
             <a href="#" class="auth-link" id="openLoginBtn">[ AUTH ]</a>
         </header>
 
         <main>
-            <!-- System Status Badge -->
             <div class="system-status code-data">
                 [SYSTEM_INITIALIZED // CONNECTION_SECURED]
             </div>
 
-            <!-- Hook Title -->
             <h1 class="hero-title">STOP BEING THE EXIT LIQUIDITY.</h1>
             
-            <!-- Inter Body Text -->
             <p class="hero-subtitle">
                 Most traders follow the herd. We follow the code. Every day, the Architect provides the blueprint to survive the market manipulation. Are you reading the code or providing the liquidity?
             </p>
@@ -405,8 +399,8 @@
                     <span>V.2.0</span>
                 </div>
                 
-                <!-- DYNAMIC TERMINAL OUTPUT -->
                 <div class="terminal-body" id="terminal-output">
+                    <!-- Esto se llena automáticamente con Supabase -->
                     <div class="terminal-line">
                         <span class="t-time">[SYS_UPDATE]</span>
                         <span class="t-action">Establishing secure connection to The Protocol...</span>
@@ -415,7 +409,7 @@
                 </div>
             </div>
 
-            <!-- Placeholder Actions -->
+            <!-- Botón de Calculadora -->
             <div class="action-area">
                 <a href="#" class="btn btn-primary" id="openCalcBtn">[ CALCULATOR ]</a>
             </div>
@@ -449,7 +443,6 @@
                 <div class="calc-verdict" id="verdictText">AWAITING DATA INPUT</div>
             </div>
 
-            <!-- Aquí pon tu enlace real de Gumroad en el href -->
             <a href="https://gumroad.com" target="_blank" class="btn btn-primary" style="width: 100%; text-align: center; display: none;" id="upsellBtn">
                 SECURE THE PROTOCOL NOW ($27)
             </a>
@@ -466,11 +459,13 @@
                 <label>> IDENTIFIER (EMAIL)</label>
                 <input type="email" id="adminEmail" placeholder="architect@..." autocomplete="off">
             </div>
-            <div class="calc-group" style="margin-bottom: 2rem;">
+            <div class="calc-group" style="margin-bottom: 1.5rem;">
                 <label>> PASSPHRASE</label>
                 <input type="password" id="adminPass" placeholder="••••••••">
             </div>
             
+            <div id="loginError">[SYS_ERROR] Credenciales inválidas.</div>
+
             <a href="#" class="btn btn-primary" style="width: 100%; text-align: center;" id="executeLoginBtn">
                 [ VERIFY CLEARANCE ]
             </a>
@@ -479,7 +474,67 @@
 
     <!-- --- JAVASCRIPT FOR LOGIC --- -->
     <script>
-        // Modal Elements
+        // =========================================================================
+        // CONEXIÓN A SUPABASE PARA LEER LAS NOTICIAS Y LOGIN
+        // =========================================================================
+        const SUPABASE_URL = 'https://qtpuipgkytzjnckkkwnl.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_eA2g7-rTvcPcfz_dVl2aWg_Ca5P7t93';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const terminalOutput = document.getElementById('terminal-output');
+
+        async function fetchTerminalLogs() {
+            try {
+                // Pedimos a Supabase los últimos 4 mensajes
+                const { data, error } = await supabaseClient
+                    .from('logs')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(4);
+
+                if (error) throw error;
+
+                terminalOutput.innerHTML = ''; 
+                
+                const sortedData = data.reverse();
+
+                sortedData.forEach(log => {
+                    let valueClass = '';
+                    if (log.log_type === 'positive') valueClass = 't-value';
+                    else if (log.log_type === 'negative') valueClass = 't-error';
+                    else valueClass = 't-time'; 
+
+                    const logHTML = `
+                        <div class="terminal-line">
+                            <span class="t-time">${log.log_time}</span>
+                            <span class="t-action">${log.action_text}</span>
+                            ${log.value_text ? `<span class="${valueClass}">${log.value_text}</span>` : ''}
+                        </div>
+                    `;
+                    terminalOutput.innerHTML += logHTML;
+                });
+
+                terminalOutput.innerHTML += `
+                    <div class="terminal-line" style="margin-top: 1.5rem;">
+                        <span class="t-value">> C:\\Alpha_Feed\\Awaiting_Input</span><span class="blinking-cursor"></span>
+                    </div>
+                `;
+
+            } catch (err) {
+                console.error("Error al cargar la base de datos:", err);
+                terminalOutput.innerHTML = `
+                    <div class="terminal-line">
+                        <span class="t-error">[SYS_ERROR] Connection to protocol database failed.</span>
+                    </div>
+                `;
+            }
+        }
+
+        fetchTerminalLogs();
+
+        // =========================================================================
+        // LOGICA DE MODALES (CALCULADORA Y LOGIN)
+        // =========================================================================
         const calcModal = document.getElementById('calcModal');
         const openCalcBtn = document.getElementById('openCalcBtn');
         const closeCalcBtn = document.getElementById('closeCalcBtn');
@@ -488,11 +543,8 @@
         const openLoginBtn = document.getElementById('openLoginBtn');
         const closeLoginBtn = document.getElementById('closeLoginBtn');
         const executeLoginBtn = document.getElementById('executeLoginBtn');
+        const loginErrorMsg = document.getElementById('loginError');
 
-        // Terminal Elements
-        const terminalOutput = document.getElementById('terminal-output');
-
-        // Calculator Elements
         const winRateInput = document.getElementById('winRate');
         const riskPctInput = document.getElementById('riskPct');
         const rewardPctInput = document.getElementById('rewardPct');
@@ -501,92 +553,81 @@
         const resultBox = document.getElementById('resultBox');
         const upsellBtn = document.getElementById('upsellBtn');
 
-        // --- TERMINAL DYNAMIC DATA LOGIC ---
-        // Esta es la lista que luego Supabase nos mandará en vivo
-        const dummyDatabaseLogs = [
-            { time: "[SYS_UPDATE]", action: "Protocol V.2.0 initialized. Scanning for retail patterns...", value: "", type: "neutral" },
-            { time: "[LOG_08:14]", action: "EURUSD Short sequence completed. Target acquired:", value: "+3.2R", type: "positive" },
-            { time: "[LOG_11:30]", action: "Retail trap verified at 1.0600. Support broken.", value: "LIQUIDITY PURGED", type: "negative" }
-        ];
-
-        function renderTerminalLogs(logs) {
-            terminalOutput.innerHTML = ''; // Limpiar el mensaje de carga
-
-            logs.forEach(log => {
-                let valueClass = '';
-                if (log.type === 'positive') valueClass = 't-value';
-                else if (log.type === 'negative') valueClass = 't-error';
-                else valueClass = 't-time'; 
-
-                const logHTML = `
-                    <div class="terminal-line">
-                        <span class="t-time">${log.time}</span>
-                        <span class="t-action">${log.action}</span>
-                        ${log.value ? `<span class="${valueClass}">${log.value}</span>` : ''}
-                    </div>
-                `;
-                terminalOutput.innerHTML += logHTML;
-            });
-
-            // Añadir el input en espera para simular terminal activo
-            terminalOutput.innerHTML += `
-                <div class="terminal-line" style="margin-top: 1.5rem;">
-                    <span class="t-value">> C:\\Alpha_Feed\\Awaiting_Input</span><span class="blinking-cursor"></span>
-                </div>
-            `;
-        }
-
-        // Simular que tarda un poco en cargar de la Base de Datos
-        setTimeout(() => {
-            renderTerminalLogs(dummyDatabaseLogs);
-        }, 1500);
-
-        // --- MODALS LOGIC ---
+        // Abrir/Cerrar Modales
         openCalcBtn.addEventListener('click', (e) => {
             e.preventDefault();
             calcModal.style.display = 'flex';
-            calculateExpectancy(); // Run once on open
+            calculateExpectancy();
         });
 
-        closeCalcBtn.addEventListener('click', () => {
-            calcModal.style.display = 'none';
-        });
+        closeCalcBtn.addEventListener('click', () => { calcModal.style.display = 'none'; });
 
         openLoginBtn.addEventListener('click', (e) => {
             e.preventDefault();
             loginModal.style.display = 'flex';
+            loginErrorMsg.style.display = 'none'; // reset error
         });
 
-        closeLoginBtn.addEventListener('click', () => {
-            loginModal.style.display = 'none';
-        });
+        closeLoginBtn.addEventListener('click', () => { loginModal.style.display = 'none'; });
 
-        // Close when clicking outside of any modal content
         window.addEventListener('click', (e) => {
-            if (e.target === calcModal) {
-                calcModal.style.display = 'none';
-            }
-            if (e.target === loginModal) {
-                loginModal.style.display = 'none';
-            }
+            if (e.target === calcModal) calcModal.style.display = 'none';
+            if (e.target === loginModal) loginModal.style.display = 'none';
         });
 
-        // --- AUTH REDIRECT LOGIC ---
-        executeLoginBtn.addEventListener('click', (e) => {
+        // =========================================================================
+        // LOGIN SEGURO CON SUPABASE AUTH
+        // =========================================================================
+        executeLoginBtn.addEventListener('click', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('adminEmail').value;
+            
+            const email = document.getElementById('adminEmail').value.trim();
             const pass = document.getElementById('adminPass').value;
             
-            if(email === "" || pass === "") {
-                alert("[SYS_ERROR] Input required.");
+            if(!email || !pass) {
+                loginErrorMsg.innerText = "[SYS_ERROR] Introduce credenciales.";
+                loginErrorMsg.style.display = 'block';
                 return;
             }
 
-            // Te redirige a tu panel de Admin
-            window.location.href = 'admin.html';
+            // Cambiar texto a comprobando
+            const originalText = executeLoginBtn.innerText;
+            executeLoginBtn.innerText = '[ VERIFYING... ]';
+            executeLoginBtn.style.pointerEvents = 'none';
+            loginErrorMsg.style.display = 'none';
+
+            try {
+                // Hacer la llamada real a Supabase
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                    email: email,
+                    password: pass
+                });
+
+                if (error) throw error;
+
+                // Si ha ido bien, Supabase ha guardado el token y podemos redirigir
+                executeLoginBtn.style.borderColor = 'var(--electric-cyan)';
+                executeLoginBtn.style.color = 'var(--electric-cyan)';
+                executeLoginBtn.innerText = '[ ACCESS GRANTED ]';
+                
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 800);
+
+            } catch (error) {
+                console.error("Auth error:", error);
+                loginErrorMsg.innerText = "[SYS_ERROR] Acceso denegado.";
+                loginErrorMsg.style.display = 'block';
+                
+                // Restaurar botón
+                executeLoginBtn.innerText = originalText;
+                executeLoginBtn.style.pointerEvents = 'auto';
+            }
         });
 
-        // --- CALCULATOR MATH LOGIC ---
+        // =========================================================================
+        // MATEMÁTICAS DE LA CALCULADORA
+        // =========================================================================
         function calculateExpectancy() {
             const winRate = parseFloat(winRateInput.value) / 100;
             const lossRate = 1 - winRate;
@@ -599,13 +640,12 @@
             
             expectancyVal.innerText = (expectancy > 0 ? '+' : '') + expectancy.toFixed(2) + '% EV';
 
-            // The "Unfiltered Alpha" Conditional Logic
-            resultBox.className = 'calc-result-box'; // Reset classes
+            resultBox.className = 'calc-result-box'; 
 
             if (expectancy <= 0) {
                 resultBox.classList.add('status-negative');
                 verdictText.innerText = '[ SYSTEM ERROR // LIQUIDITY CAPTURED ]';
-                upsellBtn.style.display = 'block'; // Show Gumroad button
+                upsellBtn.style.display = 'block'; 
                 upsellBtn.style.borderColor = 'var(--crimson-war)';
                 upsellBtn.style.color = 'var(--crimson-war)';
                 upsellBtn.innerText = 'STOP BLEEDING. GET THE PROTOCOL ($27)';
@@ -623,7 +663,6 @@
             }
         }
 
-        // Listeners for live typing
         winRateInput.addEventListener('input', calculateExpectancy);
         riskPctInput.addEventListener('input', calculateExpectancy);
         rewardPctInput.addEventListener('input', calculateExpectancy);

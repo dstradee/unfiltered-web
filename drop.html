@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNFILTERED ALPHA | The Drop</title>
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z90RHTXWGV"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-Z90RHTXWGV');
+    </script>
+
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --obsidian-navy: #0B1A30;
+            --electric-cyan: #00F2FF;
+            --crimson-war: #FF3131;
+            --smoke-white: #F8FAFC;
+            --steel-grey: #94A3B8;
+            --vantablack: #020617;
+            --hot-pink: #FF007F; 
+            --neon-purple: #B026FF;
+            --matrix-green: #00FF41;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
+
+        body {
+            background-color: var(--obsidian-navy); color: var(--smoke-white);
+            font-family: 'Inter', sans-serif; min-height: 100vh;
+            display: flex; flex-direction: column; overflow-x: hidden; position: relative;
+        }
+
+        /* Estilos base (Fondo y ruido) */
+        .blueprint-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; background-image: url('Gemini_Generated_Image_dofjdbdofjdbdofj.jpg'); background-size: cover; background-position: center; opacity: 0.15; mix-blend-mode: screen; }
+        .noise-layer { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1; opacity: 0.06; background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E'); }
+
+        h1, h2, .logo-text { font-family: 'Bebas Neue', sans-serif; color: var(--smoke-white); letter-spacing: 8px; text-transform: uppercase; font-weight: normal; }
+        .code-data { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--electric-cyan); font-size: 0.9rem; letter-spacing: 1px; }
+
+        .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 0 2rem; width: 100%; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        header { padding: 4rem 0 3rem 0; display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid rgba(148, 163, 184, 0.1); }
+        .brand-logo { display: flex; align-items: baseline; gap: 8px; font-size: 2rem; }
+        .unfiltered-word { border-bottom: 2px solid var(--electric-cyan); padding-bottom: 2px; }
+        
+        /* PUNTITO ROSA PARPADEANTE */
+        .discount-indicator {
+            display: flex; align-items: center; gap: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--steel-grey); text-decoration: none;
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .discount-indicator.active { opacity: 1; }
+        .pink-dot { width: 10px; height: 10px; background-color: var(--hot-pink); border-radius: 50% !important; animation: pulse-pink 1.5s infinite; }
+        @keyframes pulse-pink { 0% { box-shadow: 0 0 0 0 rgba(255, 0, 127, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 0, 127, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 0, 127, 0); } }
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-bottom: 15vh; } 
+        
+        .terminal-box { background-color: var(--vantablack); border: 1px solid rgba(148, 163, 184, 0.2); padding: 2rem; width: 100%; max-width: 500px; position: relative; transition: all 0.3s ease; }
+        .terminal-header { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+        
+        .btn { display: inline-block; padding: 1rem 2rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; text-align: center; width: 100%; }
+        .btn-purple { background-color: transparent; color: var(--neon-purple); border: 1px solid var(--neon-purple); box-shadow: inset 0 0 0 rgba(176, 38, 255, 0), 0 0 10px rgba(176, 38, 255, 0.1); }
+        .btn-purple:hover { background-color: rgba(176, 38, 255, 0.1); box-shadow: inset 0 0 10px rgba(176, 38, 255, 0.2), 0 0 15px rgba(176, 38, 255, 0.2); }
+
+        .pin-input { width: 100%; background: var(--obsidian-navy); border: 1px solid var(--steel-grey); color: var(--electric-cyan); padding: 1.2rem; font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; text-align: center; letter-spacing: 5px; outline: none; margin-bottom: 1.5rem; text-transform: uppercase; }
+        .pin-input:focus { border-color: var(--neon-purple); box-shadow: inset 0 0 10px rgba(176, 38, 255, 0.2); }
+
+        /* Contenido Secreto Oculto */
+        #secretContent { display: none; width: 100%; max-width: 800px; animation: fadeIn 1s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+
+        @media (max-width: 768px) {
+            header { flex-direction: column; align-items: flex-start; gap: 1.5rem; padding: 3rem 0 2rem 0;}
+            .terminal-box { padding: 1.5rem 1rem; }
+            .pin-input { font-size: 1.2rem; letter-spacing: 2px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="blueprint-layer"></div>
+    <div class="noise-layer"></div>
+
+    <div class="container">
+        <header>
+            <div class="brand-logo logo-text">
+                <span class="unfiltered-word">UNFILTERED</span> <span>ALPHA</span>
+            </div>
+            <!-- Indicador Rosa de Descuento (Solo se enciende si hay descuento activo) -->
+            <a href="index.html" class="discount-indicator" id="discountDot">
+                <div class="pink-dot"></div>
+                [ REVERT TO MAIN ]
+            </a>
+        </header>
+
+        <main>
+            <!-- CAJA DE SEGURIDAD (MÁQUINA ENIGMA) -->
+            <div class="terminal-box" id="vaultContainer" style="border-color: var(--neon-purple);">
+                <div class="terminal-header code-data" style="color: var(--smoke-white);">
+                    <span>> THE_VAULT_ENCRYPTION</span>
+                </div>
+                
+                <div style="text-align: center;">
+                    <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--steel-grey); margin-bottom: 2rem; line-height: 1.5;">
+                        Introduce el código de acceso alfanumérico para desencriptar el protocolo reservado.
+                    </p>
+                    
+                    <input type="text" id="pinInput" class="pin-input" placeholder="CODE" autocomplete="off">
+                    
+                    <div id="pinError" style="color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 1rem; display: none; font-weight: bold;">
+                        [SYS_ERROR] LIQUIDITY DETECTED. ACCESO DENEGADO.
+                    </div>
+
+                    <button class="btn btn-purple" id="btnUnlock">[ DESENCRIPTAR ]</button>
+                </div>
+            </div>
+
+            <!-- CONTENIDO SECRETO (Se muestra al acertar) -->
+            <div id="secretContent">
+                <div class="terminal-box" style="border-color: var(--matrix-green); max-width: 100%;">
+                    <div class="terminal-header code-data" style="color: var(--matrix-green);">
+                        <span>> DECLASSIFIED_INTEL</span>
+                        <span>[ UNLOCKED ]</span>
+                    </div>
+                    
+                    <p style="margin-bottom: 1.5rem; color: var(--smoke-white); font-family: 'Inter', sans-serif; line-height: 1.6;">
+                        El algoritmo retail ha sido purgado. Aquí tienes el acceso a la transmisión privada.
+                    </p>
+                    
+                    <!-- PABLO: Aquí pones tu vídeo o tu enlace real. Yo te dejo un vídeo de YT de ejemplo -->
+                    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border: 1px solid rgba(148, 163, 184, 0.2); margin-bottom: 1.5rem;">
+                        <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" 
+                                src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&modestbranding=1" 
+                                frameborder="0" allowfullscreen>
+                        </iframe>
+                    </div>
+
+                    <a href="https://unfilteredalpha.gumroad.com/l/qoabdg" target="_blank" class="btn" style="background-color: var(--matrix-green); color: var(--vantablack); border: none;">
+                        [ APPLY PROTOCOL ($27) ]
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://qtpuipgkytzjnckkkwnl.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_eA2g7-rTvcPcfz_dVl2aWg_Ca5P7t93';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let currentValidCode = "ALPHA"; // Código por defecto por si falla la BDD
+
+        // 1. Verificar si hay un descuento activo para encender el puntito rosa
+        // 2. Traer el Código Secreto actual de la Base de Datos
+        async function fetchSystemState() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('logs')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                // --- Puntito Rosa ---
+                const discountLog = data.find(log => log.log_type === 'discount_alert');
+                if (discountLog && discountLog.value_text !== "0") {
+                    const parts = discountLog.value_text.split('|');
+                    const endTime = parseInt(parts[0]);
+                    if (endTime > new Date().getTime()) {
+                        document.getElementById('discountDot').classList.add('active');
+                    }
+                }
+
+                // --- Código Secreto ---
+                const codeLog = data.find(log => log.log_type === 'drop_code');
+                if (codeLog && codeLog.value_text) {
+                    currentValidCode = codeLog.value_text.toUpperCase().trim();
+                }
+
+            } catch (err) {
+                console.error("Error connecting to Vault:", err);
+            }
+        }
+
+        fetchSystemState();
+
+        // LÓGICA DE DESENCRIPTACIÓN
+        const btnUnlock = document.getElementById('btnUnlock');
+        const pinInput = document.getElementById('pinInput');
+        const pinError = document.getElementById('pinError');
+        const vaultContainer = document.getElementById('vaultContainer');
+        const secretContent = document.getElementById('secretContent');
+
+        function tryUnlock() {
+            const intento = pinInput.value.toUpperCase().trim();
+            
+            if (intento === currentValidCode) {
+                // ÉXITO
+                pinError.style.display = 'none';
+                btnUnlock.innerText = '[ DECRYPTING... ]';
+                btnUnlock.style.pointerEvents = 'none';
+                vaultContainer.style.borderColor = 'var(--matrix-green)';
+                
+                // Trackeo en Google Analytics (si existe) de que alguien ha descifrado el código
+                if (typeof gtag === 'function') {
+                    gtag('event', 'unlock_drop', { 'event_category': 'engagement', 'event_label': 'Drop Unlocked' });
+                }
+
+                setTimeout(() => {
+                    vaultContainer.style.display = 'none'; 
+                    secretContent.style.display = 'block'; 
+                }, 800);
+            } else {
+                // FALLO
+                pinError.style.display = 'block';
+                pinInput.value = '';
+                
+                // Efecto de parpadeo rojo (Glitch)
+                vaultContainer.style.borderColor = 'var(--crimson-war)';
+                vaultContainer.style.boxShadow = '0 0 30px rgba(255, 49, 49, 0.2)';
+                setTimeout(() => {
+                    vaultContainer.style.borderColor = 'var(--neon-purple)';
+                    vaultContainer.style.boxShadow = 'none';
+                }, 400);
+            }
+        }
+
+        btnUnlock.addEventListener('click', tryUnlock);
+        
+        // Permitir darle a "Enter" en el teclado para mayor rapidez
+        pinInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                tryUnlock();
+            }
+        });
+    </script>
+</body>
+</html>

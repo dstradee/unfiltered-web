@@ -251,7 +251,9 @@
                 </div>
             </div>
 
+            <!-- HERE ARE THE BUTTONS -->
             <div class="action-area">
+                <a href="analysis.html" class="btn btn-primary" id="btn-dg" style="box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);">[ START FREE ANALYSIS ]</a>
                 <a href="#" class="btn btn-primary" id="btn-calculadora">[ CALCULATOR ]</a>
                 <a href="#" class="btn btn-gold" id="btn-VIP">[ VIP ACCESS ]</a>
                 <a href="#" class="btn btn-purple" id="btn-drop" style="display: none;">[ DROP ACCESS ]</a>
@@ -382,7 +384,7 @@
         const discountTimer = document.getElementById('discountTimer');
 
         let currentDropCode = ""; 
-        let countdownInterval; // Variable global para guardar el bucle de tiempo
+        let countdownInterval; 
 
         async function fetchTerminalLogs() {
             try {
@@ -435,7 +437,6 @@
                     discountBanner.style.backgroundColor = configData.color || 'var(--hot-pink)';
                     discountBanner.style.display = 'flex';
 
-                    // Limpiamos intervalos viejos si los hay
                     if (countdownInterval) clearInterval(countdownInterval);
 
                     if (configData.mode === 'spots') {
@@ -465,8 +466,8 @@
                             discountTimer.innerText = timeStr;
                         };
                         
-                        updateTimer(); // Ejecutar al instante
-                        countdownInterval = setInterval(updateTimer, 1000); // Luego cada segundo
+                        updateTimer(); 
+                        countdownInterval = setInterval(updateTimer, 1000); 
                     }
 
                 } else {

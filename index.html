@@ -55,20 +55,20 @@
             display: none; width: 100%; position: fixed; top: 0; left: 0; z-index: 1000; box-shadow: 0 5px 20px rgba(255, 49, 49, 0.4);
         }
 
-        /* --- DYNAMIC OFFER BANNER --- */
+        /* --- DYNAMIC OFFER BANNER (RESIZED & SMALLER) --- */
         .discount-banner {
             position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--hot-pink); 
             color: var(--vantablack); 
-            z-index: 999; display: none; padding: 1.5rem 2rem; box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.5);
-            font-family: 'Inter', sans-serif; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem;
+            z-index: 999; display: none; padding: 0.8rem 2rem; box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.5);
+            font-family: 'Inter', sans-serif; flex-direction: column; align-items: center; justify-content: center; gap: 0.3rem;
             transition: background-color 0.5s ease;
         }
         
         .discount-content { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 1200px; }
         
-        .discount-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 2px; line-height: 1; }
-        .discount-msg { font-size: 1.1rem; font-weight: 700; }
-        .discount-timer { font-family: 'JetBrains Mono', monospace; font-size: 2.5rem; font-weight: 800; background: rgba(0,0,0,0.15); padding: 0.5rem 1.5rem; border: 2px solid rgba(0,0,0,0.8); }
+        .discount-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 2px; line-height: 1; }
+        .discount-msg { font-size: 0.95rem; font-weight: 700; }
+        .discount-timer { font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; font-weight: 800; background: rgba(0,0,0,0.15); padding: 0.3rem 1rem; border: 2px solid rgba(0,0,0,0.8); }
 
         .toast-notification {
             position: fixed; top: 20px; right: -400px; width: 320px;
@@ -152,11 +152,11 @@
         @media (max-width: 768px) {
             main { padding-bottom: 25vh !important; }
             
-            .discount-banner { padding: 1rem; }
-            .discount-content { flex-direction: column; gap: 0.5rem; text-align: center; }
-            .discount-title { font-size: 1.8rem; }
-            .discount-msg { font-size: 0.9rem; }
-            .discount-timer { font-size: 1.5rem; padding: 0.3rem 0.8rem; width: 100%; max-width: 250px; }
+            .discount-banner { padding: 0.6rem 1rem; }
+            .discount-content { flex-direction: column; gap: 0.3rem; text-align: center; }
+            .discount-title { font-size: 1.3rem; }
+            .discount-msg { font-size: 0.85rem; }
+            .discount-timer { font-size: 1.2rem; padding: 0.2rem 0.5rem; width: 100%; max-width: 220px; }
 
             .hero-title { font-size: 3.5rem; }
             .terminal-box { padding: 1.5rem 1rem; }

@@ -120,11 +120,41 @@
         .btn-danger { border-color: var(--crimson-war); color: var(--crimson-war); }
         .btn-danger:hover { background: var(--crimson-war); color: var(--smoke-white); }
 
+        /* ========================================= */
+        /* MOBILE OPTIMIZATION (THE FIX)             */
+        /* ========================================= */
         @media (max-width: 768px) {
-            header { flex-direction: column; align-items: flex-start; gap: 1.5rem; padding: 3rem 0 2rem 0;}
+            header { flex-direction: column; align-items: flex-start; gap: 1rem; padding: 2rem 0 1.5rem 0;}
+            
+            /* Ajuste del Logo para que no se salga */
+            .brand-logo { font-size: 1.8rem; flex-wrap: wrap; letter-spacing: 4px; }
             .header-actions { width: 100%; justify-content: space-between; }
+            
+            /* Ajuste de la caja principal */
             .terminal-box { padding: 1.5rem 1rem; }
-            .btn-edit-float { bottom: 15px; right: 15px; padding: 0.8rem 1rem; font-size: 0.8rem; }
+            
+            /* FIX: Apilar los textos de la cabecera para que no choquen */
+            .terminal-header { 
+                flex-direction: column; 
+                align-items: flex-start; 
+                gap: 0.5rem; 
+                font-size: 0.8rem;
+                padding-bottom: 0.8rem;
+            }
+
+            /* Ajuste del texto para que respire en móvil */
+            #displayText { font-size: 0.9rem; line-height: 1.5; }
+
+            /* Ajuste de las pestañas (Tabs) */
+            .drop-tabs { gap: 0.3rem; padding-bottom: 8px; }
+            .drop-tab { padding: 0.6rem 1rem; font-size: 0.75rem; }
+            
+            /* Ajuste del botón flotante */
+            .btn-edit-float { bottom: 15px; right: 15px; padding: 0.8rem 1rem; font-size: 0.75rem; }
+
+            /* Ajuste del Modal de edición */
+            .modal-content { padding: 1.5rem; }
+            .modal-header { font-size: 1.8rem; }
         }
     </style>
 </head>
@@ -154,6 +184,7 @@
 
             <!-- DYNAMIC DROP CONTENT -->
             <div class="terminal-box" id="dropTerminalBox" style="display: none;">
+                <!-- MOBILE FIX APPLIED HERE VIA CSS -->
                 <div class="terminal-header code-data" id="dropTerminalHeader">
                     <span id="displayHeader1">> AWAITING_DATA</span>
                     <span id="displayHeader2">[ SYSTEM_ONLINE ]</span>

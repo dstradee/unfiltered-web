@@ -247,7 +247,6 @@
                     <input type="datetime-local" id="offerTimer" style="border-color: var(--hot-pink); color: var(--hot-pink); font-size: 1.1rem; text-align: center; height: 55px;">
                 </div>
                 
-                <!-- SELECTOR DE COLOR DUAL (PICKER + HEX) PARA OFERTA -->
                 <div>
                     <label style="color: var(--hot-pink);">> BANNER COLOR (HEX)</label>
                     <div style="display: flex; gap: 0.5rem; align-items: center;">
@@ -328,7 +327,6 @@
             <hr style="border: none; border-top: 1px solid rgba(148, 163, 184, 0.2); margin: 2rem 0;">
 
             <label style="color: var(--smoke-white);">> REGISTERED BUTTONS</label>
-            <!-- CONTENEDOR DE BOTONES -->
             <div id="savedButtonsContainer" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.8rem;">
             </div>
 
@@ -439,7 +437,6 @@
             const mode = document.querySelector('input[name="offerMode"]:checked').value;
             const title = document.getElementById('offerTitle').value.trim() || 'LIMITED ACCESS PROTOCOL';
             
-            // Garantizar que el HEX sea válido antes de enviar
             let colorHex = document.getElementById('offerColorHex').value.trim();
             if(!colorHex.startsWith('#') && /^[0-9A-Fa-f]{6}$/.test(colorHex)) colorHex = '#' + colorHex;
             if(!colorHex) colorHex = '#FF007F';
@@ -571,7 +568,6 @@
             }
         }
 
-        // --- SISTEMA DE BOTONES ACTUALIZADO (CON COLOR DUAL Y SEGURO) ---
         let savedButtons = JSON.parse(localStorage.getItem('admin_saved_buttons')) || [];
         
         function renderSavedButtons() {
@@ -630,7 +626,6 @@
             const feedback = document.getElementById('btnToggleFeedback');
             feedback.style.color = 'var(--neon-purple)'; feedback.innerText = `Sending command to ${btnId}...`;
             
-            // Garantizar un HEX válido
             let safeColor = colorHex ? colorHex.trim() : "#00F2FF";
             if(!safeColor.startsWith('#') && /^[0-9A-Fa-f]{6}$/.test(safeColor)) safeColor = '#' + safeColor;
             if(!safeColor) safeColor = "#00F2FF";
@@ -657,15 +652,16 @@
         async function loadLogs() {
             const container = document.getElementById('logsContainer');
             try {
-                // AUMENTADO A 100 PARA EVITAR QUE SE BORREN LOS BOTONES EN MEMORIA
                 const { data, error } = await supabaseClient.from('logs').select('*').order('created_at', { ascending: false }).limit(100);
                 if (error) throw error;
                 if (data.length === 0) { container.innerHTML = '<div class="msg-neutral" style="text-align:center;">[ EMPTY ] No records found.</div>'; return; }
                 container.innerHTML = ''; 
                 
-                // Mostrar solo los últimos 15 visualmente en el admin para no saturar
                 data.slice(0, 15).forEach(log => {
                     let borderColor = 'var(--steel-grey)'; let valueColor = 'var(--steel-grey)';
+                    let displayAction = log.action_text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    let displayValue = log.value_text ? `<span style="color: ${valueColor}; font-weight: bold;">[DATA_STORED]</span>` : '';
+
                     if(log.log_type === 'positive') { borderColor = 'var(--electric-cyan)'; valueColor = 'var(--electric-cyan)'; } 
                     else if (log.log_type === 'negative') { borderColor = 'var(--crimson-war)'; valueColor = 'var(--crimson-war)'; }
                     else if (log.log_type === 'news_alert') { borderColor = '#FF8C00'; valueColor = '#FF8C00'; } 
@@ -673,15 +669,21 @@
                     else if (log.log_type === 'toast_alert') { borderColor = 'var(--alert-gold)'; valueColor = 'var(--alert-gold)'; } 
                     else if (log.log_type === 'button_toggle') { borderColor = 'var(--neon-purple)'; valueColor = 'var(--neon-purple)'; } 
                     else if (log.log_type === 'drop_code') { borderColor = 'var(--matrix-green)'; valueColor = 'var(--matrix-green)'; } 
+                    else if (log.log_type === 'drop_config') { 
+                        borderColor = 'var(--matrix-green)'; 
+                        displayAction = `System File: <strong style="color: var(--smoke-white);">drop.html</strong>`;
+                        displayValue = `<span style="color: var(--matrix-green); font-weight: bold;">[ LAYOUT UPDATED ]</span>`;
+                    }
+                    else if (log.log_type === 'loss_config') { 
+                        borderColor = 'var(--crimson-war)'; 
+                        displayAction = `System File: <strong style="color: var(--smoke-white);">loss.html</strong>`;
+                        displayValue = `<span style="color: var(--crimson-war); font-weight: bold;">[ LAYOUT UPDATED ]</span>`;
+                    }
 
                     const logEl = document.createElement('div'); logEl.className = 'log-item'; logEl.style.borderLeftColor = borderColor;
                     
-                    let displayAction = log.action_text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                    let displayValue = log.value_text ? `<span style="color: ${valueColor}; font-weight: bold;">[DATA_STORED]</span>` : '';
-                    
                     if (log.log_type === 'button_toggle') {
                         displayAction = `ID Switch: <strong style="color: var(--smoke-white);">${displayAction}</strong>`;
-                        
                         try {
                             const btnConfig = JSON.parse(log.value_text);
                             const stateText = btnConfig.state ? btnConfig.state.toUpperCase() : "TOGGLED";

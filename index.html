@@ -120,6 +120,7 @@
 
         .action-area { display: flex; gap: 1.5rem; margin-top: 2rem; flex-wrap: wrap; }
         .btn { display: inline-block; padding: 1rem 2rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; text-align: center; }
+        
         .btn-primary { background-color: transparent; color: var(--electric-cyan); border: 1px solid var(--electric-cyan); box-shadow: inset 0 0 0 rgba(0, 242, 255, 0), 0 0 10px rgba(0, 242, 255, 0.1); }
         .btn-primary:hover { background-color: rgba(0, 242, 255, 0.1); box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.2), 0 0 15px rgba(0, 242, 255, 0.2); }
 
@@ -251,7 +252,6 @@
                 </div>
             </div>
 
-            <!-- HERE ARE THE BUTTONS -->
             <div class="action-area">
                 <a href="analysis.html" class="btn btn-primary" id="btn-dg" style="box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);">[ START FREE ANALYSIS ]</a>
                 <a href="#" class="btn btn-primary" id="btn-calculadora">[ CALCULATOR ]</a>
@@ -481,24 +481,49 @@
                     currentDropCode = dropCodeLog.value_text.toUpperCase().trim();
                 }
 
-                // --- 2.5 BUTTON VISIBILITY ---
-                const btnDrop = document.getElementById('btn-drop');
-                if (btnDrop) btnDrop.style.display = 'none';
-
+                // --- 2.5 BUTTON VISIBILITY & COLOR OVERRIDE ---
                 const toggleLogs = data.filter(log => log.log_type === 'button_toggle');
                 const buttonStates = {};
                 toggleLogs.forEach(log => {
                     const btnId = log.action_text;
-                    const state = log.value_text;
                     if (buttonStates[btnId] === undefined) {
-                        buttonStates[btnId] = state; 
+                        try {
+                            buttonStates[btnId] = JSON.parse(log.value_text);
+                        } catch(e) {
+                            buttonStates[btnId] = { state: log.value_text, color: null };
+                        }
                     }
                 });
 
-                for (const [btnId, state] of Object.entries(buttonStates)) {
+                for (const [btnId, config] of Object.entries(buttonStates)) {
                     const btnElement = document.getElementById(btnId);
                     if (btnElement) {
-                        btnElement.style.display = state === 'show' ? 'inline-block' : 'none';
+                        btnElement.style.display = config.state === 'show' ? 'inline-block' : 'none';
+                        
+                        if (config.color && config.state === 'show') {
+                            // Apply custom color to text and border
+                            btnElement.style.color = config.color;
+                            btnElement.style.borderColor = config.color;
+                            btnElement.style.boxShadow = `inset 0 0 0 transparent, 0 0 10px ${config.color}33`;
+                            
+                            // Dynamically create hover effect using mouse events
+                            btnElement.onmouseenter = function() {
+                                this.style.backgroundColor = config.color + '1A'; 
+                                this.style.boxShadow = `inset 0 0 10px ${config.color}33, 0 0 15px ${config.color}33`;
+                            };
+                            btnElement.onmouseleave = function() {
+                                this.style.backgroundColor = 'transparent';
+                                this.style.boxShadow = `inset 0 0 0 transparent, 0 0 10px ${config.color}33`;
+                            };
+                        } else if (!config.color && config.state === 'show') {
+                            // Reset to CSS defaults if no color is provided
+                            btnElement.style.color = '';
+                            btnElement.style.borderColor = '';
+                            btnElement.style.boxShadow = '';
+                            btnElement.style.backgroundColor = '';
+                            btnElement.onmouseenter = null;
+                            btnElement.onmouseleave = null;
+                        }
                     }
                 }
 

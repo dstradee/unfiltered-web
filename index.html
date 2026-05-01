@@ -55,7 +55,7 @@
             display: none; width: 100%; position: fixed; top: 0; left: 0; z-index: 1000; box-shadow: 0 5px 20px rgba(255, 49, 49, 0.4);
         }
 
-        /* --- DYNAMIC OFFER BANNER (RESIZED & SMALLER) --- */
+        /* --- DYNAMIC OFFER BANNER --- */
         .discount-banner {
             position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--hot-pink); 
             color: var(--vantablack); 
@@ -121,13 +121,13 @@
         .action-area { display: flex; gap: 1.5rem; margin-top: 2rem; flex-wrap: wrap; }
         .btn { display: inline-block; padding: 1rem 2rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; text-align: center; }
         
-        .btn-primary { background-color: transparent; color: var(--electric-cyan); border: 1px solid var(--electric-cyan); box-shadow: inset 0 0 0 rgba(0, 242, 255, 0), 0 0 10px rgba(0, 242, 255, 0.1); }
+        .btn-primary { background-color: transparent; color: var(--electric-cyan); border: 1px solid var(--electric-cyan); box-shadow: inset 0 0 0 transparent, 0 0 10px rgba(0, 242, 255, 0.1); }
         .btn-primary:hover { background-color: rgba(0, 242, 255, 0.1); box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.2), 0 0 15px rgba(0, 242, 255, 0.2); }
 
-        .btn-purple { background-color: transparent; color: var(--neon-purple); border: 1px solid var(--neon-purple); box-shadow: inset 0 0 0 rgba(176, 38, 255, 0), 0 0 10px rgba(176, 38, 255, 0.1); }
+        .btn-purple { background-color: transparent; color: var(--neon-purple); border: 1px solid var(--neon-purple); box-shadow: inset 0 0 0 transparent, 0 0 10px rgba(176, 38, 255, 0.1); }
         .btn-purple:hover { background-color: rgba(176, 38, 255, 0.1); box-shadow: inset 0 0 10px rgba(176, 38, 255, 0.2), 0 0 15px rgba(176, 38, 255, 0.2); }
 
-        .btn-gold { background-color: transparent; color: var(--alert-gold); border: 1px solid var(--alert-gold); box-shadow: inset 0 0 0 rgba(255, 215, 0, 0), 0 0 10px rgba(255, 215, 0, 0.1); }
+        .btn-gold { background-color: transparent; color: var(--alert-gold); border: 1px solid var(--alert-gold); box-shadow: inset 0 0 0 transparent, 0 0 10px rgba(255, 215, 0, 0.1); }
         .btn-gold:hover { background-color: rgba(255, 215, 0, 0.1); box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.2), 0 0 15px rgba(255, 215, 0, 0.2); }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(4px); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 1rem; }
@@ -388,11 +388,12 @@
 
         async function fetchTerminalLogs() {
             try {
+                // AUMENTADO A 100 PARA EVITAR QUE SE BORREN LOS BOTONES EN MEMORIA
                 const { data, error } = await supabaseClient
                     .from('logs')
                     .select('*')
                     .order('created_at', { ascending: false })
-                    .limit(15); 
+                    .limit(100); 
 
                 if (error) throw error;
 
@@ -481,9 +482,10 @@
                     currentDropCode = dropCodeLog.value_text.toUpperCase().trim();
                 }
 
-                // --- 2.5 BUTTON VISIBILITY & COLOR OVERRIDE ---
+                // --- 2.5 BUTTON VISIBILITY & COLOR OVERRIDE (A PRUEBA DE FALLOS) ---
                 const toggleLogs = data.filter(log => log.log_type === 'button_toggle');
                 const buttonStates = {};
+                
                 toggleLogs.forEach(log => {
                     const btnId = log.action_text;
                     if (buttonStates[btnId] === undefined) {
@@ -497,32 +499,51 @@
 
                 for (const [btnId, config] of Object.entries(buttonStates)) {
                     const btnElement = document.getElementById(btnId);
+                    
                     if (btnElement) {
-                        btnElement.style.display = config.state === 'show' ? 'inline-block' : 'none';
-                        
-                        if (config.color && config.state === 'show') {
-                            // Apply custom color to text and border
-                            btnElement.style.color = config.color;
-                            btnElement.style.borderColor = config.color;
-                            btnElement.style.boxShadow = `inset 0 0 0 transparent, 0 0 10px ${config.color}33`;
+                        try {
+                            btnElement.style.display = config.state === 'show' ? 'inline-block' : 'none';
                             
-                            // Dynamically create hover effect using mouse events
-                            btnElement.onmouseenter = function() {
-                                this.style.backgroundColor = config.color + '1A'; 
-                                this.style.boxShadow = `inset 0 0 10px ${config.color}33, 0 0 15px ${config.color}33`;
-                            };
-                            btnElement.onmouseleave = function() {
-                                this.style.backgroundColor = 'transparent';
-                                this.style.boxShadow = `inset 0 0 0 transparent, 0 0 10px ${config.color}33`;
-                            };
-                        } else if (!config.color && config.state === 'show') {
-                            // Reset to CSS defaults if no color is provided
-                            btnElement.style.color = '';
-                            btnElement.style.borderColor = '';
-                            btnElement.style.boxShadow = '';
-                            btnElement.style.backgroundColor = '';
-                            btnElement.onmouseenter = null;
-                            btnElement.onmouseleave = null;
+                            if (config.color && config.state === 'show') {
+                                // Sanitizar el color por si acaso
+                                let safeColor = config.color.trim();
+                                if (!safeColor.startsWith('#') && /^[0-9A-Fa-f]{6}$/.test(safeColor)) {
+                                    safeColor = '#' + safeColor;
+                                }
+                                
+                                btnElement.style.color = safeColor;
+                                btnElement.style.borderColor = safeColor;
+                                
+                                // Si es un hex de 7 letras le damos transparencia para la sombra, si no lo usamos tal cual
+                                let shadowColor = safeColor;
+                                if (safeColor.startsWith('#') && safeColor.length === 7) {
+                                    shadowColor = safeColor + '33';
+                                }
+                                
+                                btnElement.style.boxShadow = `inset 0 0 0 transparent, 0 0 10px ${shadowColor}`;
+                                
+                                btnElement.onmouseenter = function() {
+                                    let hoverBg = safeColor;
+                                    if (safeColor.startsWith('#') && safeColor.length === 7) hoverBg = safeColor + '1A';
+                                    
+                                    this.style.backgroundColor = hoverBg; 
+                                    this.style.boxShadow = `inset 0 0 10px ${shadowColor}, 0 0 15px ${shadowColor}`;
+                                };
+                                btnElement.onmouseleave = function() {
+                                    this.style.backgroundColor = 'transparent';
+                                    this.style.boxShadow = `inset 0 0 0 transparent, 0 0 10px ${shadowColor}`;
+                                };
+                            } else if (!config.color && config.state === 'show') {
+                                // Resetea a lo que tenga el CSS si no hay color extra
+                                btnElement.style.color = '';
+                                btnElement.style.borderColor = '';
+                                btnElement.style.boxShadow = '';
+                                btnElement.style.backgroundColor = '';
+                                btnElement.onmouseenter = null;
+                                btnElement.onmouseleave = null;
+                            }
+                        } catch(e) {
+                            console.error("Safeguard catch: error applying styles to button", e);
                         }
                     }
                 }
@@ -530,6 +551,7 @@
                 // --- 3. TERMINAL ---
                 terminalOutput.innerHTML = ''; 
                 
+                // Extraer exactamente 4 mensajes para la terminal que no sean del sistema interno
                 const visibleData = data.filter(log => 
                     log.log_type !== 'news_alert' && 
                     log.log_type !== 'discount_alert' && 

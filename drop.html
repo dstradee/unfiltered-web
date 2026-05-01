@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UNFILTERED ALPHA | The Drop</title>
     
-    <!-- Google tag (gtag.js) -->
+    <!-- Google tag (gtag.js) - INVISIBLE TRACKING ENGINE -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z90RHTXWGV"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -224,7 +224,7 @@
                 <input type="text" id="editTabName" placeholder="Ex: DROP 001">
             </div>
 
-            <!-- THEME COLORS -->
+            <!-- THEME COLORS (BOX + BUTTON TEXT) -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
                 <div class="input-group" style="border-left: 3px solid var(--electric-cyan); padding-left: 1rem; margin:0;">
                     <label>> THEME COLOR (HEX)</label>
@@ -243,7 +243,7 @@
                 </div>
             </div>
 
-            <!-- TOGGLES -->
+            <!-- TOGGLES: VIDEO AND PRIVACY -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
                 <label class="checkbox-container" style="background: rgba(0, 242, 255, 0.05); border-color: var(--electric-cyan); color: var(--electric-cyan);">
                     <input type="checkbox" id="editHasVideo" onchange="toggleVideoSection()">
@@ -493,7 +493,19 @@
                 }
 
                 btn.innerText = drop.tabName + (drop.isPrivate ? " 🔒" : "");
-                btn.onclick = () => { appState.activeIndex = index; renderUI(); };
+                btn.onclick = () => { 
+                    appState.activeIndex = index; 
+                    
+                    // GA4 TRACKING: TAB CLICK
+                    if (typeof gtag === 'function') {
+                        gtag('event', 'select_content', {
+                            'content_type': 'tab',
+                            'item_id': drop.tabName
+                        });
+                    }
+
+                    renderUI(); 
+                };
                 dropTabsContainer.appendChild(btn);
             });
 
@@ -532,6 +544,14 @@
                     elVideoSrc.src = config.video;
                     elVideo.load(); 
                 }
+
+                // GA4 TRACKING: VIDEO PLAY
+                elVideo.onplay = () => {
+                    if (typeof gtag === 'function') {
+                        gtag('event', 'video_start', { 'video_title': config.tabName });
+                    }
+                };
+
             } else {
                 videoContainerWrapper.style.display = 'none';
             }
@@ -597,8 +617,19 @@
                 }
             }
 
-            // --- NATIVE CLICK TRACKER (FAST & RESPONSIVE) ---
+            // --- NATIVE CLICK TRACKER & GA4 (FAST & RESPONSIVE) ---
             elBtn.onclick = (e) => {
+                
+                // GA4 TRACKING: MAIN CTA BUTTON
+                if (typeof gtag === 'function') {
+                    gtag('event', 'generate_lead', {
+                        'event_category': 'conversion',
+                        'event_label': 'Drop CTA Click',
+                        'drop_name': config.tabName,
+                        'urgency_mode': config.urgencyMode
+                    });
+                }
+
                 if (config.urgencyMode === 'spots') {
                     const max = parseInt(config.maxSpots) || 0;
                     const current = parseInt(config.currentClicks) || 0;
@@ -627,7 +658,6 @@
                     }
 
                     // 2. ENVÍA EL CLICK A LA BASE DE DATOS EN SEGUNDO PLANO
-                    // El navegador abrirá el target="_blank" al instante sin bloqueos
                     incrementSpotCountDB(appState.activeIndex);
                 }
             };

@@ -45,13 +45,13 @@
         /* Base Styles (Background and Noise) */
         .blueprint-layer { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; 
-            background-image: url('Gemini_Generated_Image_dofjdbdofjdbdofj.jpg'); /* Default */
+            background-image: url('Gemini_Generated_Image_dofjdbdofjdbdofj.jpg'); 
             background-size: cover; background-position: center; opacity: 0.15; mix-blend-mode: screen; transition: background-image 0.5s ease;
         }
         .noise-layer { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1; opacity: 0.06; background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E'); }
 
         h1, h2, .logo-text { font-family: 'Bebas Neue', sans-serif; color: var(--smoke-white); letter-spacing: 8px; text-transform: uppercase; font-weight: normal; }
-        .code-data { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--electric-cyan); font-size: 0.9rem; letter-spacing: 1px; }
+        .code-data { font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 0.9rem; letter-spacing: 1px; transition: color 0.3s ease; }
 
         .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 0 2rem; width: 100%; display: flex; flex-direction: column; min-height: 100vh; }
         
@@ -60,32 +60,41 @@
         .unfiltered-word { border-bottom: 2px solid var(--electric-cyan); padding-bottom: 2px; }
         
         /* AUTH LINK */
-        .auth-link { font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); text-decoration: none; font-size: 0.85rem; letter-spacing: 1px; transition: color 0.2s ease; cursor: pointer; }
+        .auth-link { font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); text-decoration: none; font-size: 0.75rem; letter-spacing: 1px; transition: color 0.2s ease; cursor: pointer; }
         .auth-link:hover { color: var(--electric-cyan); }
 
         .header-actions { display: flex; gap: 1.5rem; align-items: center; }
 
-        /* DISCOUNT INDICATOR (Blinking Pink Dot) */
-        .discount-indicator {
-            display: flex; align-items: center; gap: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--steel-grey); text-decoration: none;
-            opacity: 0; transition: opacity 0.3s;
-        }
+        /* DISCOUNT INDICATOR */
+        .discount-indicator { display: flex; align-items: center; gap: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--steel-grey); text-decoration: none; opacity: 0; transition: opacity 0.3s; }
         .discount-indicator.active { opacity: 1; }
         .pink-dot { width: 10px; height: 10px; background-color: var(--hot-pink); border-radius: 50% !important; animation: pulse-pink 1.5s infinite; }
         @keyframes pulse-pink { 0% { box-shadow: 0 0 0 0 rgba(255, 0, 127, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 0, 127, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 0, 127, 0); } }
 
-        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-bottom: 15vh; } 
+        main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding-top: 2rem; padding-bottom: 15vh; } 
         
-        .terminal-box { background-color: var(--vantablack); border: 1px solid rgba(148, 163, 184, 0.2); padding: 2rem; width: 100%; max-width: 800px; position: relative; animation: fadeIn 1s ease; }
-        .terminal-header { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+        /* --- TAB SYSTEM UI --- */
+        .drop-tabs { display: flex; gap: 0.5rem; width: 100%; max-width: 800px; margin-bottom: 1rem; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+        .drop-tabs::-webkit-scrollbar { display: none; }
+        .drop-tab { background-color: var(--obsidian-navy); border: 1px solid var(--steel-grey); color: var(--steel-grey); padding: 0.8rem 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .drop-tab:hover { background-color: rgba(255, 255, 255, 0.05); }
+        .drop-tab.active { border-color: var(--matrix-green); color: var(--matrix-green); background-color: rgba(0, 255, 65, 0.05); box-shadow: 0 -2px 10px rgba(0, 255, 65, 0.1); }
+        .drop-tab.is-private { border-style: dashed; }
+        .drop-tab-add { background: transparent; border: 1px dashed var(--electric-cyan); color: var(--electric-cyan); }
+        .drop-tab-add:hover { background: var(--electric-cyan); color: var(--vantablack); }
+
+        .terminal-box { background-color: var(--vantablack); border: 1px solid var(--matrix-green); padding: 2rem; width: 100%; max-width: 800px; position: relative; animation: fadeIn 0.5s ease; transition: border-color 0.3s ease; }
+        .terminal-header { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 1rem; margin-bottom: 1.5rem; color: var(--matrix-green); transition: color 0.3s ease; }
         
         .btn { display: inline-block; padding: 1rem 2rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; text-align: center; width: 100%; }
 
-        /* Custom Video Player Styling */
         .video-container { position: relative; width: 100%; border: 1px solid rgba(148, 163, 184, 0.2); margin-bottom: 1.5rem; background-color: #000; }
         video { width: 100%; display: block; outline: none; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        /* Urgency Display */
+        .urgency-display { display: none; margin-bottom: 1rem; padding: 0.8rem; border: 1px dashed var(--alert-gold); color: var(--alert-gold); font-family: 'JetBrains Mono', monospace; font-weight: bold; text-align: center; font-size: 1rem; letter-spacing: 2px; background: rgba(255, 215, 0, 0.05); transition: all 0.3s; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- MODALS (Login & Editor) --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(4px); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 1rem; }
@@ -96,19 +105,20 @@
         
         .input-group { margin-bottom: 1.2rem; }
         .input-group label { display: block; font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); font-size: 0.85rem; margin-bottom: 0.5rem; }
-        .input-group input, .input-group textarea { width: 100%; background-color: var(--vantablack); border: 1px solid var(--steel-grey); color: var(--electric-cyan); padding: 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; outline: none; }
-        .input-group input:focus, .input-group textarea:focus { border-color: var(--electric-cyan); }
+        .input-group input, .input-group textarea, .input-group select { width: 100%; background-color: var(--vantablack); border: 1px solid var(--steel-grey); color: var(--electric-cyan); padding: 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; outline: none; }
+        .input-group input:focus, .input-group textarea:focus, .input-group select:focus { border-color: var(--electric-cyan); }
         .input-group textarea { resize: vertical; min-height: 80px; line-height: 1.4; font-family: 'Inter', sans-serif; }
 
-        /* Float Admin Button */
+        .checkbox-container { display: flex; align-items: center; gap: 0.8rem; padding: 1rem; border: 1px solid; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-weight: bold; }
+        .checkbox-container input { width: 18px; height: 18px; cursor: pointer; }
+
         .btn-edit-float { position: fixed; bottom: 30px; right: 30px; background-color: var(--matrix-green); color: var(--vantablack); padding: 1rem 1.5rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; cursor: pointer; z-index: 100; border: none; box-shadow: 0 0 20px rgba(0, 255, 65, 0.4); display: none; }
         .btn-edit-float:hover { background-color: var(--smoke-white); }
 
-        /* Cloudinary Guide */
-        .guide-box { background-color: rgba(2, 6, 23, 0.5); border-left: 2px solid var(--alert-gold); padding: 1rem; margin-bottom: 1.5rem; font-family: 'Inter', sans-serif; font-size: 0.85rem; color: var(--steel-grey); }
-        .guide-box h4 { color: var(--alert-gold); margin-bottom: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;}
-        .guide-box ol { padding-left: 1.2rem; margin-top: 0.5rem; }
-        .guide-box li { margin-bottom: 0.3rem; }
+        .btn-outline { background: transparent; border: 1px solid var(--steel-grey); color: var(--steel-grey); padding: 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; width: 100%; }
+        .btn-outline:hover { background: rgba(255,255,255,0.05); color: var(--smoke-white); border-color: var(--smoke-white); }
+        .btn-danger { border-color: var(--crimson-war); color: var(--crimson-war); }
+        .btn-danger:hover { background: var(--crimson-war); color: var(--smoke-white); }
 
         @media (max-width: 768px) {
             header { flex-direction: column; align-items: flex-start; gap: 1.5rem; padding: 3rem 0 2rem 0;}
@@ -123,7 +133,6 @@
     <div class="blueprint-layer" id="pageBackground"></div>
     <div class="noise-layer"></div>
 
-    <!-- MAIN PAGE CONTAINER -->
     <div class="container">
         <header>
             <div class="brand-logo logo-text">
@@ -140,32 +149,41 @@
         </header>
 
         <main>
+            <!-- DYNAMIC TABS -->
+            <div class="drop-tabs" id="dropTabsContainer"></div>
+
             <!-- DYNAMIC DROP CONTENT -->
-            <div class="terminal-box" style="border-color: var(--matrix-green);">
-                <div class="terminal-header code-data" style="color: var(--matrix-green);">
-                    <span id="displayHeader1">> DROP_001_ACTIVE</span>
+            <div class="terminal-box" id="dropTerminalBox" style="display: none;">
+                <div class="terminal-header code-data" id="dropTerminalHeader">
+                    <span id="displayHeader1">> AWAITING_DATA</span>
                     <span id="displayHeader2">[ SYSTEM_ONLINE ]</span>
                 </div>
                 
-                <p id="displayText" style="margin-bottom: 1.5rem; color: var(--smoke-white); font-family: 'Inter', sans-serif; line-height: 1.6;">
-                    [INITIATING TRANSMISSION] Retail market noise has been filtered out. What you are witnessing is the actual architecture behind institutional movements. Use this protocol at your own risk.
-                </p>
+                <p id="displayText" style="margin-bottom: 1.5rem; color: var(--smoke-white); font-family: 'Inter', sans-serif; line-height: 1.6;"></p>
                 
-                <div class="video-container">
+                <div class="video-container" id="videoContainerWrapper">
                     <video id="displayVideo" controls controlslist="nodownload">
                         <source id="displayVideoSrc" src="" type="video/mp4">
                         [SYS_ERROR] Your browser does not support the video protocol.
                     </video>
                 </div>
 
-                <a href="https://unfilteredalpha.gumroad.com/l/qoabdg" target="_blank" id="displayBtn" class="btn" style="background-color: var(--matrix-green); color: var(--vantablack); border: none;">
-                    [ INTEGRATE PROTOCOL ($27) ]
+                <!-- URGENCY DISPLAY -->
+                <div id="displayUrgency" class="urgency-display"></div>
+
+                <a href="#" target="_blank" id="displayBtn" class="btn" style="border: none;">
+                    [ AWAITING DATA ]
                 </a>
+            </div>
+            
+            <!-- FALLBACK MESSAGE -->
+            <div id="noDropsMessage" style="display: none; color: var(--steel-grey); font-family: 'JetBrains Mono', monospace; text-align: center; margin-top: 2rem;">
+                [ NO PUBLIC TRANSMISSIONS AVAILABLE ]
             </div>
         </main>
     </div>
 
-    <!-- FLOAT EDIT BUTTON (Hidden by default) -->
+    <!-- FLOAT EDIT BUTTON -->
     <button class="btn-edit-float" id="btnEditMode">[ ⚙️ EDIT DROP SYSTEM ]</button>
 
     <!-- LOGIN MODAL -->
@@ -174,6 +192,10 @@
             <div class="close-modal" id="closeLoginBtn">[ X ]</div>
             <div class="modal-header" style="color: var(--matrix-green); border-bottom-color: rgba(0,255,65,0.2);">ARCHITECT AUTH</div>
             
+            <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--steel-grey); margin-bottom: 1.5rem;">
+                * System locked. Registration disabled. Only authorized architects can access the control panel.
+            </p>
+
             <div class="input-group">
                 <label style="color: var(--matrix-green);">> IDENTIFIER (EMAIL)</label>
                 <input type="email" id="adminEmail" placeholder="architect@..." autocomplete="off" style="border-color: var(--matrix-green); color: var(--matrix-green);">
@@ -185,9 +207,9 @@
             
             <div id="loginError" style="color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 1rem; text-align: center; display: none;">[SYS_ERROR] Invalid credentials.</div>
 
-            <a href="#" class="btn" style="background-color: var(--matrix-green); color: var(--vantablack); border: none;" id="executeLoginBtn">
+            <button type="button" class="btn" style="background-color: var(--matrix-green); color: var(--vantablack); border: none;" id="executeLoginBtn">
                 [ VERIFY CLEARANCE ]
-            </a>
+            </button>
         </div>
     </div>
 
@@ -196,6 +218,43 @@
         <div class="modal-content">
             <div class="close-modal" id="closeEditorBtn">[ X ]</div>
             <div class="modal-header" style="color: var(--electric-cyan);">SYSTEM EDITOR</div>
+
+            <div class="input-group">
+                <label>> TAB NAME</label>
+                <input type="text" id="editTabName" placeholder="Ex: DROP 001">
+            </div>
+
+            <!-- THEME COLORS (BOX + BUTTON TEXT) -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <div class="input-group" style="border-left: 3px solid var(--electric-cyan); padding-left: 1rem; margin:0;">
+                    <label>> THEME COLOR (HEX)</label>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="color" id="editThemeColorPicker" value="#00FF41" style="width: 30px; height: 35px; border:none; background:transparent; cursor:pointer;" oninput="document.getElementById('editThemeColorHex').value = this.value">
+                        <input type="text" id="editThemeColorHex" value="#00FF41" style="text-align: center; padding: 0.4rem; height: 35px;" oninput="let val = this.value.trim(); if(!val.startsWith('#') && val.length>0) val='#'+val; if(/^#[0-9A-Fa-f]{6}$/.test(val)){document.getElementById('editThemeColorPicker').value=val;}">
+                    </div>
+                </div>
+
+                <div class="input-group" style="border-left: 3px solid var(--smoke-white); padding-left: 1rem; margin:0;">
+                    <label style="color: var(--smoke-white);">> BTN TEXT COLOR</label>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="color" id="editBtnTextColorPicker" value="#FFFFFF" style="width: 30px; height: 35px; border:none; background:transparent; cursor:pointer;" oninput="document.getElementById('editBtnTextColorHex').value = this.value">
+                        <input type="text" id="editBtnTextColorHex" value="#FFFFFF" style="text-align: center; padding: 0.4rem; height: 35px; color: var(--smoke-white); border-color: var(--smoke-white);" oninput="let val = this.value.trim(); if(!val.startsWith('#') && val.length>0) val='#'+val; if(/^#[0-9A-Fa-f]{6}$/.test(val)){document.getElementById('editBtnTextColorPicker').value=val;}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOGGLES: VIDEO AND PRIVACY -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <label class="checkbox-container" style="background: rgba(0, 242, 255, 0.05); border-color: var(--electric-cyan); color: var(--electric-cyan);">
+                    <input type="checkbox" id="editHasVideo" onchange="toggleVideoSection()">
+                    [ HAS VIDEO? ]
+                </label>
+                
+                <label class="checkbox-container" style="background: rgba(255, 49, 49, 0.05); border-color: var(--crimson-war); color: var(--crimson-war);" title="Hides this drop from normal users.">
+                    <input type="checkbox" id="editIsPrivate">
+                    [ PRIVATE MODE ]
+                </label>
+            </div>
 
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                 <div class="input-group">
@@ -213,19 +272,8 @@
                 <textarea id="editText" placeholder="Write your protocol transmission here..."></textarea>
             </div>
 
-            <!-- CLOUDINARY GUIDE -->
-            <div class="guide-box">
-                <h4>>> HOW TO UPLOAD A VIDEO (CLOUDINARY)</h4>
-                <ol>
-                    <li>Create a free account at <strong>cloudinary.com</strong></li>
-                    <li>Go to <strong>Media Library</strong> and click "Upload". Upload your video (.mp4).</li>
-                    <li>Once uploaded, hover over the video, click the <strong>"< >" (Copy URL)</strong> icon.</li>
-                    <li>Paste that exact URL in the box below. It must end in <strong>.mp4</strong>.</li>
-                </ol>
-            </div>
-
-            <div class="input-group">
-                <label>> VIDEO URL (.MP4)</label>
+            <div class="input-group" id="videoUrlSection">
+                <label>> VIDEO URL (.MP4 via Cloudinary)</label>
                 <input type="url" id="editVideo" placeholder="https://res.cloudinary.com/.../video.mp4">
             </div>
 
@@ -240,25 +288,85 @@
                 </div>
             </div>
 
-            <div class="input-group" style="margin-bottom: 2rem;">
+            <!-- SCARCITY / URGENCY ENGINE -->
+            <div class="input-group" style="margin-top: 1.5rem; border-top: 1px dashed var(--steel-grey); padding-top: 1.5rem;">
+                <label style="color: var(--alert-gold);">[ ⏳ ] SCARCITY / URGENCY ENGINE</label>
+                <select id="editUrgencyMode" onchange="toggleUrgencyInputs()" style="border-color: var(--alert-gold); color: var(--alert-gold);">
+                    <option value="none">-- NO URGENCY --</option>
+                    <option value="timer">COUNTDOWN TIMER</option>
+                    <option value="spots">LIMITED CLICKS (SPOTS)</option>
+                </select>
+            </div>
+
+            <div id="urgencyTimerSection" style="display:none;" class="input-group">
+                <label>> LOCK DROP AT DATE/TIME</label>
+                <input type="datetime-local" id="editTimerEnd" style="border-color: var(--alert-gold);">
+            </div>
+
+            <div id="urgencySpotsSection" style="display:none;" class="input-group">
+                <label>> MAX ALLOWED CLICKS</label>
+                <div style="display: flex; gap: 1rem;">
+                    <input type="number" id="editMaxSpots" placeholder="Ex: 50" style="border-color: var(--alert-gold);">
+                    <button type="button" class="btn-outline" onclick="resetClicks()" style="width: auto; border-color: var(--alert-gold); color: var(--alert-gold);">[ RESET CLICKS ]</button>
+                </div>
+            </div>
+
+            <div class="input-group" style="margin-bottom: 2rem; margin-top: 1.5rem; border-top: 1px dashed var(--steel-grey); padding-top: 1.5rem;">
                 <label>> BACKGROUND IMAGE URL (Optional)</label>
                 <input type="url" id="editBgImage" placeholder="Leave empty for default image">
             </div>
 
-            <button class="btn" style="background-color: transparent; border: 1px solid var(--electric-cyan); color: var(--electric-cyan);" id="saveConfigBtn">
+            <!-- SAVE BUTTON -->
+            <button type="button" class="btn" style="background-color: transparent; border: 1px solid var(--electric-cyan); color: var(--electric-cyan); margin-bottom: 1rem;" id="saveConfigBtn">
                 [ SAVE & DEPLOY TO PROTOCOL ]
             </button>
-            <div id="saveFeedback" style="text-align: center; margin-top: 1rem; font-family: monospace; font-size: 0.85rem; height: 20px;"></div>
+            <div id="saveFeedback" style="text-align: center; margin-bottom: 1rem; font-family: monospace; font-size: 0.85rem; height: 20px;"></div>
+
+            <!-- DANGER ZONE -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; border-top: 1px dashed var(--steel-grey); padding-top: 1rem;">
+                <button type="button" class="btn-outline" id="btnResetDrop" title="Restores this specific drop to its factory text.">[ RESET TO DEFAULT ]</button>
+                <button type="button" class="btn-outline btn-danger" id="btnDeleteDrop" title="Permanently deletes this drop.">[ DELETE DROP ]</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // Supabase Initialization
         const SUPABASE_URL = 'https://qtpuipgkytzjnckkkwnl.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_eA2g7-rTvcPcfz_dVl2aWg_Ca5P7t93';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // UI Elements - Display
+        // --- GLOBAL STATE ---
+        let appState = { drops: [], activeIndex: 0 };
+        let isAdmin = false;
+        let countdownInterval = null;
+
+        const defaultDropTemplate = {
+            tabName: "DROP 001",
+            themeColor: "#00FF41",
+            btnTextColor: "#FFFFFF",
+            header1: "> DROP_001_ACTIVE",
+            header2: "[ SYSTEM_ONLINE ]",
+            text: "[INITIATING TRANSMISSION] Retail market noise has been filtered out. What you are witnessing is the actual architecture behind institutional movements. Use this protocol at your own risk.",
+            hasVideo: true,
+            video: "",
+            btnText: "[ INTEGRATE PROTOCOL ($27) ]",
+            btnLink: "https://unfilteredalpha.gumroad.com/l/qoabdg",
+            bgImage: "",
+            isPrivate: false,
+            urgencyMode: "none",
+            timerEnd: "",
+            maxSpots: 0,
+            currentClicks: 0
+        };
+
+        // --- UI ELEMENTS ---
+        const dropTabsContainer = document.getElementById('dropTabsContainer');
+        const dropTerminalBox = document.getElementById('dropTerminalBox');
+        const dropTerminalHeader = document.getElementById('dropTerminalHeader');
+        const noDropsMessage = document.getElementById('noDropsMessage');
+        const videoContainerWrapper = document.getElementById('videoContainerWrapper');
+        const displayUrgency = document.getElementById('displayUrgency');
+
         const elHeader1 = document.getElementById('displayHeader1');
         const elHeader2 = document.getElementById('displayHeader2');
         const elText = document.getElementById('displayText');
@@ -267,7 +375,14 @@
         const elBtn = document.getElementById('displayBtn');
         const elBg = document.getElementById('pageBackground');
 
-        // UI Elements - Editor
+        const inputTabName = document.getElementById('editTabName');
+        const inputThemeColorHex = document.getElementById('editThemeColorHex');
+        const inputThemeColorPicker = document.getElementById('editThemeColorPicker');
+        const inputBtnTextColorHex = document.getElementById('editBtnTextColorHex');
+        const inputBtnTextColorPicker = document.getElementById('editBtnTextColorPicker');
+        const inputHasVideo = document.getElementById('editHasVideo');
+        const inputIsPrivate = document.getElementById('editIsPrivate');
+        const videoUrlSection = document.getElementById('videoUrlSection');
         const inputHeader1 = document.getElementById('editHeader1');
         const inputHeader2 = document.getElementById('editHeader2');
         const inputText = document.getElementById('editText');
@@ -275,8 +390,13 @@
         const inputBtnText = document.getElementById('editBtnText');
         const inputBtnLink = document.getElementById('editBtnLink');
         const inputBgImage = document.getElementById('editBgImage');
+        
+        const inputUrgencyMode = document.getElementById('editUrgencyMode');
+        const urgencyTimerSection = document.getElementById('urgencyTimerSection');
+        const urgencySpotsSection = document.getElementById('urgencySpotsSection');
+        const inputTimerEnd = document.getElementById('editTimerEnd');
+        const inputMaxSpots = document.getElementById('editMaxSpots');
 
-        // Modals & Buttons
         const loginModal = document.getElementById('loginModal');
         const editorModal = document.getElementById('editorModal');
         const openLoginBtn = document.getElementById('openLoginBtn');
@@ -285,54 +405,267 @@
         const btnEditMode = document.getElementById('btnEditMode');
         const executeLoginBtn = document.getElementById('executeLoginBtn');
         const saveConfigBtn = document.getElementById('saveConfigBtn');
+        const btnResetDrop = document.getElementById('btnResetDrop');
+        const btnDeleteDrop = document.getElementById('btnDeleteDrop');
         const loginErrorMsg = document.getElementById('loginError');
         const saveFeedback = document.getElementById('saveFeedback');
 
         // Modal Logic
         openLoginBtn.addEventListener('click', () => { loginModal.style.display = 'flex'; loginErrorMsg.style.display = 'none'; });
         closeLoginBtn.addEventListener('click', () => { loginModal.style.display = 'none'; });
-        btnEditMode.addEventListener('click', () => { editorModal.style.display = 'flex'; });
+        btnEditMode.addEventListener('click', () => { populateEditor(appState.drops[appState.activeIndex]); editorModal.style.display = 'flex'; });
         closeEditorBtn.addEventListener('click', () => { editorModal.style.display = 'none'; });
 
-        // --- 1. LOAD CONFIGURATION FROM DATABASE ---
+        function toggleVideoSection() { videoUrlSection.style.display = inputHasVideo.checked ? 'block' : 'none'; }
+        
+        function toggleUrgencyInputs() {
+            urgencyTimerSection.style.display = inputUrgencyMode.value === 'timer' ? 'block' : 'none';
+            urgencySpotsSection.style.display = inputUrgencyMode.value === 'spots' ? 'block' : 'none';
+        }
+
+        function resetClicks() {
+            if(appState.drops[appState.activeIndex]) {
+                appState.drops[appState.activeIndex].currentClicks = 0;
+                document.getElementById('saveFeedback').innerText = "[ CLICKS RESET TO 0. CLICK SAVE. ]";
+                document.getElementById('saveFeedback').style.color = "var(--alert-gold)";
+            }
+        }
+
+        // --- 1. LOAD CONFIGURATION ---
         async function loadDropConfig() {
             try {
-                // Fetch discount dot state
                 const { data: logsData } = await supabaseClient.from('logs').select('*').order('created_at', { ascending: false });
                 if (logsData) {
                     const discountLog = logsData.find(log => log.log_type === 'discount_alert');
-                    if (discountLog && discountLog.value_text !== "0") {
-                        document.getElementById('discountDot').classList.add('active');
-                    }
+                    if (discountLog && discountLog.value_text !== "0") { document.getElementById('discountDot').classList.add('active'); }
                     
-                    // Fetch page configuration
                     const configLog = logsData.find(log => log.log_type === 'drop_config');
                     if (configLog && configLog.value_text) {
-                        const config = JSON.parse(configLog.value_text);
-                        applyConfigToPage(config);
-                        populateEditor(config);
+                        let parsed = JSON.parse(configLog.value_text);
+                        if (!parsed.drops) {
+                            parsed = { drops: [parsed] };
+                            parsed.drops[0].tabName = "DROP 001";
+                            parsed.drops[0].hasVideo = true;
+                            parsed.drops[0].isPrivate = false;
+                            parsed.drops[0].urgencyMode = "none";
+                            parsed.drops[0].btnTextColor = "#FFFFFF";
+                        }
+                        appState.drops = parsed.drops;
+                    } else {
+                        appState.drops = [{...defaultDropTemplate}];
                     }
+                    renderUI();
                 }
-            } catch (err) {
-                console.error("Failed to load drop config", err);
+            } catch (err) { console.error("Failed to load drop config", err); }
+        }
+
+        function renderUI() {
+            if (!isAdmin) {
+                const activeIsPrivate = appState.drops[appState.activeIndex] && appState.drops[appState.activeIndex].isPrivate;
+                if (activeIsPrivate) {
+                    const firstPublicIndex = appState.drops.findIndex(d => !d.isPrivate);
+                    appState.activeIndex = firstPublicIndex !== -1 ? firstPublicIndex : -1;
+                }
+            }
+            renderTabs();
+            if (appState.activeIndex === -1 || appState.drops.length === 0) {
+                dropTerminalBox.style.display = 'none';
+                noDropsMessage.style.display = 'block';
+            } else {
+                noDropsMessage.style.display = 'none';
+                dropTerminalBox.style.display = 'block';
+                applyConfigToPage(appState.drops[appState.activeIndex]);
+            }
+        }
+
+        function renderTabs() {
+            dropTabsContainer.innerHTML = '';
+            appState.drops.forEach((drop, index) => {
+                if (!isAdmin && drop.isPrivate) return;
+                const btn = document.createElement('button');
+                btn.className = `drop-tab ${index === appState.activeIndex ? 'active' : ''} ${drop.isPrivate ? 'is-private' : ''}`;
+                
+                if (index === appState.activeIndex) {
+                    let activeColor = drop.themeColor || '#00FF41';
+                    btn.style.borderColor = activeColor;
+                    btn.style.color = activeColor;
+                    btn.style.boxShadow = `0 -2px 10px ${activeColor}33`;
+                }
+
+                btn.innerText = drop.tabName + (drop.isPrivate ? " 🔒" : "");
+                btn.onclick = () => { appState.activeIndex = index; renderUI(); };
+                dropTabsContainer.appendChild(btn);
+            });
+
+            if (isAdmin) {
+                const addBtn = document.createElement('button');
+                addBtn.className = 'drop-tab drop-tab-add';
+                addBtn.innerText = '[ + ADD NEW DROP ]';
+                addBtn.onclick = createNewDrop;
+                dropTabsContainer.appendChild(addBtn);
             }
         }
 
         function applyConfigToPage(config) {
-            if(config.header1) elHeader1.innerText = config.header1;
-            if(config.header2) elHeader2.innerText = config.header2;
-            if(config.text) elText.innerText = config.text;
-            if(config.btnText) elBtn.innerText = config.btnText;
-            if(config.btnLink) elBtn.href = config.btnLink;
-            if(config.bgImage) elBg.style.backgroundImage = `url('${config.bgImage}')`;
+            let themeColor = config.themeColor || '#00FF41'; 
+            let btnTextColor = config.btnTextColor || '#FFFFFF';
             
-            if(config.video && elVideoSrc.src !== config.video) {
-                elVideoSrc.src = config.video;
-                elVideo.load(); // Reload video player to fetch new source
+            dropTerminalBox.style.borderColor = themeColor;
+            dropTerminalHeader.style.color = themeColor;
+            
+            // Apply Button Colors
+            elBtn.style.backgroundColor = themeColor;
+            elBtn.style.color = btnTextColor;
+            elBtn.style.border = "none";
+            elBtn.style.pointerEvents = 'auto'; // Reset pointer
+
+            elHeader1.innerText = config.header1 || "";
+            elHeader2.innerText = config.header2 || "";
+            elText.innerText = config.text || "";
+            elBtn.innerText = config.btnText || "";
+            elBtn.href = config.btnLink || "#";
+            elBg.style.backgroundImage = config.bgImage ? `url('${config.bgImage}')` : "url('Gemini_Generated_Image_dofjdbdofjdbdofj.jpg')";
+            
+            if (config.hasVideo) {
+                videoContainerWrapper.style.display = 'block';
+                if(config.video && elVideoSrc.src !== config.video) {
+                    elVideoSrc.src = config.video;
+                    elVideo.load(); 
+                }
+            } else {
+                videoContainerWrapper.style.display = 'none';
             }
+
+            // URGENCY LOGIC
+            clearInterval(countdownInterval);
+            displayUrgency.style.display = 'none';
+
+            if (config.urgencyMode === 'timer' && config.timerEnd) {
+                displayUrgency.style.display = 'block';
+                displayUrgency.style.color = "var(--alert-gold)";
+                displayUrgency.style.borderColor = "var(--alert-gold)";
+                
+                const target = new Date(config.timerEnd).getTime();
+                
+                const updateTimer = () => {
+                    const now = new Date().getTime();
+                    const dist = target - now;
+                    if (dist <= 0) {
+                        clearInterval(countdownInterval);
+                        displayUrgency.innerText = "[ TRANSMISSION TIME EXPIRED ]";
+                        displayUrgency.style.color = "var(--crimson-war)";
+                        displayUrgency.style.borderColor = "var(--crimson-war)";
+                        
+                        elBtn.innerText = "[ DROP CLOSED ]";
+                        elBtn.style.backgroundColor = "transparent";
+                        elBtn.style.color = "var(--crimson-war)";
+                        elBtn.style.border = "1px solid var(--crimson-war)";
+                        elBtn.style.pointerEvents = "none";
+                    } else {
+                        const days = Math.floor(dist / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((dist % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((dist % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((dist % (1000 * 60)) / 1000);
+                        let timeStr = days > 0 ? `${days}D ` : "";
+                        timeStr += `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+                        displayUrgency.innerText = `[ CLOSING IN: ${timeStr} ]`;
+                    }
+                };
+                updateTimer();
+                countdownInterval = setInterval(updateTimer, 1000);
+
+            } else if (config.urgencyMode === 'spots') {
+                displayUrgency.style.display = 'block';
+                const max = parseInt(config.maxSpots) || 0;
+                const current = parseInt(config.currentClicks) || 0;
+                const remaining = Math.max(0, max - current);
+
+                if (remaining === 0) {
+                    displayUrgency.innerText = "[ PROTOCOL CAPACITY REACHED ]";
+                    displayUrgency.style.color = "var(--crimson-war)";
+                    displayUrgency.style.borderColor = "var(--crimson-war)";
+                    
+                    elBtn.innerText = "[ DROP LOCKED ]";
+                    elBtn.style.backgroundColor = "transparent";
+                    elBtn.style.color = "var(--crimson-war)";
+                    elBtn.style.border = "1px solid var(--crimson-war)";
+                    elBtn.style.pointerEvents = "none";
+                } else {
+                    displayUrgency.innerText = `[ SPOTS REMAINING: ${remaining} ]`;
+                    displayUrgency.style.color = themeColor;
+                    displayUrgency.style.borderColor = themeColor;
+                }
+            }
+
+            // --- CLICK TRACKER ---
+            elBtn.onclick = async (e) => {
+                if (config.urgencyMode === 'spots') {
+                    e.preventDefault(); // Pause redirect to update DB first
+                    const originalText = elBtn.innerText;
+                    elBtn.innerText = "[ VERIFYING CAPACITY... ]";
+                    elBtn.style.pointerEvents = 'none';
+
+                    try {
+                        const { data, error } = await supabaseClient.from('logs').select('*').eq('log_type', 'drop_config').single();
+                        if (data && data.value_text) {
+                            let liveConf = JSON.parse(data.value_text);
+                            let liveDrop = liveConf.drops[appState.activeIndex];
+                            
+                            const liveMax = parseInt(liveDrop.maxSpots) || 0;
+                            const liveCurr = parseInt(liveDrop.currentClicks) || 0;
+
+                            if (liveCurr >= liveMax) {
+                                elBtn.innerText = "[ CAPACITY REACHED ]";
+                                elBtn.style.backgroundColor = "transparent";
+                                elBtn.style.color = "var(--crimson-war)";
+                                elBtn.style.border = "1px solid var(--crimson-war)";
+                                return;
+                            }
+
+                            // Update DB
+                            liveDrop.currentClicks = liveCurr + 1;
+                            liveConf.drops[appState.activeIndex] = liveDrop;
+                            await supabaseClient.from('logs').update({ value_text: JSON.stringify(liveConf) }).eq('log_type', 'drop_config');
+
+                            // Open Link
+                            window.open(config.btnLink, '_blank');
+
+                            // Reset Button UI for this user temporarily
+                            elBtn.innerText = originalText;
+                            elBtn.style.pointerEvents = 'auto';
+                        }
+                    } catch(err) {
+                        console.error(err);
+                        elBtn.innerText = originalText;
+                        elBtn.style.pointerEvents = 'auto';
+                    }
+                } 
+                // If Timer or None, it just acts as a normal <a> tag (unless blocked by Timer logic above)
+            };
         }
 
         function populateEditor(config) {
+            if(!config) return;
+            inputTabName.value = config.tabName || `DROP 00${appState.activeIndex + 1}`;
+            
+            let themeColor = config.themeColor || '#00FF41';
+            inputThemeColorHex.value = themeColor;
+            inputThemeColorPicker.value = themeColor;
+
+            let btnTextColor = config.btnTextColor || '#FFFFFF';
+            inputBtnTextColorHex.value = btnTextColor;
+            inputBtnTextColorPicker.value = btnTextColor;
+
+            inputHasVideo.checked = config.hasVideo !== false; 
+            inputIsPrivate.checked = config.isPrivate === true;
+            
+            inputUrgencyMode.value = config.urgencyMode || 'none';
+            inputTimerEnd.value = config.timerEnd || '';
+            inputMaxSpots.value = config.maxSpots || '';
+
+            toggleVideoSection();
+            toggleUrgencyInputs();
+
             inputHeader1.value = config.header1 || "";
             inputHeader2.value = config.header2 || "";
             inputText.value = config.text || "";
@@ -342,16 +675,15 @@
             inputBgImage.value = config.bgImage || "";
         }
 
-        // --- 2. AUTHENTICATION (ARCHITECT LOGIN) ---
+        // --- 2. ARCHITECT ACTIONS ---
         async function checkSession() {
             const { data: { session } } = await supabaseClient.auth.getSession();
-            if (session) enableEditMode();
-        }
-
-        function enableEditMode() {
-            openLoginBtn.style.display = 'none'; // Hide auth link
-            btnEditMode.style.display = 'block'; // Show floating gear
-            loginModal.style.display = 'none';
+            if (session) {
+                isAdmin = true;
+                openLoginBtn.style.display = 'none'; 
+                btnEditMode.style.display = 'block'; 
+                renderUI(); 
+            }
         }
 
         executeLoginBtn.addEventListener('click', async (e) => {
@@ -360,27 +692,88 @@
             const pass = document.getElementById('adminPass').value;
             
             if(!email || !pass) { loginErrorMsg.innerText = "[SYS_ERROR] Credentials required."; loginErrorMsg.style.display = 'block'; return; }
-
             executeLoginBtn.innerText = '[ VERIFYING... ]';
             loginErrorMsg.style.display = 'none';
 
             try {
                 const { error } = await supabaseClient.auth.signInWithPassword({ email: email, password: pass });
                 if (error) throw error;
-                enableEditMode();
+                loginModal.style.display = 'none';
+                checkSession();
             } catch (error) {
                 loginErrorMsg.innerText = "[SYS_ERROR] Access denied."; loginErrorMsg.style.display = 'block';
                 executeLoginBtn.innerText = '[ VERIFY CLEARANCE ]';
             }
         });
 
-        // --- 3. SAVE CONFIGURATION ---
+        async function createNewDrop() {
+            const newDrop = { ...defaultDropTemplate, tabName: `DROP 00${appState.drops.length + 1}`, isPrivate: true };
+            appState.drops.push(newDrop);
+            appState.activeIndex = appState.drops.length - 1;
+            await syncToCloud("[SYS_UPDATE] New Drop Added");
+            renderUI();
+        }
+
+        btnResetDrop.addEventListener('click', () => {
+            if(!confirm("⚠️ Reset this drop to default?")) return;
+            const currentTabName = inputTabName.value.trim() || `DROP 00${appState.activeIndex + 1}`;
+            const resetData = { ...defaultDropTemplate, tabName: currentTabName };
+            populateEditor(resetData);
+            document.getElementById('saveFeedback').innerText = "[ LOADED DEFAULTS. CLICK SAVE TO APPLY. ]";
+            document.getElementById('saveFeedback').style.color = "var(--alert-gold)";
+        });
+
+        btnDeleteDrop.addEventListener('click', async () => {
+            if(appState.drops.length <= 1) { alert("[SYS_ERROR] Cannot delete the only existing drop."); return; }
+            if(!confirm("⚠️ PERMANENTLY DELETE THIS DROP?")) return;
+            
+            const originalText = btnDeleteDrop.innerText;
+            btnDeleteDrop.innerText = '[ DELETING... ]';
+            btnDeleteDrop.style.pointerEvents = 'none';
+
+            appState.drops.splice(appState.activeIndex, 1);
+            if (appState.activeIndex >= appState.drops.length) {
+                appState.activeIndex = Math.max(0, appState.drops.length - 1);
+            }
+            
+            const success = await syncToCloud("[SYS_UPDATE] Drop Deleted");
+            
+            if(success) {
+                editorModal.style.display = 'none';
+                renderUI();
+            } else {
+                alert("[ERROR] Could not delete drop from database.");
+            }
+            
+            btnDeleteDrop.innerText = originalText;
+            btnDeleteDrop.style.pointerEvents = 'auto';
+        });
+
         saveConfigBtn.addEventListener('click', async () => {
             saveConfigBtn.innerText = '[ SAVING... ]';
             saveConfigBtn.style.pointerEvents = 'none';
             saveFeedback.innerText = '';
 
-            const newConfig = {
+            let safeColor = inputThemeColorHex.value.trim();
+            if(!safeColor.startsWith('#') && /^[0-9A-Fa-f]{6}$/.test(safeColor)) safeColor = '#' + safeColor;
+            if(!safeColor) safeColor = '#00FF41';
+
+            let safeTxtColor = inputBtnTextColorHex.value.trim();
+            if(!safeTxtColor.startsWith('#') && /^[0-9A-Fa-f]{6}$/.test(safeTxtColor)) safeTxtColor = '#' + safeTxtColor;
+            if(!safeTxtColor) safeTxtColor = '#FFFFFF';
+
+            const currentClicks = appState.drops[appState.activeIndex]?.currentClicks || 0;
+
+            appState.drops[appState.activeIndex] = {
+                tabName: inputTabName.value.trim() || `DROP 00${appState.activeIndex + 1}`,
+                themeColor: safeColor,
+                btnTextColor: safeTxtColor,
+                hasVideo: inputHasVideo.checked,
+                isPrivate: inputIsPrivate.checked,
+                urgencyMode: inputUrgencyMode.value,
+                timerEnd: inputTimerEnd.value,
+                maxSpots: parseInt(inputMaxSpots.value) || 0,
+                currentClicks: currentClicks,
                 header1: inputHeader1.value.trim(),
                 header2: inputHeader2.value.trim(),
                 text: inputText.value.trim(),
@@ -390,42 +783,45 @@
                 bgImage: inputBgImage.value.trim()
             };
 
-            try {
-                // Delete old config
-                await supabaseClient.from('logs').delete().eq('log_type', 'drop_config');
-                // Insert new config as JSON
-                const payload = JSON.stringify(newConfig);
-                const { error } = await supabaseClient.from('logs').insert([{ 
-                    log_time: '[SYS_UPDATE]', action_text: 'Drop Layout Configured', value_text: payload, log_type: 'drop_config' 
-                }]);
-                
-                if (error) throw error;
-                
+            const success = await syncToCloud('Drop Layout Configured');
+            
+            if (success) {
                 saveFeedback.style.color = "var(--electric-cyan)";
                 saveFeedback.innerText = "[ SUCCESS ] PROTOCOL UPDATED IN REAL-TIME.";
-                
-                // Apply changes immediately without refreshing
-                applyConfigToPage(newConfig);
-
-                setTimeout(() => { editorModal.style.display = 'none'; saveFeedback.innerText = ''; }, 1500);
-            } catch(e) {
+                renderUI();
+                setTimeout(() => { editorModal.style.display = 'none'; saveFeedback.innerText = ''; }, 1000);
+            } else {
                 saveFeedback.style.color = "var(--crimson-war)";
                 saveFeedback.innerText = "[ ERROR ] FAILED TO UPDATE DATABASE.";
-            } finally {
-                saveConfigBtn.innerText = '[ SAVE & DEPLOY TO PROTOCOL ]';
-                saveConfigBtn.style.pointerEvents = 'auto';
             }
+
+            saveConfigBtn.innerText = '[ SAVE & DEPLOY TO PROTOCOL ]';
+            saveConfigBtn.style.pointerEvents = 'auto';
         });
 
-        // Initialize Page
+        async function syncToCloud(actionText) {
+            try {
+                await supabaseClient.from('logs').delete().eq('log_type', 'drop_config');
+                const payload = JSON.stringify({ drops: appState.drops });
+                const { error } = await supabaseClient.from('logs').insert([{ log_time: '[SYS_UPDATE]', action_text: actionText, value_text: payload, log_type: 'drop_config' }]);
+                if (error) throw error;
+                return true;
+            } catch(e) { console.error(e); return false; }
+        }
+
+        // Initialization
         loadDropConfig();
         checkSession();
 
-        // Realtime Listener to update if another admin changes it
+        // Realtime Listener
         supabaseClient.channel('public:drop')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'logs', filter: 'log_type=eq.drop_config' }, payload => {
                 if (payload.new && payload.new.value_text) {
-                    applyConfigToPage(JSON.parse(payload.new.value_text));
+                    const parsed = JSON.parse(payload.new.value_text);
+                    if (parsed.drops) {
+                        appState.drops = parsed.drops;
+                        renderUI();
+                    }
                 }
             })
             .subscribe();

@@ -255,6 +255,7 @@
             <div class="action-area">
                 <a href="analysis.html" class="btn btn-primary" id="btn-dg" style="box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);">[ START FREE ANALYSIS ]</a>
                 <a href="#" class="btn btn-primary" id="btn-calculadora">[ CALCULATOR ]</a>
+                <a href="loss.html" class="btn" id="btn-loss" style="color: #FF3131; border: 1px solid #FF3131; background: rgba(255,49,49,0.05);">[ CRITICAL FAILURE LOG ]</a>
                 <a href="#" class="btn btn-gold" id="btn-VIP">[ VIP ACCESS ]</a>
                 <a href="#" class="btn btn-purple" id="btn-drop" style="display: none;">[ DROP ACCESS ]</a>
             </div>
@@ -388,7 +389,6 @@
 
         async function fetchTerminalLogs() {
             try {
-                // AUMENTADO A 100 PARA EVITAR QUE SE BORREN LOS BOTONES EN MEMORIA
                 const { data, error } = await supabaseClient
                     .from('logs')
                     .select('*')
@@ -482,7 +482,7 @@
                     currentDropCode = dropCodeLog.value_text.toUpperCase().trim();
                 }
 
-                // --- 2.5 BUTTON VISIBILITY & COLOR OVERRIDE (A PRUEBA DE FALLOS) ---
+                // --- 2.5 BUTTON VISIBILITY & COLOR OVERRIDE ---
                 const toggleLogs = data.filter(log => log.log_type === 'button_toggle');
                 const buttonStates = {};
                 
@@ -505,7 +505,6 @@
                             btnElement.style.display = config.state === 'show' ? 'inline-block' : 'none';
                             
                             if (config.color && config.state === 'show') {
-                                // Sanitizar el color por si acaso
                                 let safeColor = config.color.trim();
                                 if (!safeColor.startsWith('#') && /^[0-9A-Fa-f]{6}$/.test(safeColor)) {
                                     safeColor = '#' + safeColor;
@@ -514,7 +513,6 @@
                                 btnElement.style.color = safeColor;
                                 btnElement.style.borderColor = safeColor;
                                 
-                                // Si es un hex de 7 letras le damos transparencia para la sombra, si no lo usamos tal cual
                                 let shadowColor = safeColor;
                                 if (safeColor.startsWith('#') && safeColor.length === 7) {
                                     shadowColor = safeColor + '33';
@@ -534,7 +532,6 @@
                                     this.style.boxShadow = `inset 0 0 0 transparent, 0 0 10px ${shadowColor}`;
                                 };
                             } else if (!config.color && config.state === 'show') {
-                                // Resetea a lo que tenga el CSS si no hay color extra
                                 btnElement.style.color = '';
                                 btnElement.style.borderColor = '';
                                 btnElement.style.boxShadow = '';
@@ -551,13 +548,9 @@
                 // --- 3. TERMINAL ---
                 terminalOutput.innerHTML = ''; 
                 
-                // Extraer exactamente 4 mensajes para la terminal que no sean del sistema interno
+                // IGNORE HIDDEN CONFIG LOGS
                 const visibleData = data.filter(log => 
-                    log.log_type !== 'news_alert' && 
-                    log.log_type !== 'discount_alert' && 
-                    log.log_type !== 'toast_alert' &&
-                    log.log_type !== 'button_toggle' &&
-                    log.log_type !== 'drop_code'
+                    !['news_alert', 'discount_alert', 'toast_alert', 'button_toggle', 'drop_code', 'drop_config', 'loss_config'].includes(log.log_type)
                 ).slice(0, 4);
                 
                 const sortedData = visibleData.reverse();
@@ -598,7 +591,10 @@
                 fetchTerminalLogs(); 
                 
                 if (payload.eventType === 'INSERT') {
-                    if (payload.new && (payload.new.log_type === 'button_toggle' || payload.new.log_type === 'drop_code')) {
+                    
+                    // SILENTLY IGNORE BACKGROUND CONFIG UPDATES SO NO POPUP APPEARS
+                    const hiddenToastTypes = ['button_toggle', 'drop_code', 'drop_config', 'loss_config'];
+                    if (payload.new && hiddenToastTypes.includes(payload.new.log_type)) {
                         return; 
                     }
 

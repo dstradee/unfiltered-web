@@ -246,10 +246,16 @@
                     <label style="color: var(--hot-pink);">> END DATE & TIME</label>
                     <input type="datetime-local" id="offerTimer" style="border-color: var(--hot-pink); color: var(--hot-pink); font-size: 1.1rem; text-align: center; height: 55px;">
                 </div>
+                
+                <!-- NUEVO SELECTOR DE COLOR DUAL (PICKER + HEX) -->
                 <div>
-                    <label style="color: var(--hot-pink);">> BANNER COLOR</label>
-                    <input type="color" id="offerColor" value="#FF007F" style="border-color: var(--hot-pink); width: 100%; height: 55px; padding: 0.2rem; cursor: pointer;">
+                    <label style="color: var(--hot-pink);">> BANNER COLOR (HEX)</label>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="color" id="offerColorPicker" value="#FF007F" style="border-color: var(--hot-pink); width: 60px; height: 55px; padding: 0.2rem; cursor: pointer;" oninput="document.getElementById('offerColorHex').value = this.value">
+                        <input type="text" id="offerColorHex" value="#FF007F" style="border-color: var(--hot-pink); color: var(--hot-pink); font-size: 1.2rem; text-align: center; height: 55px; text-transform: uppercase;" oninput="document.getElementById('offerColorPicker').value = this.value">
+                    </div>
                 </div>
+
                 <div id="actionContainer">
                     <label style="color: var(--hot-pink);">> QUICK ACTION</label>
                     <button class="btn-execute btn-pink" id="btnSubtractSpot" style="margin-top: 0; padding: 0.8rem; font-size: 1.2rem; height: 55px;" onclick="subtractSpot()">[ -1 SPOT ]</button>
@@ -295,15 +301,15 @@
         </div>
 
         <div id="panel-buttons" class="admin-box" style="border-color: var(--neon-purple);">
-            <h1 style="color: var(--neon-purple);">[ 🎛️ ] BUTTON VISIBILITY</h1>
+            <h1 style="color: var(--neon-purple);">[ 🎛️ ] BUTTON VISIBILITY & COLOR</h1>
             <div class="warning-text" style="color: var(--neon-purple); border-color: rgba(176, 38, 255, 0.2);">
-                MANAGE YOUR BUTTONS QUICKLY WITHOUT TYPING THE ID EVERY TIME.
+                MANAGE YOUR BUTTONS QUICKLY AND SET THEIR CUSTOM COLORS (HEX).
             </div>
 
             <div class="form-group flex-row-mobile" style="display: flex; gap: 1rem; align-items: flex-end;">
                 <div style="flex: 1;">
                     <label style="color: var(--neon-purple);">> ADD NEW ID TO LIST</label>
-                    <input type="text" id="newBtnId" placeholder="Ex: btn-drop or btn-calculadora" autocomplete="off" style="border-color: var(--neon-purple); color: var(--neon-purple);">
+                    <input type="text" id="newBtnId" placeholder="Ex: btn-dg or btn-calculadora" autocomplete="off" style="border-color: var(--neon-purple); color: var(--neon-purple);">
                 </div>
                 <button class="btn-execute btn-purple" style="width: auto; margin-top: 0; padding: 0.8rem 1.5rem; font-size: 1.2rem;" onclick="addSavedButton()">[ ADD ]</button>
             </div>
@@ -311,6 +317,7 @@
             <hr style="border: none; border-top: 1px solid rgba(148, 163, 184, 0.2); margin: 2rem 0;">
 
             <label style="color: var(--smoke-white);">> REGISTERED BUTTONS</label>
+            <!-- CONTENEDOR DE BOTONES (AHORA CON SELECTOR DE COLOR) -->
             <div id="savedButtonsContainer" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.8rem;">
             </div>
 
@@ -357,7 +364,6 @@
             if (panelId === 'panel-logs') { loadLogs(); }
         }
 
-        // Toggles inputs between SPOTS and TIMER
         function toggleOfferMode() {
             const mode = document.querySelector('input[name="offerMode"]:checked').value;
             if (mode === 'spots') {
@@ -418,11 +424,10 @@
             finally { btn.innerText = '[ START RED ALERT ]'; }
         }
 
-        // --- NEW OFFER MODE (SPOTS / TIMER + EDITABLE TITLE) ---
         async function activateDiscountMode() {
             const mode = document.querySelector('input[name="offerMode"]:checked').value;
             const title = document.getElementById('offerTitle').value.trim() || 'LIMITED ACCESS PROTOCOL';
-            const colorHex = document.getElementById('offerColor').value;
+            const colorHex = document.getElementById('offerColorHex').value || '#FF007F'; // Usamos el input de texto como principal
             
             let val = "";
             if (mode === 'spots') {
@@ -449,7 +454,6 @@
 
             btn.innerText = 'ACTIVATING...';
             try {
-                // Structure JSON Payload
                 const payloadObj = { mode: mode, value: val, color: colorHex, title: title };
                 const valuePayload = JSON.stringify(payloadObj);
 
@@ -477,7 +481,6 @@
                     try { 
                         config = JSON.parse(data[0].value_text); 
                     } catch(e) {
-                        // Support for old legacy format if needed
                         const parts = data[0].value_text.split('|');
                         config = { mode: 'spots', value: parts[0], color: parts[1] || "#FF007F", title: "LIMITED ACCESS PROTOCOL" };
                     }
@@ -553,7 +556,9 @@
             }
         }
 
+        // --- SISTEMA DE BOTONES ACTUALIZADO (CON COLOR DUAL) ---
         let savedButtons = JSON.parse(localStorage.getItem('admin_saved_buttons')) || [];
+        
         function renderSavedButtons() {
             const container = document.getElementById('savedButtonsContainer');
             container.innerHTML = '';
@@ -562,13 +567,28 @@
                 return;
             }
             savedButtons.forEach(btnId => {
+                // Recupera el color guardado de forma local para este botón (por comodidad), por defecto Cyan
+                let savedColor = localStorage.getItem('color_' + btnId) || '#00F2FF';
+
                 container.innerHTML += `
                     <div class="saved-btn-row">
                         <span class="saved-btn-id">> ID: ${btnId}</span>
+                        
+                        <div style="display: flex; gap: 0.5rem; align-items: center; background-color: rgba(2,6,23,0.5); padding: 0.3rem 0.5rem; border: 1px solid rgba(148,163,184,0.3);">
+                            <span style="color: var(--steel-grey); font-size: 0.7rem; font-family: monospace;">COLOR:</span>
+                            <input type="color" id="btnColorPicker_${btnId}" value="${savedColor}" 
+                                style="width: 30px; height: 30px; border: none; padding: 0; cursor: pointer; background: transparent;" 
+                                oninput="document.getElementById('btnColorHex_${btnId}').value = this.value; localStorage.setItem('color_${btnId}', this.value);">
+                            
+                            <input type="text" id="btnColorHex_${btnId}" value="${savedColor}" 
+                                style="width: 80px; height: 30px; padding: 0.2rem; font-size: 0.8rem; text-align: center; border: 1px solid var(--steel-grey); background: var(--vantablack); color: var(--electric-cyan); text-transform: uppercase;" 
+                                oninput="document.getElementById('btnColorPicker_${btnId}').value = this.value; localStorage.setItem('color_${btnId}', this.value);">
+                        </div>
+
                         <div class="saved-btn-actions">
                             <div style="display: flex; gap: 0.5rem;">
-                                <button class="action-btn-show" onclick="quickToggle('${btnId}', 'show')">[ 🟢 SHOW ]</button>
-                                <button class="action-btn-hide" onclick="quickToggle('${btnId}', 'hide')">[ 🔴 HIDE ]</button>
+                                <button class="action-btn-show" onclick="quickToggle('${btnId}', 'show', document.getElementById('btnColorHex_${btnId}').value)">[ 🟢 SHOW ]</button>
+                                <button class="action-btn-hide" onclick="quickToggle('${btnId}', 'hide', document.getElementById('btnColorHex_${btnId}').value)">[ 🔴 HIDE ]</button>
                             </div>
                             <button class="action-btn-del" onclick="removeSavedButton('${btnId}')" title="Remove from list">X</button>
                         </div>
@@ -576,22 +596,28 @@
                 `;
             });
         }
+
         function addSavedButton() {
             const input = document.getElementById('newBtnId'); const val = input.value.trim();
             if(val && !savedButtons.includes(val)) { savedButtons.push(val); localStorage.setItem('admin_saved_buttons', JSON.stringify(savedButtons)); input.value = ''; renderSavedButtons(); }
         }
         function removeSavedButton(btnId) { savedButtons = savedButtons.filter(id => id !== btnId); localStorage.setItem('admin_saved_buttons', JSON.stringify(savedButtons)); renderSavedButtons(); }
         
-        async function quickToggle(btnId, btnState) {
+        async function quickToggle(btnId, btnState, colorHex) {
             const feedback = document.getElementById('btnToggleFeedback');
             feedback.style.color = 'var(--neon-purple)'; feedback.innerText = `Sending command to ${btnId}...`;
+            
+            // Ahora mandamos el estado y el color en formato JSON
+            const payloadData = JSON.stringify({ state: btnState, color: colorHex || "#00F2FF" });
+
             try {
                 await supabaseClient.from('logs').delete().eq('log_type', 'button_toggle').eq('action_text', btnId);
-                const { error } = await supabaseClient.from('logs').insert([{ log_time: '[SYS_TOGGLE]', action_text: btnId, value_text: btnState, log_type: 'button_toggle' }]);
+                const { error } = await supabaseClient.from('logs').insert([{ log_time: '[SYS_TOGGLE]', action_text: btnId, value_text: payloadData, log_type: 'button_toggle' }]);
                 if (error) throw error;
                 feedback.innerText = `[ OK ] Command sent. Button '${btnId}' -> ${btnState.toUpperCase()}.`; loadLogs();
             } catch (error) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Failed to update button.'; }
         }
+        
         renderSavedButtons();
 
         async function deactivateSpecialMode(type) {
@@ -625,7 +651,17 @@
                     
                     if (log.log_type === 'button_toggle') {
                         displayAction = `ID Switch: <strong style="color: var(--smoke-white);">${displayAction}</strong>`;
-                        displayValue = `<span style="color: ${log.value_text === 'show' ? 'var(--electric-cyan)' : 'var(--crimson-war)'}; font-weight: bold;">[ ${log.value_text.toUpperCase()} ]</span>`;
+                        
+                        // Parsear el nuevo JSON de botones para mostrarlo en el log
+                        try {
+                            const btnConfig = JSON.parse(log.value_text);
+                            const stateText = btnConfig.state.toUpperCase();
+                            const colorDot = btnConfig.color ? `<span style="display:inline-block; width:10px; height:10px; background-color:${btnConfig.color}; border-radius:50%; margin-left:8px; border:1px solid #fff;"></span> ${btnConfig.color}` : '';
+                            displayValue = `<span style="color: ${btnConfig.state === 'show' ? 'var(--electric-cyan)' : 'var(--crimson-war)'}; font-weight: bold;">[ ${stateText} ] ${colorDot}</span>`;
+                        } catch(e) {
+                            displayValue = `<span style="color: ${log.value_text === 'show' ? 'var(--electric-cyan)' : 'var(--crimson-war)'}; font-weight: bold;">[ ${log.value_text.toUpperCase()} ]</span>`;
+                        }
+
                     } else if (log.log_type === 'drop_code') {
                         displayAction = `Active Drop Code:`;
                         displayValue = `<span style="color: var(--matrix-green); font-weight: bold; letter-spacing: 2px;">[ ${log.value_text} ]</span>`;

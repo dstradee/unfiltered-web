@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYSTEM DIAGNOSTIC | Unfiltered Alpha</title>
+    
+    <link rel="icon" type="image/png" href="logo.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --obsidian-navy: #0B1A30;
+            --electric-cyan: #00F2FF;
+            --crimson-war: #FF3131;
+            --smoke-white: #F8FAFC;
+            --steel-grey: #94A3B8;
+            --vantablack: #020617;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
+
+        body {
+            background-color: var(--obsidian-navy); color: var(--smoke-white);
+            font-family: 'Inter', sans-serif; min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            overflow: hidden; position: relative;
+        }
+
+        /* --- BACKGROUND (Blueprint & Noise) --- */
+        .blueprint-layer { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; 
+            background-color: var(--obsidian-navy);
+            background-image: 
+                linear-gradient(rgba(0, 242, 255, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 255, 0.15) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.6; mix-blend-mode: screen; 
+        }
+        
+        .noise-layer { 
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1; opacity: 0.05; 
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E'); 
+        }
+
+        /* --- TERMINAL BOX --- */
+        .container { position: relative; z-index: 10; width: 100%; max-width: 600px; padding: 2rem; }
+        
+        .terminal-box { 
+            background-color: var(--vantablack); border: 1px solid var(--electric-cyan); 
+            padding: 2.5rem; width: 100%; box-shadow: 0 0 30px rgba(0, 242, 255, 0.1); 
+            transition: all 0.3s ease; position: relative;
+        }
+
+        /* Red Trap State */
+        .terminal-box.trap-active {
+            border-color: var(--crimson-war);
+            background-color: rgba(2, 6, 23, 0.95);
+            animation: red-pulse 2s infinite;
+        }
+
+        @keyframes red-pulse {
+            0% { box-shadow: inset 0 0 10px rgba(255, 49, 49, 0.1), 0 0 20px rgba(255, 49, 49, 0.2); }
+            50% { box-shadow: inset 0 0 40px rgba(255, 49, 49, 0.3), 0 0 60px rgba(255, 49, 49, 0.4); }
+            100% { box-shadow: inset 0 0 10px rgba(255, 49, 49, 0.1), 0 0 20px rgba(255, 49, 49, 0.2); }
+        }
+
+        .terminal-header { 
+            font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 2px; 
+            color: var(--smoke-white); border-bottom: 1px solid rgba(148, 163, 184, 0.2); 
+            padding-bottom: 0.5rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: baseline;
+        }
+
+        .terminal-header span.version { font-family: 'JetBrains Mono', monospace; font-size: 1rem; color: var(--electric-cyan); letter-spacing: 0; }
+
+        /* --- FORM ELEMENTS --- */
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { 
+            display: block; font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); 
+            font-size: 0.85rem; margin-bottom: 0.5rem; font-weight: 600; 
+        }
+        
+        select { 
+            width: 100%; background-color: rgba(255, 255, 255, 0.03); border: 1px solid var(--steel-grey); 
+            color: var(--electric-cyan); padding: 1rem; font-family: 'JetBrains Mono', monospace; 
+            font-size: 1rem; outline: none; cursor: pointer; appearance: none; transition: border-color 0.2s;
+        }
+        select:focus { border-color: var(--electric-cyan); }
+        select option { background-color: var(--obsidian-navy); color: var(--smoke-white); }
+
+        .btn { 
+            display: block; width: 100%; padding: 1.2rem; font-family: 'JetBrains Mono', monospace; 
+            font-weight: 800; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; 
+            cursor: pointer; transition: all 0.2s ease; text-decoration: none; text-align: center; border: none; margin-top: 2rem;
+        }
+
+        .btn-primary { 
+            background-color: transparent; color: var(--electric-cyan); border: 1px solid var(--electric-cyan); 
+            box-shadow: inset 0 0 0 rgba(0, 242, 255, 0), 0 0 10px rgba(0, 242, 255, 0.1); 
+        }
+        .btn-primary:hover { background-color: rgba(0, 242, 255, 0.1); box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.2), 0 0 15px rgba(0, 242, 255, 0.2); }
+
+        .btn-cyan-pulse {
+            background-color: var(--electric-cyan); color: var(--vantablack); font-weight: 900;
+            animation: cyan-pulse 1.5s infinite;
+        }
+        @keyframes cyan-pulse {
+            0% { box-shadow: 0 0 10px rgba(0, 242, 255, 0.4); transform: scale(1); }
+            50% { box-shadow: 0 0 30px rgba(0, 242, 255, 0.8); transform: scale(1.02); }
+            100% { box-shadow: 0 0 10px rgba(0, 242, 255, 0.4); transform: scale(1); }
+        }
+
+        /* --- LOADING & FINAL STATE --- */
+        #loadingState { display: none; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; min-height: 250px; }
+        .loading-line { color: var(--steel-grey); margin-bottom: 0.8rem; opacity: 0; }
+        .blinking-cursor { display: inline-block; width: 10px; height: 1em; background-color: var(--electric-cyan); animation: blink 1s step-end infinite; vertical-align: text-bottom; margin-left: 5px; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        #finalState { display: none; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; line-height: 1.6; }
+        .error-title { color: var(--crimson-war); font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; letter-spacing: 2px; margin-bottom: 1rem; border-bottom: 1px solid rgba(255, 49, 49, 0.3); padding-bottom: 0.5rem; display: flex; align-items: center; gap: 10px; }
+        
+        .diag-box { background-color: rgba(255, 49, 49, 0.05); border-left: 3px solid var(--crimson-war); padding: 1.5rem; margin-bottom: 2rem; }
+        .diag-item { margin-bottom: 1rem; }
+        .diag-label { color: var(--crimson-war); font-weight: bold; }
+        .diag-text { color: var(--smoke-white); }
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .terminal-box { padding: 1.5rem; }
+            .terminal-header { font-size: 2rem; }
+            .error-title { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="blueprint-layer"></div>
+    <div class="noise-layer"></div>
+
+    <div class="container">
+        <div class="terminal-box" id="terminalBox">
+            
+            <div class="terminal-header" id="tHeader">
+                <span>SYSTEM DIAGNOSTIC</span>
+                <span class="version">V.2.0</span>
+            </div>
+
+            <!-- STEP 1: THE FORM -->
+            <div id="formState">
+                <div class="form-group">
+                    <label>> SELECT PRIMARY CONFIRMATION</label>
+                    <select id="q1">
+                        <option value="" disabled selected>-- Awaiting Selection --</option>
+                        <option value="rsi">RSI / Oscillators</option>
+                        <option value="macd">MACD</option>
+                        <option value="sr">Support / Resistance</option>
+                        <option value="trend">Trendlines / Patterns</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>> DAILY SCREEN TIME</label>
+                    <select id="q2">
+                        <option value="" disabled selected>-- Awaiting Selection --</option>
+                        <option value="low">1-2 Hours</option>
+                        <option value="mid">3-5 Hours</option>
+                        <option value="high">+8 Hours</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>> EXPECTED MONTHLY RETURN</label>
+                    <select id="q3">
+                        <option value="" disabled selected>-- Awaiting Selection --</option>
+                        <option value="low">1-5%</option>
+                        <option value="mid">10-20%</option>
+                        <option value="high">+50%</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-primary" id="btnRun">[ RUN DIAGNOSTIC ]</button>
+            </div>
+
+            <!-- STEP 2: LOADING -->
+            <div id="loadingState">
+                <div class="loading-line" id="line1">> Extracting market metrics...</div>
+                <div class="loading-line" id="line2">> Comparing against institutional volume...</div>
+                <div class="loading-line" id="line3">> Calculating mathematical expectancy...</div>
+                <div style="margin-top: 1rem; color: var(--electric-cyan);">
+                    <span id="loadStatus">Processing</span><span class="blinking-cursor"></span>
+                </div>
+            </div>
+
+            <!-- STEP 3: THE TRAP (FINAL RESULT) -->
+            <div id="finalState">
+                <div class="error-title">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--crimson-war);"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    [SYSTEM ERROR // RETAIL TRAP DETECTED]
+                </div>
+                
+                <div class="diag-box">
+                    <div class="diag-item">
+                        <span class="diag-label">> DIAGNOSIS:</span> 
+                        <span class="diag-text">Your trading system yields negative mathematical expectancy. You are institutional exit liquidity.</span>
+                    </div>
+                    <div class="diag-item" style="margin-bottom: 0;">
+                        <span class="diag-label">> SOLUTION:</span> 
+                        <span class="diag-text">Unlearn retail theory. Protocol access required.</span>
+                    </div>
+                </div>
+
+                <!-- IMPORTANTE: Cambia el href a tu enlace de Telegram real -->
+                <a href="https://t.me/tu_grupo_aqui" target="_blank" class="btn btn-cyan-pulse">
+                    [ UNLOCK THE BLUEPRINT (FREE) ]
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const btnRun = document.getElementById('btnRun');
+        const formState = document.getElementById('formState');
+        const loadingState = document.getElementById('loadingState');
+        const finalState = document.getElementById('finalState');
+        const terminalBox = document.getElementById('terminalBox');
+        const tHeader = document.getElementById('tHeader');
+
+        const line1 = document.getElementById('line1');
+        const line2 = document.getElementById('line2');
+        const line3 = document.getElementById('line3');
+
+        btnRun.addEventListener('click', () => {
+            // Validate if user selected options (optional, but good for UX)
+            const q1 = document.getElementById('q1').value;
+            const q2 = document.getElementById('q2').value;
+            const q3 = document.getElementById('q3').value;
+            
+            if(!q1 || !q2 || !q3) {
+                btnRun.innerText = "[ ERROR: SELECT ALL FIELDS ]";
+                btnRun.style.borderColor = "var(--crimson-war)";
+                btnRun.style.color = "var(--crimson-war)";
+                setTimeout(() => {
+                    btnRun.innerText = "[ RUN DIAGNOSTIC ]";
+                    btnRun.style.borderColor = "var(--electric-cyan)";
+                    btnRun.style.color = "var(--electric-cyan)";
+                }, 1500);
+                return;
+            }
+
+            // Hide Form, Show Loading
+            formState.style.display = 'none';
+            loadingState.style.display = 'block';
+
+            // Simulate Terminal Lines (3.5 seconds total flow)
+            setTimeout(() => { line1.style.opacity = '1'; }, 400);
+            setTimeout(() => { line2.style.opacity = '1'; }, 1400);
+            setTimeout(() => { line3.style.opacity = '1'; }, 2400);
+
+            // Trigger Final Trap
+            setTimeout(() => {
+                loadingState.style.display = 'none';
+                tHeader.style.display = 'none'; // Hide normal header to add impact
+                
+                finalState.style.display = 'block';
+                terminalBox.classList.add('trap-active');
+                
+            }, 3500); // Exactly 3.5s as requested
+        });
+    </script>
+</body>
+</html>

@@ -119,7 +119,9 @@
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
         .action-area { display: flex; gap: 1.5rem; margin-top: 2rem; flex-wrap: wrap; }
-        .btn { display: inline-block; padding: 1rem 2rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; text-align: center; }
+        
+        /* BOTONES FLEX ORDER FIX */
+        .action-area .btn { order: 99; display: inline-block; padding: 1rem 2rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; text-align: center; }
         
         .btn-primary { background-color: transparent; color: var(--electric-cyan); border: 1px solid var(--electric-cyan); box-shadow: inset 0 0 0 transparent, 0 0 10px rgba(0, 242, 255, 0.1); }
         .btn-primary:hover { background-color: rgba(0, 242, 255, 0.1); box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.2), 0 0 15px rgba(0, 242, 255, 0.2); }
@@ -252,7 +254,8 @@
                 </div>
             </div>
 
-            <div class="action-area">
+            <!-- THE BUTTONS -->
+            <div class="action-area" id="actionArea">
                 <a href="analysis.html" class="btn btn-primary" id="btn-dg" style="box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);">[ START FREE ANALYSIS ]</a>
                 <a href="#" class="btn btn-primary" id="btn-calculadora">[ CALCULATOR ]</a>
                 <a href="loss.html" class="btn" id="btn-loss" style="color: #FF3131; border: 1px solid #FF3131; background: rgba(255,49,49,0.05);">[ CRITICAL FAILURE LOG ]</a>
@@ -482,7 +485,26 @@
                     currentDropCode = dropCodeLog.value_text.toUpperCase().trim();
                 }
 
-                // --- 2.5 BUTTON VISIBILITY & COLOR OVERRIDE ---
+                // --- 2.5 BUTTON VISIBILITY, COLOR OVERRIDE & ORDER ---
+                
+                // Primero: resetear todos los botones al orden por defecto (99) para que queden al final si no están en la lista
+                const allButtons = document.querySelectorAll('.action-area .btn');
+                allButtons.forEach(b => b.style.order = '99');
+
+                // Aplicar el orden guardado
+                const orderLog = data.find(log => log.log_type === 'button_order');
+                if (orderLog && orderLog.value_text) {
+                    try {
+                        const orderArray = JSON.parse(orderLog.value_text);
+                        orderArray.forEach((btnId, index) => {
+                            const btnElement = document.getElementById(btnId);
+                            if (btnElement) {
+                                btnElement.style.order = index + 1; // Asignar el orden en flexbox
+                            }
+                        });
+                    } catch(e){}
+                }
+
                 const toggleLogs = data.filter(log => log.log_type === 'button_toggle');
                 const buttonStates = {};
                 
@@ -550,7 +572,7 @@
                 
                 // IGNORE HIDDEN CONFIG LOGS
                 const visibleData = data.filter(log => 
-                    !['news_alert', 'discount_alert', 'toast_alert', 'button_toggle', 'drop_code', 'drop_config', 'loss_config'].includes(log.log_type)
+                    !['news_alert', 'discount_alert', 'toast_alert', 'button_toggle', 'button_order', 'drop_code', 'drop_config', 'loss_config'].includes(log.log_type)
                 ).slice(0, 4);
                 
                 const sortedData = visibleData.reverse();
@@ -593,7 +615,7 @@
                 if (payload.eventType === 'INSERT') {
                     
                     // SILENTLY IGNORE BACKGROUND CONFIG UPDATES SO NO POPUP APPEARS
-                    const hiddenToastTypes = ['button_toggle', 'drop_code', 'drop_config', 'loss_config'];
+                    const hiddenToastTypes = ['button_toggle', 'button_order', 'drop_code', 'drop_config', 'loss_config'];
                     if (payload.new && hiddenToastTypes.includes(payload.new.log_type)) {
                         return; 
                     }

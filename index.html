@@ -45,7 +45,6 @@
             display: flex; flex-direction: column; overflow-x: hidden; position: relative;
         }
 
-        /* --- ALERTA ROJA MACRO --- */
         .emergency-vignette { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 50; display: none; }
         .emergency-vignette.active { display: block; animation: pulse-red 2s infinite; }
         @keyframes pulse-red { 0% { box-shadow: inset 0 0 20px rgba(255, 49, 49, 0.1); } 50% { box-shadow: inset 0 0 120px rgba(255, 49, 49, 0.4); } 100% { box-shadow: inset 0 0 20px rgba(255, 49, 49, 0.1); } }
@@ -56,10 +55,10 @@
             display: none; width: 100%; position: fixed; top: 0; left: 0; z-index: 1000; box-shadow: 0 5px 20px rgba(255, 49, 49, 0.4);
         }
 
-        /* --- OFERTA DINÁMICA POR PLAZAS --- */
+        /* --- DYNAMIC OFFER BANNER --- */
         .discount-banner {
-            position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--hot-pink); /* Color por defecto */
-            color: var(--vantablack); /* Letra oscura para que resalte en fondos de neón */
+            position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--hot-pink); 
+            color: var(--vantablack); 
             z-index: 999; display: none; padding: 1.5rem 2rem; box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.5);
             font-family: 'Inter', sans-serif; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem;
             transition: background-color 0.5s ease;
@@ -71,7 +70,6 @@
         .discount-msg { font-size: 1.1rem; font-weight: 700; }
         .discount-timer { font-family: 'JetBrains Mono', monospace; font-size: 2.5rem; font-weight: 800; background: rgba(0,0,0,0.15); padding: 0.5rem 1.5rem; border: 2px solid rgba(0,0,0,0.8); }
 
-        /* --- TOAST NOTIFICATION (TIEMPO REAL) --- */
         .toast-notification {
             position: fixed; top: 20px; right: -400px; width: 320px;
             background-color: var(--obsidian-navy); border: 1px solid var(--electric-cyan);
@@ -83,7 +81,6 @@
         .toast-notification.show { right: 20px; }
         .toast-title { color: var(--electric-cyan); font-weight: bold; margin-bottom: 0.3rem; }
 
-        /* Estilos base (Fondo Blueprint CSS Puro) */
         .blueprint-layer { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; 
             background-color: var(--obsidian-navy);
@@ -132,7 +129,6 @@
         .btn-gold { background-color: transparent; color: var(--alert-gold); border: 1px solid var(--alert-gold); box-shadow: inset 0 0 0 rgba(255, 215, 0, 0), 0 0 10px rgba(255, 215, 0, 0.1); }
         .btn-gold:hover { background-color: rgba(255, 215, 0, 0.1); box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.2), 0 0 15px rgba(255, 215, 0, 0.2); }
 
-        /* Modales */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(4px); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 1rem; }
         .modal-content { background-color: var(--obsidian-navy); border: 1px solid var(--electric-cyan); padding: 2.5rem; width: 100%; max-width: 600px; box-shadow: 0 0 30px rgba(0, 242, 255, 0.15); position: relative; max-height: 90vh; overflow-y: auto; }
         .close-modal { position: absolute; top: 1rem; right: 1.5rem; color: var(--steel-grey); font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; cursor: pointer; transition: color 0.2s; }
@@ -153,9 +149,6 @@
 
         #loginError { color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 1rem; text-align: center; display: none; }
 
-        /* ============================================================== */
-        /* OPTIMIZACIÓN MÓVIL (CORRECCIÓN DE OVERLAP Y TOAST)             */
-        /* ============================================================== */
         @media (max-width: 768px) {
             main { padding-bottom: 25vh !important; }
             
@@ -174,7 +167,6 @@
             
             .btn { width: 100%; }
 
-            /* ARREGLO DEL POP-UP PARA MÓVIL: Entra desde arriba, no desde la derecha */
             .toast-notification {
                 width: 90%; left: 5%; right: auto; top: -150px; 
                 transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -186,13 +178,11 @@
 </head>
 <body>
 
-    <!-- TOAST NOTIFICATION EN TIEMPO REAL -->
     <div id="realtimeToast" class="toast-notification">
         <div class="toast-title" id="toastTitle">[!] URGENT ALPHA</div>
         <div id="toastMessage">New institutional trace detected in the terminal.</div>
     </div>
 
-    <!-- MODAL FOMO (10 SEGUNDOS) -->
     <div class="modal-overlay" id="fomoModal">
         <div class="modal-content" style="border-color: var(--crimson-war); box-shadow: 0 0 30px rgba(255, 49, 49, 0.15);">
             <div class="close-modal" id="closeFomoBtn" style="color: var(--steel-grey);">[ X ]</div>
@@ -218,9 +208,9 @@
         <div class="discount-content">
             <div>
                 <div class="discount-title" id="discountTitle">LIMITED ACCESS PROTOCOL</div>
-                <div class="discount-msg" id="discountMsg">Plazas limitadas abiertas.</div>
+                <div class="discount-msg" id="discountMsg">Limited spots available.</div>
             </div>
-            <div class="discount-timer" id="discountTimer">00 PLAZAS</div>
+            <div class="discount-timer" id="discountTimer">00 SPOTS</div>
         </div>
     </div>
 
@@ -269,7 +259,6 @@
         </main>
     </div>
 
-    <!-- MODAL CALCULATOR -->
     <div class="modal-overlay" id="calcModal">
         <div class="modal-content">
             <div class="close-modal" id="closeCalcBtn">[ X ]</div>
@@ -301,7 +290,6 @@
         </div>
     </div>
 
-    <!-- MODAL LOGIN DE ADMINISTRADOR -->
     <div class="modal-overlay" id="loginModal">
         <div class="modal-content" style="max-width: 400px;">
             <div class="close-modal" id="closeLoginBtn">[ X ]</div>
@@ -316,7 +304,7 @@
                 <input type="password" id="adminPass" placeholder="••••••••">
             </div>
             
-            <div id="loginError">[SYS_ERROR] Credenciales inválidas.</div>
+            <div id="loginError">[SYS_ERROR] Invalid credentials.</div>
 
             <a href="#" class="btn btn-primary" style="width: 100%; text-align: center;" id="executeLoginBtn">
                 [ VERIFY CLEARANCE ]
@@ -324,14 +312,13 @@
         </div>
     </div>
 
-    <!-- MODAL PARA CÓDIGO DEL DROP -->
     <div class="modal-overlay" id="dropModal">
         <div class="modal-content" style="max-width: 400px; border-color: var(--matrix-green); box-shadow: 0 0 30px rgba(0, 255, 65, 0.15);">
             <div class="close-modal" id="closeDropBtn">[ X ]</div>
             <div class="calc-header" style="font-size: 2rem; color: var(--matrix-green); border-bottom-color: rgba(0, 255, 65, 0.2);">VAULT DECRYPTION</div>
             
             <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--steel-grey); margin-bottom: 1.5rem;">
-                Introduce el código de acceso proporcionado por el Arquitecto para desbloquear el Búnker.
+                Enter the access code provided by the Architect to unlock the Vault.
             </p>
 
             <div class="calc-group" style="margin-bottom: 1.5rem;">
@@ -339,7 +326,7 @@
             </div>
             
             <div id="dropErrorMsg" style="color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 1rem; text-align: center; display: none; font-weight: bold;">
-                [SYS_ERROR] ACCESO DENEGADO.
+                [SYS_ERROR] ACCESS DENIED.
             </div>
 
             <a href="#" class="btn" style="width: 100%; text-align: center; background-color: var(--matrix-green); color: var(--vantablack); border: none;" id="executeDropBtn">
@@ -348,7 +335,6 @@
         </div>
     </div>
 
-    <!-- MODAL VIP LOGIN FAKE -->
     <div class="modal-overlay" id="vipModal">
         <div class="modal-content" style="max-width: 400px; border-color: var(--alert-gold); box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);">
             <div class="close-modal" id="closeVipBtn">[ X ]</div>
@@ -387,17 +373,16 @@
 
         const terminalOutput = document.getElementById('terminal-output');
         
-        // Elementos de la Alerta Roja
         const redAlert = document.getElementById('redAlert');
         const emergencyBanner = document.getElementById('emergencyBanner');
         
-        // Elementos de la Oferta / Descuento
         const discountBanner = document.getElementById('discountBanner');
         const discountTitle = document.getElementById('discountTitle');
         const discountMsg = document.getElementById('discountMsg');
-        const discountTimer = document.getElementById('discountTimer'); // Ahora usado para plazas
+        const discountTimer = document.getElementById('discountTimer');
 
-        let currentDropCode = ""; // Variable para guardar el código en memoria
+        let currentDropCode = ""; 
+        let countdownInterval; // Variable global para guardar el bucle de tiempo
 
         async function fetchTerminalLogs() {
             try {
@@ -409,7 +394,7 @@
 
                 if (error) throw error;
 
-                // --- 1. LÓGICA DE MODO NOTICIAS (ROJO) ---
+                // --- 1. MACRO NEWS (ROJO) ---
                 let isEmergencyActive = false;
                 const emergencyLog = data.find(log => log.log_type === 'news_alert');
                 
@@ -433,34 +418,69 @@
                     emergencyBanner.style.display = 'none';
                 }
 
-                // --- 2. LÓGICA DE OFERTA / PLAZAS (ROSA/CUSTOM) ---
-                let isDiscountActive = false;
+                // --- 2. DYNAMIC OFFER (SPOTS / TIMER) ---
                 const discountLog = data.find(log => log.log_type === 'discount_alert');
 
                 if (discountLog && discountLog.value_text !== "0") {
-                    // El payload ahora es "spots|colorHex" (ej: "15|#FF007F")
-                    const parts = discountLog.value_text.split('|');
-                    const spots = parts[0];
-                    const bannerColor = parts[1] || "var(--hot-pink)"; // Fallback de seguridad
-                    
-                    isDiscountActive = true;
-                    discountTitle.innerText = `LIMITED ACCESS PROTOCOL`;
+                    let configData = {};
+                    try {
+                        configData = JSON.parse(discountLog.value_text);
+                    } catch(e) {
+                        const parts = discountLog.value_text.split('|');
+                        configData = { mode: 'spots', value: parts[0], color: parts[1] || 'var(--hot-pink)', title: 'LIMITED ACCESS PROTOCOL' };
+                    }
+
+                    discountTitle.innerText = configData.title || 'LIMITED ACCESS PROTOCOL';
                     discountMsg.innerHTML = discountLog.action_text; 
-                    discountTimer.innerText = `${spots} PLAZAS`;
-                    
-                    discountBanner.style.backgroundColor = bannerColor;
+                    discountBanner.style.backgroundColor = configData.color || 'var(--hot-pink)';
                     discountBanner.style.display = 'flex';
+
+                    // Limpiamos intervalos viejos si los hay
+                    if (countdownInterval) clearInterval(countdownInterval);
+
+                    if (configData.mode === 'spots') {
+                        discountTimer.innerText = `${configData.value} SPOTS LEFT`;
+                    } else if (configData.mode === 'timer') {
+                        const targetDate = new Date(configData.value).getTime();
+                        
+                        const updateTimer = () => {
+                            const now = new Date().getTime();
+                            const distance = targetDate - now;
+                            
+                            if (distance < 0) {
+                                discountTimer.innerText = "OFFER EXPIRED";
+                                clearInterval(countdownInterval);
+                                return;
+                            }
+                            
+                            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                            
+                            let timeStr = "";
+                            if(days > 0) timeStr += `${days}D `;
+                            timeStr += `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                            
+                            discountTimer.innerText = timeStr;
+                        };
+                        
+                        updateTimer(); // Ejecutar al instante
+                        countdownInterval = setInterval(updateTimer, 1000); // Luego cada segundo
+                    }
+
                 } else {
                     discountBanner.style.display = 'none';
+                    if (countdownInterval) clearInterval(countdownInterval);
                 }
 
-                // --- 2.1 RECUPERAR CÓDIGO DEL DROP SECRETO ---
+                // --- 2.1 SECRET DROP CODE ---
                 const dropCodeLog = data.find(log => log.log_type === 'drop_code');
                 if (dropCodeLog && dropCodeLog.value_text) {
                     currentDropCode = dropCodeLog.value_text.toUpperCase().trim();
                 }
 
-                // --- 2.5 VISIBILIDAD DE BOTONES DINÁMICOS ---
+                // --- 2.5 BUTTON VISIBILITY ---
                 const btnDrop = document.getElementById('btn-drop');
                 if (btnDrop) btnDrop.style.display = 'none';
 
@@ -470,7 +490,7 @@
                     const btnId = log.action_text;
                     const state = log.value_text;
                     if (buttonStates[btnId] === undefined) {
-                        buttonStates[btnId] = state; // Guarda el último estado conocido
+                        buttonStates[btnId] = state; 
                     }
                 });
 
@@ -481,10 +501,9 @@
                     }
                 }
 
-                // --- 3. RENDERIZADO DEL TERMINAL NORMAL ---
+                // --- 3. TERMINAL ---
                 terminalOutput.innerHTML = ''; 
                 
-                // CRUCIAL: Aquí filtramos para que no ensucie la pantalla
                 const visibleData = data.filter(log => 
                     log.log_type !== 'news_alert' && 
                     log.log_type !== 'discount_alert' && 
@@ -525,13 +544,12 @@
 
         fetchTerminalLogs();
 
-        // --- SISTEMA DE NOTIFICACIONES EN TIEMPO REAL (SUPABASE REALTIME) ---
+        // --- REAL-TIME SUPABASE ---
         supabaseClient.channel('public:logs')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'logs' }, payload => {
-                fetchTerminalLogs(); // Refrescar siempre si entra o sale algo
+                fetchTerminalLogs(); 
                 
                 if (payload.eventType === 'INSERT') {
-                    // Cortamos si es un botón o un código para no generar ruido
                     if (payload.new && (payload.new.log_type === 'button_toggle' || payload.new.log_type === 'drop_code')) {
                         return; 
                     }
@@ -548,17 +566,16 @@
                         toast.style.borderColor = "var(--crimson-war)";
                         toastMsg.innerText = "CRITICAL: Macro Event Protocol Activated.";
                     } else if (payload.new && payload.new.log_type === 'discount_alert') {
-                        // Cambiamos el texto porque ahora es un sistema de plazas
                         toastTitle.style.color = "var(--vantablack)"; 
                         toast.style.borderColor = "var(--vantablack)";
-                        toastMsg.innerText = "LIMITED PROTOCOL ACCESS OPENED.";
-                        
-                        // Si nos manda un color personalizado, lo aplicamos al toast
-                        const colorHex = payload.new.value_text.split('|')[1];
-                        if(colorHex) {
-                            toastTitle.style.color = colorHex;
-                            toast.style.borderColor = colorHex;
-                        }
+                        toastMsg.innerText = "PROTOCOL OFFER UPDATED.";
+                        try {
+                            const configData = JSON.parse(payload.new.value_text);
+                            if(configData.color) {
+                                toastTitle.style.color = configData.color;
+                                toast.style.borderColor = configData.color;
+                            }
+                        } catch(e) {}
                     } else if (payload.new && payload.new.log_type === 'toast_alert') {
                         toastTitle.style.color = "#FFD700"; 
                         toast.style.borderColor = "#FFD700";
@@ -574,7 +591,7 @@
             })
             .subscribe();
 
-        // --- SISTEMA DE FOMO AUTOMÁTICO (10 SEGUNDOS, 1 VEZ AL DÍA) ---
+        // --- FOMO ---
         setTimeout(() => {
             const fomoModal = document.getElementById('fomoModal');
             const closeFomoBtn = document.getElementById('closeFomoBtn');
@@ -604,7 +621,7 @@
 
         }, 10000);
 
-        // --- LÓGICA DE MODALES ---
+        // --- MODALS ---
         const calcModal = document.getElementById('calcModal');
         const openCalcBtn = document.getElementById('btn-calculadora');
         const closeCalcBtn = document.getElementById('closeCalcBtn');
@@ -622,7 +639,6 @@
         const executeDropBtn = document.getElementById('executeDropBtn');
         const dropErrorMsg = document.getElementById('dropErrorMsg');
 
-        // Modal VIP Fake
         const vipModal = document.getElementById('vipModal');
         const openVipBtn = document.getElementById('btn-VIP');
         const closeVipBtn = document.getElementById('closeVipBtn');
@@ -656,7 +672,6 @@
             if (e.target === vipModal) vipModal.style.display = 'none';
         });
 
-        // --- TRACKEO DE CLICS EN GUMROAD (GA4) ---
         upsellBtn.addEventListener('click', () => {
             if (typeof gtag === 'function') {
                 gtag('event', 'purchase_click', {
@@ -671,7 +686,7 @@
             const email = document.getElementById('adminEmail').value.trim();
             const pass = document.getElementById('adminPass').value;
             
-            if(!email || !pass) { loginErrorMsg.innerText = "[SYS_ERROR] Credenciales requeridas."; loginErrorMsg.style.display = 'block'; return; }
+            if(!email || !pass) { loginErrorMsg.innerText = "[SYS_ERROR] Credentials required."; loginErrorMsg.style.display = 'block'; return; }
 
             const originalText = executeLoginBtn.innerText;
             executeLoginBtn.innerText = '[ VERIFYING... ]';
@@ -691,12 +706,11 @@
                 }, 800);
 
             } catch (error) {
-                loginErrorMsg.innerText = "[SYS_ERROR] Acceso denegado."; loginErrorMsg.style.display = 'block';
+                loginErrorMsg.innerText = "[SYS_ERROR] Access denied."; loginErrorMsg.style.display = 'block';
                 executeLoginBtn.innerText = originalText; executeLoginBtn.style.pointerEvents = 'auto';
             }
         });
 
-        // --- LÓGICA VIP FAKE LOGIN ---
         executeVipBtn.addEventListener('click', (e) => {
             e.preventDefault();
             const originalText = executeVipBtn.innerText;
@@ -711,7 +725,6 @@
             }, 1200);
         });
 
-        // --- LÓGICA DE DESBLOQUEO DEL DROP ---
         executeDropBtn.addEventListener('click', (e) => {
             e.preventDefault();
             const intento = dropPinInput.value.toUpperCase().trim();
@@ -725,7 +738,6 @@
                     gtag('event', 'unlock_drop', { 'event_category': 'engagement', 'event_label': 'Drop Unlocked via Popup' });
                 }
 
-                // Guardamos la sesión
                 sessionStorage.setItem('vault_auth', 'GRANTED');
 
                 setTimeout(() => {
@@ -743,7 +755,6 @@
             }
         });
 
-        // --- CALCULADORA DE RIESGO ---
         function calculateExpectancy() {
             const winRate = parseFloat(winRateInput.value) / 100;
             const lossRate = 1 - winRate;

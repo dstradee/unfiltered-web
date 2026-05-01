@@ -73,14 +73,13 @@
         input[type="time"]::-webkit-calendar-picker-indicator, input[type="datetime-local"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
         input:focus { border-color: var(--electric-cyan); box-shadow: inset 0 0 5px rgba(0, 242, 255, 0.1); }
 
-        .type-selector { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .type-selector { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
         .type-option { background-color: var(--vantablack); border: 1px solid var(--steel-grey); color: var(--steel-grey); padding: 0.8rem 0.5rem; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; user-select: none; touch-action: manipulation; }
         .type-selector input[type="radio"] { display: none; }
         
         .type-selector input[type="radio"]:checked + .type-option.opt-cyan { border-color: var(--electric-cyan); color: var(--electric-cyan); background-color: rgba(0, 242, 255, 0.05); box-shadow: 0 0 10px rgba(0, 242, 255, 0.2); }
         .type-selector input[type="radio"]:checked + .type-option.opt-red { border-color: var(--crimson-war); color: var(--crimson-war); background-color: rgba(255, 49, 49, 0.05); box-shadow: 0 0 10px rgba(255, 49, 49, 0.2); }
         .type-selector input[type="radio"]:checked + .type-option.opt-grey { border-color: var(--smoke-white); color: var(--smoke-white); background-color: rgba(248, 250, 252, 0.05); }
-        .type-selector input[type="radio"]:checked + .type-option.opt-pink { border-color: var(--hot-pink); color: var(--hot-pink); background-color: rgba(255, 0, 127, 0.05); box-shadow: 0 0 10px rgba(255, 0, 127, 0.2); }
 
         .btn-execute { width: 100%; background-color: transparent; color: var(--smoke-white); border: 1px solid var(--smoke-white); padding: 1.2rem; font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 2px; cursor: pointer; margin-top: 1rem; transition: all 0.2s ease; touch-action: manipulation; }
         .btn-execute:hover { background-color: var(--smoke-white); color: var(--vantablack); }
@@ -110,7 +109,15 @@
         .btn-delete { background: transparent; border: 1px solid var(--crimson-war); color: var(--crimson-war); padding: 0.4rem 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; cursor: pointer; transition: all 0.2s; touch-action: manipulation; }
         .btn-delete:hover { background: var(--crimson-war); color: var(--smoke-white); }
 
-        .saved-btn-row { background-color: rgba(176, 38, 255, 0.05); border: 1px solid var(--neon-purple); padding: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        /* BUTTON ROW STYLING (DRAG & DROP) */
+        .saved-btn-row { background-color: rgba(176, 38, 255, 0.05); border: 1px solid var(--neon-purple); padding: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; transition: all 0.2s; }
+        .saved-btn-row.draggable { cursor: grab; }
+        .saved-btn-row.dragging { opacity: 0.5; border-style: dashed; border-color: var(--electric-cyan); background-color: rgba(0, 242, 255, 0.05); }
+        .saved-btn-row.drag-over { border-top: 3px solid var(--electric-cyan); }
+        
+        .drag-handle { color: var(--steel-grey); cursor: grab; font-size: 1.2rem; padding: 0.5rem; user-select: none; }
+        .drag-handle:active { cursor: grabbing; }
+
         .saved-btn-id { color: var(--neon-purple); font-family: 'JetBrains Mono', monospace; font-weight: bold; font-size: 1.1rem; }
         .action-btn-show { background: transparent; border: 1px solid var(--electric-cyan); color: var(--electric-cyan); padding: 0.5rem 1rem; cursor: pointer; font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; transition: all 0.2s; }
         .action-btn-show:hover { background-color: rgba(0,242,255,0.1); }
@@ -118,6 +125,9 @@
         .action-btn-hide:hover { background-color: rgba(255,49,49,0.1); }
         .action-btn-del { background: transparent; border: none; color: var(--steel-grey); padding: 0.5rem; cursor: pointer; font-family: monospace; font-weight: bold; font-size: 1.2rem; transition: color 0.2s; }
         .action-btn-del:hover { color: var(--crimson-war); }
+        
+        .move-btn { background: transparent; border: 1px solid var(--steel-grey); color: var(--steel-grey); cursor: pointer; padding: 0.2rem 0.5rem; font-family: monospace; transition: all 0.2s;}
+        .move-btn:hover { background: var(--steel-grey); color: var(--vantablack); }
 
         @media (max-width: 768px) { 
             body { padding: 1rem; }
@@ -125,11 +135,8 @@
             h1 { font-size: 1.8rem; }
             .tab-btn { font-size: 0.75rem; padding: 0.6rem 0.5rem; }
             .type-selector { grid-template-columns: 1fr; gap: 0.5rem; }
-            .optional-group > div { grid-template-columns: 1fr !important; }
             .log-item { flex-direction: column; align-items: flex-start; gap: 1rem; }
             .log-content { max-width: 100%; }
-            .grid-3-col { grid-template-columns: 1fr !important; }
-            
             .flex-row-mobile { flex-direction: column !important; align-items: stretch !important; gap: 0.5rem !important; }
             .flex-row-mobile button { width: 100%; margin-top: 0.5rem; }
             .saved-btn-row { flex-direction: column; align-items: flex-start; }
@@ -150,7 +157,7 @@
             <button class="tab-btn tab-news" onclick="switchTab('panel-news', this)">[ NEWS ]</button>
             <button class="tab-btn tab-desc" onclick="switchTab('panel-desc', this)">[ OFFER / TIMER ]</button>
             <button class="tab-btn tab-popup" onclick="switchTab('panel-popup', this)">[ POP-UP ]</button>
-            <button class="tab-btn tab-btns" onclick="switchTab('panel-buttons', this)">[ VISIBILITY ]</button>
+            <button class="tab-btn tab-btns" onclick="switchTab('panel-buttons', this)">[ VISIBILITY & ORDER ]</button>
             <button class="tab-btn tab-drop" onclick="switchTab('panel-drop', this)">[ SECRET DROP ]</button>
             <button class="tab-btn tab-logs" onclick="switchTab('panel-logs', this)">[ LOGS ]</button>
         </div>
@@ -310,23 +317,24 @@
             <div id="popupFeedback" class="feedback-msg"></div>
         </div>
 
+        <!-- REORDER AND VISIBILITY PANEL -->
         <div id="panel-buttons" class="admin-box" style="border-color: var(--neon-purple);">
-            <h1 style="color: var(--neon-purple);">[ 🎛️ ] BUTTON VISIBILITY & COLOR</h1>
+            <h1 style="color: var(--neon-purple);">[ 🎛️ ] BUTTON VISIBILITY & ORDER</h1>
             <div class="warning-text" style="color: var(--neon-purple); border-color: rgba(176, 38, 255, 0.2);">
-                MANAGE YOUR BUTTONS QUICKLY AND SET THEIR CUSTOM COLORS (HEX).
+                MANAGE YOUR BUTTONS, SET CUSTOM COLORS, AND DRAG TO REORDER THEM IN REAL TIME.
             </div>
 
             <div class="form-group flex-row-mobile" style="display: flex; gap: 1rem; align-items: flex-end;">
                 <div style="flex: 1;">
                     <label style="color: var(--neon-purple);">> ADD NEW ID TO LIST</label>
-                    <input type="text" id="newBtnId" placeholder="Ex: btn-dg or btn-calculadora" autocomplete="off" style="border-color: var(--neon-purple); color: var(--neon-purple);">
+                    <input type="text" id="newBtnId" placeholder="Ex: btn-loss or btn-calculadora" autocomplete="off" style="border-color: var(--neon-purple); color: var(--neon-purple);">
                 </div>
                 <button class="btn-execute btn-purple" style="width: auto; margin-top: 0; padding: 0.8rem 1.5rem; font-size: 1.2rem;" onclick="addSavedButton()">[ ADD ]</button>
             </div>
 
             <hr style="border: none; border-top: 1px solid rgba(148, 163, 184, 0.2); margin: 2rem 0;">
 
-            <label style="color: var(--smoke-white);">> REGISTERED BUTTONS</label>
+            <label style="color: var(--smoke-white);">> REGISTERED BUTTONS (Drag [ ☰ ] to reorder)</label>
             <div id="savedButtonsContainer" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.8rem;">
             </div>
 
@@ -568,22 +576,36 @@
             }
         }
 
+        // --- BUTTON SYSTEM (DRAG & DROP) ---
         let savedButtons = JSON.parse(localStorage.getItem('admin_saved_buttons')) || [];
+        let draggedItemIndex = null;
         
         function renderSavedButtons() {
             const container = document.getElementById('savedButtonsContainer');
             container.innerHTML = '';
+            
             if(savedButtons.length === 0) {
                 container.innerHTML = '<div style="color: var(--steel-grey); font-family: monospace; font-size: 0.85rem; text-align: center; border: 1px dashed var(--steel-grey); padding: 2rem;">No buttons saved. Add one above.</div>';
                 return;
             }
-            savedButtons.forEach(btnId => {
+
+            savedButtons.forEach((btnId, index) => {
                 let savedColor = localStorage.getItem('color_' + btnId) || '#00F2FF';
                 let pickerColor = savedColor.startsWith('#') ? savedColor : '#00F2FF';
 
                 container.innerHTML += `
-                    <div class="saved-btn-row">
-                        <span class="saved-btn-id">> ID: ${btnId}</span>
+                    <div class="saved-btn-row draggable" draggable="true" data-index="${index}">
+                        
+                        <div style="display: flex; align-items: center; gap: 0.8rem;">
+                            <span class="drag-handle" title="Drag to reorder">☰</span>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 0.2rem;">
+                                <button class="move-btn" onclick="moveButtonUp(${index})" title="Move Up">↑</button>
+                                <button class="move-btn" onclick="moveButtonDown(${index})" title="Move Down">↓</button>
+                            </div>
+                            
+                            <span class="saved-btn-id">> ID: ${btnId}</span>
+                        </div>
                         
                         <div style="display: flex; gap: 0.5rem; align-items: center; background-color: rgba(2,6,23,0.5); padding: 0.3rem 0.5rem; border: 1px solid rgba(148,163,184,0.3);">
                             <span style="color: var(--steel-grey); font-size: 0.7rem; font-family: monospace;">COLOR:</span>
@@ -614,13 +636,90 @@
                     </div>
                 `;
             });
+
+            // Add Event Listeners for Native Drag and Drop
+            const rows = document.querySelectorAll('.saved-btn-row.draggable');
+            rows.forEach(row => {
+                row.addEventListener('dragstart', (e) => {
+                    draggedItemIndex = +row.getAttribute('data-index');
+                    row.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = "move";
+                });
+                row.addEventListener('dragover', (e) => {
+                    e.preventDefault(); 
+                    row.classList.add('drag-over');
+                });
+                row.addEventListener('dragleave', () => {
+                    row.classList.remove('drag-over');
+                });
+                row.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    row.classList.remove('drag-over');
+                    const targetIndex = +row.getAttribute('data-index');
+                    
+                    if (draggedItemIndex !== null && draggedItemIndex !== targetIndex) {
+                        const item = savedButtons.splice(draggedItemIndex, 1)[0];
+                        savedButtons.splice(targetIndex, 0, item);
+                        
+                        localStorage.setItem('admin_saved_buttons', JSON.stringify(savedButtons));
+                        syncButtonOrder(savedButtons); 
+                        renderSavedButtons();
+                    }
+                });
+                row.addEventListener('dragend', () => {
+                    row.classList.remove('dragging');
+                    draggedItemIndex = null;
+                });
+            });
+        }
+
+        window.moveButtonUp = function(index) {
+            if (index > 0) {
+                const temp = savedButtons[index - 1];
+                savedButtons[index - 1] = savedButtons[index];
+                savedButtons[index] = temp;
+                localStorage.setItem('admin_saved_buttons', JSON.stringify(savedButtons));
+                syncButtonOrder(savedButtons);
+                renderSavedButtons();
+            }
+        }
+        window.moveButtonDown = function(index) {
+            if (index < savedButtons.length - 1) {
+                const temp = savedButtons[index + 1];
+                savedButtons[index + 1] = savedButtons[index];
+                savedButtons[index] = temp;
+                localStorage.setItem('admin_saved_buttons', JSON.stringify(savedButtons));
+                syncButtonOrder(savedButtons);
+                renderSavedButtons();
+            }
+        }
+
+        async function syncButtonOrder(orderArray) {
+            try {
+                await supabaseClient.from('logs').delete().eq('log_type', 'button_order');
+                await supabaseClient.from('logs').insert([{ 
+                    log_time: '[SYS_UPDATE]', action_text: 'Button Order Updated', value_text: JSON.stringify(orderArray), log_type: 'button_order' 
+                }]);
+            } catch(e) { console.error("Error syncing order", e); }
         }
 
         function addSavedButton() {
             const input = document.getElementById('newBtnId'); const val = input.value.trim();
-            if(val && !savedButtons.includes(val)) { savedButtons.push(val); localStorage.setItem('admin_saved_buttons', JSON.stringify(savedButtons)); input.value = ''; renderSavedButtons(); }
+            if(val && !savedButtons.includes(val)) { 
+                savedButtons.push(val); 
+                localStorage.setItem('admin_saved_buttons', JSON.stringify(savedButtons)); 
+                syncButtonOrder(savedButtons); 
+                input.value = ''; 
+                renderSavedButtons(); 
+            }
         }
-        function removeSavedButton(btnId) { savedButtons = savedButtons.filter(id => id !== btnId); localStorage.setItem('admin_saved_buttons', JSON.stringify(savedButtons)); renderSavedButtons(); }
+
+        function removeSavedButton(btnId) { 
+            savedButtons = savedButtons.filter(id => id !== btnId); 
+            localStorage.setItem('admin_saved_buttons', JSON.stringify(savedButtons)); 
+            syncButtonOrder(savedButtons); 
+            renderSavedButtons(); 
+        }
         
         async function quickToggle(btnId, btnState, colorHex) {
             const feedback = document.getElementById('btnToggleFeedback');
@@ -640,7 +739,9 @@
             } catch (error) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Failed to update button.'; }
         }
         
+        // Initial call
         renderSavedButtons();
+        if(savedButtons.length > 0) { syncButtonOrder(savedButtons); }
 
         async function deactivateSpecialMode(type) {
             try {
@@ -668,6 +769,7 @@
                     else if (log.log_type === 'discount_alert') { borderColor = 'var(--hot-pink)'; valueColor = 'var(--hot-pink)'; } 
                     else if (log.log_type === 'toast_alert') { borderColor = 'var(--alert-gold)'; valueColor = 'var(--alert-gold)'; } 
                     else if (log.log_type === 'button_toggle') { borderColor = 'var(--neon-purple)'; valueColor = 'var(--neon-purple)'; } 
+                    else if (log.log_type === 'button_order') { borderColor = 'var(--neon-purple)'; valueColor = 'var(--neon-purple)'; displayValue = `[ ORDER SYNCED ]`; } 
                     else if (log.log_type === 'drop_code') { borderColor = 'var(--matrix-green)'; valueColor = 'var(--matrix-green)'; } 
                     else if (log.log_type === 'drop_config') { 
                         borderColor = 'var(--matrix-green)'; 

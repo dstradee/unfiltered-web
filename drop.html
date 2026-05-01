@@ -224,7 +224,7 @@
                 <input type="text" id="editTabName" placeholder="Ex: DROP 001">
             </div>
 
-            <!-- THEME COLORS (BOX + BUTTON TEXT) -->
+            <!-- THEME COLORS -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
                 <div class="input-group" style="border-left: 3px solid var(--electric-cyan); padding-left: 1rem; margin:0;">
                     <label>> THEME COLOR (HEX)</label>
@@ -243,7 +243,7 @@
                 </div>
             </div>
 
-            <!-- TOGGLES: VIDEO AND PRIVACY -->
+            <!-- TOGGLES -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
                 <label class="checkbox-container" style="background: rgba(0, 242, 255, 0.05); border-color: var(--electric-cyan); color: var(--electric-cyan);">
                     <input type="checkbox" id="editHasVideo" onchange="toggleVideoSection()">
@@ -517,7 +517,7 @@
             elBtn.style.backgroundColor = themeColor;
             elBtn.style.color = btnTextColor;
             elBtn.style.border = "none";
-            elBtn.style.pointerEvents = 'auto'; // Reset pointer
+            elBtn.style.pointerEvents = 'auto'; // Asegurar que sea clickeable por defecto
 
             elHeader1.innerText = config.header1 || "";
             elHeader2.innerText = config.header2 || "";
@@ -597,51 +597,63 @@
                 }
             }
 
-            // --- CLICK TRACKER ---
-            elBtn.onclick = async (e) => {
+            // --- NATIVE CLICK TRACKER (FAST & RESPONSIVE) ---
+            elBtn.onclick = (e) => {
                 if (config.urgencyMode === 'spots') {
-                    e.preventDefault(); // Pause redirect to update DB first
-                    const originalText = elBtn.innerText;
-                    elBtn.innerText = "[ VERIFYING CAPACITY... ]";
-                    elBtn.style.pointerEvents = 'none';
-
-                    try {
-                        const { data, error } = await supabaseClient.from('logs').select('*').eq('log_type', 'drop_config').single();
-                        if (data && data.value_text) {
-                            let liveConf = JSON.parse(data.value_text);
-                            let liveDrop = liveConf.drops[appState.activeIndex];
-                            
-                            const liveMax = parseInt(liveDrop.maxSpots) || 0;
-                            const liveCurr = parseInt(liveDrop.currentClicks) || 0;
-
-                            if (liveCurr >= liveMax) {
-                                elBtn.innerText = "[ CAPACITY REACHED ]";
-                                elBtn.style.backgroundColor = "transparent";
-                                elBtn.style.color = "var(--crimson-war)";
-                                elBtn.style.border = "1px solid var(--crimson-war)";
-                                return;
-                            }
-
-                            // Update DB
-                            liveDrop.currentClicks = liveCurr + 1;
-                            liveConf.drops[appState.activeIndex] = liveDrop;
-                            await supabaseClient.from('logs').update({ value_text: JSON.stringify(liveConf) }).eq('log_type', 'drop_config');
-
-                            // Open Link
-                            window.open(config.btnLink, '_blank');
-
-                            // Reset Button UI for this user temporarily
-                            elBtn.innerText = originalText;
-                            elBtn.style.pointerEvents = 'auto';
-                        }
-                    } catch(err) {
-                        console.error(err);
-                        elBtn.innerText = originalText;
-                        elBtn.style.pointerEvents = 'auto';
+                    const max = parseInt(config.maxSpots) || 0;
+                    const current = parseInt(config.currentClicks) || 0;
+                    
+                    // Si ya está lleno, aborta el click
+                    if (current >= max) {
+                        e.preventDefault(); 
+                        return;
                     }
-                } 
-                // If Timer or None, it just acts as a normal <a> tag (unless blocked by Timer logic above)
+
+                    // 1. UPDATE VISUAL INMEDIATAMENTE (Optimistic Update)
+                    config.currentClicks = current + 1;
+                    const remaining = Math.max(0, max - config.currentClicks);
+                    
+                    if(remaining === 0) {
+                        displayUrgency.innerText = "[ PROTOCOL CAPACITY REACHED ]";
+                        displayUrgency.style.color = "var(--crimson-war)";
+                        displayUrgency.style.borderColor = "var(--crimson-war)";
+                        elBtn.innerText = "[ DROP LOCKED ]";
+                        elBtn.style.backgroundColor = "transparent";
+                        elBtn.style.color = "var(--crimson-war)";
+                        elBtn.style.border = "1px solid var(--crimson-war)";
+                        elBtn.style.pointerEvents = "none";
+                    } else {
+                        displayUrgency.innerText = `[ SPOTS REMAINING: ${remaining} ]`;
+                    }
+
+                    // 2. ENVÍA EL CLICK A LA BASE DE DATOS EN SEGUNDO PLANO
+                    // El navegador abrirá el target="_blank" al instante sin bloqueos
+                    incrementSpotCountDB(appState.activeIndex);
+                }
             };
+        }
+
+        // Helper para sumar clics sin bloquear el navegador
+        async function incrementSpotCountDB(index) {
+            try {
+                const { data, error } = await supabaseClient.from('logs').select('*').eq('log_type', 'drop_config').order('created_at', { ascending: false }).limit(1);
+                if (data && data.length > 0) {
+                    let liveConf = JSON.parse(data[0].value_text);
+                    if (liveConf.drops && liveConf.drops[index]) {
+                        liveConf.drops[index].currentClicks = (parseInt(liveConf.drops[index].currentClicks) || 0) + 1;
+                        
+                        await supabaseClient.from('logs').delete().eq('log_type', 'drop_config');
+                        await supabaseClient.from('logs').insert([{ 
+                            log_time: '[SYS_UPDATE]', 
+                            action_text: 'Spot Claimed', 
+                            value_text: JSON.stringify(liveConf), 
+                            log_type: 'drop_config' 
+                        }]);
+                    }
+                }
+            } catch(e) {
+                console.error("Click sync error:", e);
+            }
         }
 
         function populateEditor(config) {

@@ -56,18 +56,20 @@
             display: none; width: 100%; position: fixed; top: 0; left: 0; z-index: 1000; box-shadow: 0 5px 20px rgba(255, 49, 49, 0.4);
         }
 
-        /* --- ALERTA ROSA DESCUENTO --- */
+        /* --- OFERTA DINÁMICA POR PLAZAS --- */
         .discount-banner {
-            position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--hot-pink); color: #FFFFFF;
-            z-index: 999; display: none; padding: 1.5rem 2rem; box-shadow: 0 -5px 30px rgba(255, 0, 127, 0.4);
+            position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--hot-pink); /* Color por defecto */
+            color: var(--vantablack); /* Letra oscura para que resalte en fondos de neón */
+            z-index: 999; display: none; padding: 1.5rem 2rem; box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.5);
             font-family: 'Inter', sans-serif; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem;
+            transition: background-color 0.5s ease;
         }
         
         .discount-content { display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 1200px; }
         
         .discount-title { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; letter-spacing: 2px; line-height: 1; }
-        .discount-msg { font-size: 1.1rem; font-weight: 500; }
-        .discount-timer { font-family: 'JetBrains Mono', monospace; font-size: 2rem; font-weight: 800; background: rgba(0,0,0,0.2); padding: 0.5rem 1rem; border: 1px solid rgba(255,255,255,0.3); }
+        .discount-msg { font-size: 1.1rem; font-weight: 700; }
+        .discount-timer { font-family: 'JetBrains Mono', monospace; font-size: 2.5rem; font-weight: 800; background: rgba(0,0,0,0.15); padding: 0.5rem 1.5rem; border: 2px solid rgba(0,0,0,0.8); }
 
         /* --- TOAST NOTIFICATION (TIEMPO REAL) --- */
         .toast-notification {
@@ -81,8 +83,16 @@
         .toast-notification.show { right: 20px; }
         .toast-title { color: var(--electric-cyan); font-weight: bold; margin-bottom: 0.3rem; }
 
-        /* Estilos base */
-        .blueprint-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; background-image: url('Gemini_Generated_Image_dofjdbdofjdbdofj.jpg'); background-size: cover; background-position: center; opacity: 0.15; mix-blend-mode: screen; }
+        /* Estilos base (Fondo Blueprint CSS Puro) */
+        .blueprint-layer { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; 
+            background-color: var(--obsidian-navy);
+            background-image: 
+                linear-gradient(rgba(0, 242, 255, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 255, 0.15) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.6; mix-blend-mode: screen; 
+        }
         .noise-layer { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1; opacity: 0.06; background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E'); }
 
         h1, h2, .logo-text { font-family: 'Bebas Neue', sans-serif; color: var(--smoke-white); letter-spacing: 8px; text-transform: uppercase; font-weight: normal; }
@@ -153,7 +163,7 @@
             .discount-content { flex-direction: column; gap: 0.5rem; text-align: center; }
             .discount-title { font-size: 1.8rem; }
             .discount-msg { font-size: 0.9rem; }
-            .discount-timer { font-size: 1.2rem; padding: 0.3rem 0.8rem; width: 100%; max-width: 250px; }
+            .discount-timer { font-size: 1.5rem; padding: 0.3rem 0.8rem; width: 100%; max-width: 250px; }
 
             .hero-title { font-size: 3.5rem; }
             .terminal-box { padding: 1.5rem 1rem; }
@@ -207,10 +217,10 @@
     <div class="discount-banner" id="discountBanner">
         <div class="discount-content">
             <div>
-                <div class="discount-title" id="discountTitle">FLASH PROTOCOL: -50% OFF</div>
-                <div class="discount-msg" id="discountMsg">Mira el vídeo para el código.</div>
+                <div class="discount-title" id="discountTitle">LIMITED ACCESS PROTOCOL</div>
+                <div class="discount-msg" id="discountMsg">Plazas limitadas abiertas.</div>
             </div>
-            <div class="discount-timer" id="discountTimer">00:00:00:00</div>
+            <div class="discount-timer" id="discountTimer">00 PLAZAS</div>
         </div>
     </div>
 
@@ -253,7 +263,6 @@
 
             <div class="action-area">
                 <a href="#" class="btn btn-primary" id="btn-calculadora">[ CALCULATOR ]</a>
-                <!-- NUEVO BOTÓN VIP -->
                 <a href="#" class="btn btn-gold" id="btn-VIP">[ VIP ACCESS ]</a>
                 <a href="#" class="btn btn-purple" id="btn-drop" style="display: none;">[ DROP ACCESS ]</a>
             </div>
@@ -339,7 +348,7 @@
         </div>
     </div>
 
-    <!-- MODAL VIP LOGIN FAKE (NUEVO) -->
+    <!-- MODAL VIP LOGIN FAKE -->
     <div class="modal-overlay" id="vipModal">
         <div class="modal-content" style="max-width: 400px; border-color: var(--alert-gold); box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);">
             <div class="close-modal" id="closeVipBtn">[ X ]</div>
@@ -382,12 +391,11 @@
         const redAlert = document.getElementById('redAlert');
         const emergencyBanner = document.getElementById('emergencyBanner');
         
-        // Elementos del Descuento
+        // Elementos de la Oferta / Descuento
         const discountBanner = document.getElementById('discountBanner');
         const discountTitle = document.getElementById('discountTitle');
         const discountMsg = document.getElementById('discountMsg');
-        const discountTimer = document.getElementById('discountTimer');
-        let countdownInterval;
+        const discountTimer = document.getElementById('discountTimer'); // Ahora usado para plazas
 
         let currentDropCode = ""; // Variable para guardar el código en memoria
 
@@ -425,44 +433,24 @@
                     emergencyBanner.style.display = 'none';
                 }
 
-                // --- 2. LÓGICA DE DESCUENTO FLASH (ROSA) ---
-                clearInterval(countdownInterval); 
+                // --- 2. LÓGICA DE OFERTA / PLAZAS (ROSA/CUSTOM) ---
                 let isDiscountActive = false;
                 const discountLog = data.find(log => log.log_type === 'discount_alert');
 
                 if (discountLog && discountLog.value_text !== "0") {
+                    // El payload ahora es "spots|colorHex" (ej: "15|#FF007F")
                     const parts = discountLog.value_text.split('|');
-                    const endTime = parseInt(parts[0]);
-                    const pct = parts[1] || "??";
+                    const spots = parts[0];
+                    const bannerColor = parts[1] || "var(--hot-pink)"; // Fallback de seguridad
                     
-                    if (endTime > new Date().getTime()) {
-                        isDiscountActive = true;
-                        discountTitle.innerText = `FLASH PROTOCOL: -${pct}% OFF`;
-                        discountMsg.innerHTML = discountLog.action_text; 
-                        discountBanner.style.display = 'flex';
-
-                        countdownInterval = setInterval(() => {
-                            const distance = endTime - new Date().getTime();
-                            if (distance < 0) {
-                                clearInterval(countdownInterval);
-                                discountBanner.style.display = 'none';
-                                return;
-                            }
-                            const d = Math.floor(distance / (1000 * 60 * 60 * 24));
-                            const h = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                            const m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                            const s = Math.floor((distance % (1000 * 60)) / 1000);
-                            
-                            discountTimer.innerText = 
-                                (d < 10 ? "0"+d : d) + "D : " + 
-                                (h < 10 ? "0"+h : h) + "H : " + 
-                                (m < 10 ? "0"+m : m) + "M : " + 
-                                (s < 10 ? "0"+s : s) + "S";
-                        }, 1000);
-                    }
-                }
-
-                if (!isDiscountActive) {
+                    isDiscountActive = true;
+                    discountTitle.innerText = `LIMITED ACCESS PROTOCOL`;
+                    discountMsg.innerHTML = discountLog.action_text; 
+                    discountTimer.innerText = `${spots} PLAZAS`;
+                    
+                    discountBanner.style.backgroundColor = bannerColor;
+                    discountBanner.style.display = 'flex';
+                } else {
                     discountBanner.style.display = 'none';
                 }
 
@@ -473,8 +461,6 @@
                 }
 
                 // --- 2.5 VISIBILIDAD DE BOTONES DINÁMICOS ---
-                
-                // Forzamos al botón de Drop a esconderse por defecto en cada recarga
                 const btnDrop = document.getElementById('btn-drop');
                 if (btnDrop) btnDrop.style.display = 'none';
 
@@ -562,9 +548,17 @@
                         toast.style.borderColor = "var(--crimson-war)";
                         toastMsg.innerText = "CRITICAL: Macro Event Protocol Activated.";
                     } else if (payload.new && payload.new.log_type === 'discount_alert') {
-                        toastTitle.style.color = "var(--hot-pink)";
-                        toast.style.borderColor = "var(--hot-pink)";
-                        toastMsg.innerText = "FLASH PROTOCOL: Global Discount Activated.";
+                        // Cambiamos el texto porque ahora es un sistema de plazas
+                        toastTitle.style.color = "var(--vantablack)"; 
+                        toast.style.borderColor = "var(--vantablack)";
+                        toastMsg.innerText = "LIMITED PROTOCOL ACCESS OPENED.";
+                        
+                        // Si nos manda un color personalizado, lo aplicamos al toast
+                        const colorHex = payload.new.value_text.split('|')[1];
+                        if(colorHex) {
+                            toastTitle.style.color = colorHex;
+                            toast.style.borderColor = colorHex;
+                        }
                     } else if (payload.new && payload.new.log_type === 'toast_alert') {
                         toastTitle.style.color = "#FFD700"; 
                         toast.style.borderColor = "#FFD700";

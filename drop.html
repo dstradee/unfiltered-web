@@ -31,6 +31,7 @@
             --hot-pink: #FF007F; 
             --neon-purple: #B026FF;
             --matrix-green: #00FF41;
+            --alert-gold: #FFD700;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
@@ -42,7 +43,11 @@
         }
 
         /* Base Styles (Background and Noise) */
-        .blueprint-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; background-image: url('Gemini_Generated_Image_dofjdbdofjdbdofj.jpg'); background-size: cover; background-position: center; opacity: 0.15; mix-blend-mode: screen; }
+        .blueprint-layer { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; 
+            background-image: url('Gemini_Generated_Image_dofjdbdofjdbdofj.jpg'); /* Default */
+            background-size: cover; background-position: center; opacity: 0.15; mix-blend-mode: screen; transition: background-image 0.5s ease;
+        }
         .noise-layer { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1; opacity: 0.06; background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E'); }
 
         h1, h2, .logo-text { font-family: 'Bebas Neue', sans-serif; color: var(--smoke-white); letter-spacing: 8px; text-transform: uppercase; font-weight: normal; }
@@ -54,6 +59,12 @@
         .brand-logo { display: flex; align-items: baseline; gap: 8px; font-size: 2rem; }
         .unfiltered-word { border-bottom: 2px solid var(--electric-cyan); padding-bottom: 2px; }
         
+        /* AUTH LINK */
+        .auth-link { font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); text-decoration: none; font-size: 0.85rem; letter-spacing: 1px; transition: color 0.2s ease; cursor: pointer; }
+        .auth-link:hover { color: var(--electric-cyan); }
+
+        .header-actions { display: flex; gap: 1.5rem; align-items: center; }
+
         /* DISCOUNT INDICATOR (Blinking Pink Dot) */
         .discount-indicator {
             display: flex; align-items: center; gap: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--steel-grey); text-decoration: none;
@@ -71,103 +82,354 @@
         .btn { display: inline-block; padding: 1rem 2rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; text-align: center; width: 100%; }
 
         /* Custom Video Player Styling */
-        .video-container {
-            position: relative;
-            width: 100%;
-            border: 1px solid rgba(148, 163, 184, 0.2);
-            margin-bottom: 1.5rem;
-            background-color: #000;
-        }
-        
-        video {
-            width: 100%;
-            display: block;
-            outline: none;
-        }
+        .video-container { position: relative; width: 100%; border: 1px solid rgba(148, 163, 184, 0.2); margin-bottom: 1.5rem; background-color: #000; }
+        video { width: 100%; display: block; outline: none; }
 
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.98) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
 
+        /* --- MODALS (Login & Editor) --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(4px); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 1rem; }
+        .modal-content { background-color: var(--obsidian-navy); border: 1px solid var(--electric-cyan); padding: 2.5rem; width: 100%; max-width: 600px; box-shadow: 0 0 30px rgba(0, 242, 255, 0.15); position: relative; max-height: 90vh; overflow-y: auto; }
+        .close-modal { position: absolute; top: 1rem; right: 1.5rem; color: var(--steel-grey); font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; cursor: pointer; transition: color 0.2s; }
+        .close-modal:hover { color: var(--crimson-war); }
+        .modal-header { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--smoke-white); letter-spacing: 2px; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 0.5rem; }
+        
+        .input-group { margin-bottom: 1.2rem; }
+        .input-group label { display: block; font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); font-size: 0.85rem; margin-bottom: 0.5rem; }
+        .input-group input, .input-group textarea { width: 100%; background-color: var(--vantablack); border: 1px solid var(--steel-grey); color: var(--electric-cyan); padding: 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; outline: none; }
+        .input-group input:focus, .input-group textarea:focus { border-color: var(--electric-cyan); }
+        .input-group textarea { resize: vertical; min-height: 80px; line-height: 1.4; font-family: 'Inter', sans-serif; }
+
+        /* Float Admin Button */
+        .btn-edit-float { position: fixed; bottom: 30px; right: 30px; background-color: var(--matrix-green); color: var(--vantablack); padding: 1rem 1.5rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; cursor: pointer; z-index: 100; border: none; box-shadow: 0 0 20px rgba(0, 255, 65, 0.4); display: none; }
+        .btn-edit-float:hover { background-color: var(--smoke-white); }
+
+        /* Cloudinary Guide */
+        .guide-box { background-color: rgba(2, 6, 23, 0.5); border-left: 2px solid var(--alert-gold); padding: 1rem; margin-bottom: 1.5rem; font-family: 'Inter', sans-serif; font-size: 0.85rem; color: var(--steel-grey); }
+        .guide-box h4 { color: var(--alert-gold); margin-bottom: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem;}
+        .guide-box ol { padding-left: 1.2rem; margin-top: 0.5rem; }
+        .guide-box li { margin-bottom: 0.3rem; }
+
         @media (max-width: 768px) {
             header { flex-direction: column; align-items: flex-start; gap: 1.5rem; padding: 3rem 0 2rem 0;}
+            .header-actions { width: 100%; justify-content: space-between; }
             .terminal-box { padding: 1.5rem 1rem; }
+            .btn-edit-float { bottom: 15px; right: 15px; padding: 0.8rem 1rem; font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
 
-    <div class="blueprint-layer"></div>
+    <div class="blueprint-layer" id="pageBackground"></div>
     <div class="noise-layer"></div>
 
+    <!-- MAIN PAGE CONTAINER -->
     <div class="container">
         <header>
             <div class="brand-logo logo-text">
                 <span class="unfiltered-word">UNFILTERED</span> <span>ALPHA</span>
             </div>
-            <!-- Discount Indicator -->
-            <a href="index.html" class="discount-indicator" id="discountDot">
-                <div class="pink-dot"></div>
-                [ REVERT TO MAIN ]
-            </a>
+            
+            <div class="header-actions">
+                <a href="index.html" class="discount-indicator" id="discountDot">
+                    <div class="pink-dot"></div>
+                    [ REVERT TO MAIN ]
+                </a>
+                <span class="auth-link" id="openLoginBtn">[ AUTH ]</span>
+            </div>
         </header>
 
         <main>
-            <!-- DROP CONTENT -->
+            <!-- DYNAMIC DROP CONTENT -->
             <div class="terminal-box" style="border-color: var(--matrix-green);">
                 <div class="terminal-header code-data" style="color: var(--matrix-green);">
-                    <span>> DROP_001_ACTIVE</span>
-                    <span>[ SYSTEM_ONLINE ]</span>
+                    <span id="displayHeader1">> DROP_001_ACTIVE</span>
+                    <span id="displayHeader2">[ SYSTEM_ONLINE ]</span>
                 </div>
                 
-                <p style="margin-bottom: 1.5rem; color: var(--smoke-white); font-family: 'Inter', sans-serif; line-height: 1.6;">
+                <p id="displayText" style="margin-bottom: 1.5rem; color: var(--smoke-white); font-family: 'Inter', sans-serif; line-height: 1.6;">
                     [INITIATING TRANSMISSION] Retail market noise has been filtered out. What you are witnessing is the actual architecture behind institutional movements. Use this protocol at your own risk.
                 </p>
                 
-                <!-- PLAYABLE NATIVE VIDEO -->
                 <div class="video-container">
-                    <video controls controlslist="nodownload">
-                        <!-- REPLACE the 'src' link below with your actual video link (MP4 format is best) -->
-                        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                    <video id="displayVideo" controls controlslist="nodownload">
+                        <source id="displayVideoSrc" src="" type="video/mp4">
                         [SYS_ERROR] Your browser does not support the video protocol.
                     </video>
                 </div>
 
-                <a href="https://unfilteredalpha.gumroad.com/l/qoabdg" target="_blank" class="btn" style="background-color: var(--matrix-green); color: var(--vantablack); border: none;">
+                <a href="https://unfilteredalpha.gumroad.com/l/qoabdg" target="_blank" id="displayBtn" class="btn" style="background-color: var(--matrix-green); color: var(--vantablack); border: none;">
                     [ INTEGRATE PROTOCOL ($27) ]
                 </a>
             </div>
         </main>
     </div>
 
+    <!-- FLOAT EDIT BUTTON (Hidden by default) -->
+    <button class="btn-edit-float" id="btnEditMode">[ ⚙️ EDIT DROP SYSTEM ]</button>
+
+    <!-- LOGIN MODAL -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-content" style="max-width: 400px; border-color: var(--matrix-green); box-shadow: 0 0 30px rgba(0, 255, 65, 0.15);">
+            <div class="close-modal" id="closeLoginBtn">[ X ]</div>
+            <div class="modal-header" style="color: var(--matrix-green); border-bottom-color: rgba(0,255,65,0.2);">ARCHITECT AUTH</div>
+            
+            <div class="input-group">
+                <label style="color: var(--matrix-green);">> IDENTIFIER (EMAIL)</label>
+                <input type="email" id="adminEmail" placeholder="architect@..." autocomplete="off" style="border-color: var(--matrix-green); color: var(--matrix-green);">
+            </div>
+            <div class="input-group" style="margin-bottom: 1.5rem;">
+                <label style="color: var(--matrix-green);">> PASSPHRASE</label>
+                <input type="password" id="adminPass" placeholder="••••••••" style="border-color: var(--matrix-green); color: var(--matrix-green);">
+            </div>
+            
+            <div id="loginError" style="color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 1rem; text-align: center; display: none;">[SYS_ERROR] Invalid credentials.</div>
+
+            <a href="#" class="btn" style="background-color: var(--matrix-green); color: var(--vantablack); border: none;" id="executeLoginBtn">
+                [ VERIFY CLEARANCE ]
+            </a>
+        </div>
+    </div>
+
+    <!-- CMS / EDITOR MODAL -->
+    <div class="modal-overlay" id="editorModal">
+        <div class="modal-content">
+            <div class="close-modal" id="closeEditorBtn">[ X ]</div>
+            <div class="modal-header" style="color: var(--electric-cyan);">SYSTEM EDITOR</div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="input-group">
+                    <label>> TERMINAL HEADER 1</label>
+                    <input type="text" id="editHeader1" placeholder="Ex: > DROP_001_ACTIVE">
+                </div>
+                <div class="input-group">
+                    <label>> TERMINAL HEADER 2</label>
+                    <input type="text" id="editHeader2" placeholder="Ex: [ SYSTEM_ONLINE ]">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>> MAIN PARAGRAPH TEXT</label>
+                <textarea id="editText" placeholder="Write your protocol transmission here..."></textarea>
+            </div>
+
+            <!-- CLOUDINARY GUIDE -->
+            <div class="guide-box">
+                <h4>>> HOW TO UPLOAD A VIDEO (CLOUDINARY)</h4>
+                <ol>
+                    <li>Create a free account at <strong>cloudinary.com</strong></li>
+                    <li>Go to <strong>Media Library</strong> and click "Upload". Upload your video (.mp4).</li>
+                    <li>Once uploaded, hover over the video, click the <strong>"< >" (Copy URL)</strong> icon.</li>
+                    <li>Paste that exact URL in the box below. It must end in <strong>.mp4</strong>.</li>
+                </ol>
+            </div>
+
+            <div class="input-group">
+                <label>> VIDEO URL (.MP4)</label>
+                <input type="url" id="editVideo" placeholder="https://res.cloudinary.com/.../video.mp4">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="input-group">
+                    <label>> BUTTON TEXT</label>
+                    <input type="text" id="editBtnText" placeholder="Ex: [ INTEGRATE PROTOCOL ]">
+                </div>
+                <div class="input-group">
+                    <label>> BUTTON LINK (URL)</label>
+                    <input type="url" id="editBtnLink" placeholder="https://gumroad.com/...">
+                </div>
+            </div>
+
+            <div class="input-group" style="margin-bottom: 2rem;">
+                <label>> BACKGROUND IMAGE URL (Optional)</label>
+                <input type="url" id="editBgImage" placeholder="Leave empty for default image">
+            </div>
+
+            <button class="btn" style="background-color: transparent; border: 1px solid var(--electric-cyan); color: var(--electric-cyan);" id="saveConfigBtn">
+                [ SAVE & DEPLOY TO PROTOCOL ]
+            </button>
+            <div id="saveFeedback" style="text-align: center; margin-top: 1rem; font-family: monospace; font-size: 0.85rem; height: 20px;"></div>
+        </div>
+    </div>
+
     <script>
+        // Supabase Initialization
         const SUPABASE_URL = 'https://qtpuipgkytzjnckkkwnl.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_eA2g7-rTvcPcfz_dVl2aWg_Ca5P7t93';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Check for active discount to light up the pink dot
-        async function fetchSystemState() {
+        // UI Elements - Display
+        const elHeader1 = document.getElementById('displayHeader1');
+        const elHeader2 = document.getElementById('displayHeader2');
+        const elText = document.getElementById('displayText');
+        const elVideoSrc = document.getElementById('displayVideoSrc');
+        const elVideo = document.getElementById('displayVideo');
+        const elBtn = document.getElementById('displayBtn');
+        const elBg = document.getElementById('pageBackground');
+
+        // UI Elements - Editor
+        const inputHeader1 = document.getElementById('editHeader1');
+        const inputHeader2 = document.getElementById('editHeader2');
+        const inputText = document.getElementById('editText');
+        const inputVideo = document.getElementById('editVideo');
+        const inputBtnText = document.getElementById('editBtnText');
+        const inputBtnLink = document.getElementById('editBtnLink');
+        const inputBgImage = document.getElementById('editBgImage');
+
+        // Modals & Buttons
+        const loginModal = document.getElementById('loginModal');
+        const editorModal = document.getElementById('editorModal');
+        const openLoginBtn = document.getElementById('openLoginBtn');
+        const closeLoginBtn = document.getElementById('closeLoginBtn');
+        const closeEditorBtn = document.getElementById('closeEditorBtn');
+        const btnEditMode = document.getElementById('btnEditMode');
+        const executeLoginBtn = document.getElementById('executeLoginBtn');
+        const saveConfigBtn = document.getElementById('saveConfigBtn');
+        const loginErrorMsg = document.getElementById('loginError');
+        const saveFeedback = document.getElementById('saveFeedback');
+
+        // Modal Logic
+        openLoginBtn.addEventListener('click', () => { loginModal.style.display = 'flex'; loginErrorMsg.style.display = 'none'; });
+        closeLoginBtn.addEventListener('click', () => { loginModal.style.display = 'none'; });
+        btnEditMode.addEventListener('click', () => { editorModal.style.display = 'flex'; });
+        closeEditorBtn.addEventListener('click', () => { editorModal.style.display = 'none'; });
+
+        // --- 1. LOAD CONFIGURATION FROM DATABASE ---
+        async function loadDropConfig() {
             try {
-                const { data, error } = await supabaseClient
-                    .from('logs')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (error) throw error;
-
-                // --- Pink Dot Logic ---
-                const discountLog = data.find(log => log.log_type === 'discount_alert');
-                if (discountLog && discountLog.value_text !== "0") {
-                    const parts = discountLog.value_text.split('|');
-                    const endTime = parseInt(parts[0]);
-                    if (endTime > new Date().getTime()) {
+                // Fetch discount dot state
+                const { data: logsData } = await supabaseClient.from('logs').select('*').order('created_at', { ascending: false });
+                if (logsData) {
+                    const discountLog = logsData.find(log => log.log_type === 'discount_alert');
+                    if (discountLog && discountLog.value_text !== "0") {
                         document.getElementById('discountDot').classList.add('active');
+                    }
+                    
+                    // Fetch page configuration
+                    const configLog = logsData.find(log => log.log_type === 'drop_config');
+                    if (configLog && configLog.value_text) {
+                        const config = JSON.parse(configLog.value_text);
+                        applyConfigToPage(config);
+                        populateEditor(config);
                     }
                 }
             } catch (err) {
-                console.error("Error connecting to terminal:", err);
+                console.error("Failed to load drop config", err);
             }
         }
 
-        fetchSystemState();
+        function applyConfigToPage(config) {
+            if(config.header1) elHeader1.innerText = config.header1;
+            if(config.header2) elHeader2.innerText = config.header2;
+            if(config.text) elText.innerText = config.text;
+            if(config.btnText) elBtn.innerText = config.btnText;
+            if(config.btnLink) elBtn.href = config.btnLink;
+            if(config.bgImage) elBg.style.backgroundImage = `url('${config.bgImage}')`;
+            
+            if(config.video && elVideoSrc.src !== config.video) {
+                elVideoSrc.src = config.video;
+                elVideo.load(); // Reload video player to fetch new source
+            }
+        }
+
+        function populateEditor(config) {
+            inputHeader1.value = config.header1 || "";
+            inputHeader2.value = config.header2 || "";
+            inputText.value = config.text || "";
+            inputVideo.value = config.video || "";
+            inputBtnText.value = config.btnText || "";
+            inputBtnLink.value = config.btnLink || "";
+            inputBgImage.value = config.bgImage || "";
+        }
+
+        // --- 2. AUTHENTICATION (ARCHITECT LOGIN) ---
+        async function checkSession() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) enableEditMode();
+        }
+
+        function enableEditMode() {
+            openLoginBtn.style.display = 'none'; // Hide auth link
+            btnEditMode.style.display = 'block'; // Show floating gear
+            loginModal.style.display = 'none';
+        }
+
+        executeLoginBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('adminEmail').value.trim();
+            const pass = document.getElementById('adminPass').value;
+            
+            if(!email || !pass) { loginErrorMsg.innerText = "[SYS_ERROR] Credentials required."; loginErrorMsg.style.display = 'block'; return; }
+
+            executeLoginBtn.innerText = '[ VERIFYING... ]';
+            loginErrorMsg.style.display = 'none';
+
+            try {
+                const { error } = await supabaseClient.auth.signInWithPassword({ email: email, password: pass });
+                if (error) throw error;
+                enableEditMode();
+            } catch (error) {
+                loginErrorMsg.innerText = "[SYS_ERROR] Access denied."; loginErrorMsg.style.display = 'block';
+                executeLoginBtn.innerText = '[ VERIFY CLEARANCE ]';
+            }
+        });
+
+        // --- 3. SAVE CONFIGURATION ---
+        saveConfigBtn.addEventListener('click', async () => {
+            saveConfigBtn.innerText = '[ SAVING... ]';
+            saveConfigBtn.style.pointerEvents = 'none';
+            saveFeedback.innerText = '';
+
+            const newConfig = {
+                header1: inputHeader1.value.trim(),
+                header2: inputHeader2.value.trim(),
+                text: inputText.value.trim(),
+                video: inputVideo.value.trim(),
+                btnText: inputBtnText.value.trim(),
+                btnLink: inputBtnLink.value.trim(),
+                bgImage: inputBgImage.value.trim()
+            };
+
+            try {
+                // Delete old config
+                await supabaseClient.from('logs').delete().eq('log_type', 'drop_config');
+                // Insert new config as JSON
+                const payload = JSON.stringify(newConfig);
+                const { error } = await supabaseClient.from('logs').insert([{ 
+                    log_time: '[SYS_UPDATE]', action_text: 'Drop Layout Configured', value_text: payload, log_type: 'drop_config' 
+                }]);
+                
+                if (error) throw error;
+                
+                saveFeedback.style.color = "var(--electric-cyan)";
+                saveFeedback.innerText = "[ SUCCESS ] PROTOCOL UPDATED IN REAL-TIME.";
+                
+                // Apply changes immediately without refreshing
+                applyConfigToPage(newConfig);
+
+                setTimeout(() => { editorModal.style.display = 'none'; saveFeedback.innerText = ''; }, 1500);
+            } catch(e) {
+                saveFeedback.style.color = "var(--crimson-war)";
+                saveFeedback.innerText = "[ ERROR ] FAILED TO UPDATE DATABASE.";
+            } finally {
+                saveConfigBtn.innerText = '[ SAVE & DEPLOY TO PROTOCOL ]';
+                saveConfigBtn.style.pointerEvents = 'auto';
+            }
+        });
+
+        // Initialize Page
+        loadDropConfig();
+        checkSession();
+
+        // Realtime Listener to update if another admin changes it
+        supabaseClient.channel('public:drop')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'logs', filter: 'log_type=eq.drop_config' }, payload => {
+                if (payload.new && payload.new.value_text) {
+                    applyConfigToPage(JSON.parse(payload.new.value_text));
+                }
+            })
+            .subscribe();
+
     </script>
 </body>
 </html>

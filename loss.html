@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRITICAL FAILURE LOG | Unfiltered Alpha</title>
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z90RHTXWGV"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-Z90RHTXWGV');
+    </script>
+
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --obsidian-navy: #0B1A30;
+            --electric-cyan: #00F2FF;
+            --crimson-war: #FF3131;
+            --smoke-white: #F8FAFC;
+            --steel-grey: #94A3B8;
+            --vantablack: #020617;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
+
+        body {
+            background-color: var(--obsidian-navy); color: var(--smoke-white);
+            font-family: 'Inter', sans-serif; min-height: 100vh;
+            display: flex; flex-direction: column; overflow-x: hidden; position: relative;
+        }
+
+        /* --- BACKGROUND (Blueprint & Noise) --- */
+        .blueprint-layer { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; 
+            background-color: var(--obsidian-navy);
+            background-image: 
+                linear-gradient(rgba(0, 242, 255, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 255, 0.15) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.6; mix-blend-mode: screen; 
+        }
+        .noise-layer { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1; opacity: 0.06; background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E'); }
+
+        .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 0 2rem; width: 100%; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        header { padding: 4rem 0 3rem 0; display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid rgba(148, 163, 184, 0.1); }
+        .brand-logo { font-family: 'Bebas Neue', sans-serif; letter-spacing: 8px; font-size: 2rem; }
+        .unfiltered-word { border-bottom: 2px solid var(--crimson-war); padding-bottom: 2px; }
+        
+        /* HEADER LINKS */
+        .auth-link, .back-link { font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); text-decoration: none; font-size: 0.85rem; letter-spacing: 1px; transition: color 0.2s ease; cursor: pointer; }
+        .auth-link:hover, .back-link:hover { color: var(--electric-cyan); }
+
+        .header-actions { display: flex; gap: 1.5rem; align-items: center; }
+
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-bottom: 10vh; } 
+        
+        /* TERMINAL BOX */
+        .terminal-box { 
+            background-color: rgba(2, 6, 23, 0.9); border: 1px solid var(--crimson-war); padding: 3rem; 
+            width: 100%; max-width: 800px; position: relative; box-shadow: 0 0 40px rgba(255, 49, 49, 0.1); 
+        }
+        
+        /* EDITABLE ELEMENTS STYLING */
+        .editable-content {
+            font-family: 'JetBrains Mono', monospace;
+            outline: none; transition: all 0.2s ease;
+        }
+        
+        /* Active Edit Mode Styling */
+        .editable-content[contenteditable="true"] {
+            border: 1px dashed rgba(148, 163, 184, 0.5);
+            padding: 10px; min-height: 50px;
+            background: rgba(255, 255, 255, 0.02);
+            cursor: text;
+        }
+        .editable-content[contenteditable="true"]:focus {
+            border: 1px solid var(--electric-cyan);
+            background: rgba(0, 242, 255, 0.05);
+            box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.1);
+        }
+
+        .loss-title { color: var(--crimson-war); font-size: 1.5rem; letter-spacing: 2px; margin-bottom: 2rem; border-bottom: 1px solid rgba(255, 49, 49, 0.3); padding-bottom: 0.5rem; display: inline-block; width: 100%;}
+        .loss-body { color: var(--steel-grey); font-size: 1.1rem; line-height: 1.8; margin-bottom: 3rem; width: 100%; }
+
+        /* Media inside body */
+        .loss-body img, .loss-body video { max-width: 100%; border: 1px solid var(--crimson-war); margin: 1rem 0; display: block; }
+        .loss-body a { color: var(--electric-cyan); text-decoration: underline; text-underline-offset: 4px; font-weight: bold; }
+
+        /* CTA BUTTON */
+        .btn-cta {
+            display: block; width: 100%; padding: 1.2rem; font-family: 'JetBrains Mono', monospace; 
+            font-weight: 800; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; 
+            text-align: center; text-decoration: none; border: none;
+            background-color: var(--electric-cyan); color: var(--vantablack);
+            animation: cyan-pulse 2s infinite; cursor: pointer;
+        }
+        @keyframes cyan-pulse {
+            0% { box-shadow: 0 0 10px rgba(0, 242, 255, 0.4); transform: scale(1); }
+            50% { box-shadow: 0 0 30px rgba(0, 242, 255, 0.6); transform: scale(1.01); }
+            100% { box-shadow: 0 0 10px rgba(0, 242, 255, 0.4); transform: scale(1); }
+        }
+
+        /* ADMIN CONTROLS & TOOLBAR */
+        .admin-controls { display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem; width: 100%; max-width: 800px; align-items: center; }
+        
+        .editor-toolbar {
+            display: none; gap: 0.8rem; flex-wrap: wrap; justify-content: center; width: 100%;
+            background-color: rgba(2, 6, 23, 0.95); border: 1px dashed var(--electric-cyan); padding: 1rem;
+        }
+
+        .btn-tool {
+            padding: 0.6rem 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: bold;
+            background: transparent; border: 1px solid var(--electric-cyan); color: var(--electric-cyan); cursor: pointer; transition: all 0.2s;
+        }
+        .btn-tool:hover { background-color: var(--electric-cyan); color: var(--vantablack); }
+
+        .btn-admin { 
+            padding: 0.8rem 2rem; font-family: 'JetBrains Mono', monospace; font-weight: bold; font-size: 0.9rem; 
+            cursor: pointer; background: transparent; border: 1px solid var(--steel-grey); color: var(--steel-grey); transition: all 0.2s;
+        }
+        .btn-admin:hover { color: var(--smoke-white); border-color: var(--smoke-white); }
+        
+        .btn-save { display: none; border-color: var(--matrix-green); color: var(--matrix-green); }
+        .btn-save:hover { background-color: var(--matrix-green); color: var(--vantablack); }
+
+        /* LOGIN MODAL */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(4px); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 1rem; }
+        .modal-content { background-color: var(--obsidian-navy); border: 1px solid var(--electric-cyan); padding: 2.5rem; width: 100%; max-width: 400px; box-shadow: 0 0 30px rgba(0, 242, 255, 0.15); position: relative; }
+        .close-modal { position: absolute; top: 1rem; right: 1.5rem; color: var(--steel-grey); font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; cursor: pointer; transition: color 0.2s; }
+        .close-modal:hover { color: var(--crimson-war); }
+        .modal-header { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--smoke-white); letter-spacing: 2px; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 0.5rem; }
+        .input-group { margin-bottom: 1.2rem; }
+        .input-group label { display: block; font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); font-size: 0.85rem; margin-bottom: 0.5rem; }
+        .input-group input { width: 100%; background-color: var(--vantablack); border: 1px solid var(--steel-grey); color: var(--electric-cyan); padding: 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; outline: none; }
+        .input-group input:focus { border-color: var(--electric-cyan); }
+        .btn-login { display: block; width: 100%; padding: 1rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem; text-align: center; text-decoration: none; border: none; background-color: transparent; border: 1px solid var(--electric-cyan); color: var(--electric-cyan); cursor: pointer; transition: all 0.2s; }
+        .btn-login:hover { background-color: rgba(0, 242, 255, 0.1); box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.2); }
+
+        @media (max-width: 768px) {
+            header { flex-direction: column; align-items: flex-start; gap: 1.5rem; padding: 2rem 0;}
+            .header-actions { width: 100%; justify-content: space-between; }
+            .terminal-box { padding: 2rem 1.5rem; }
+            .loss-title { font-size: 1.2rem; }
+            .loss-body { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="blueprint-layer"></div>
+    <div class="noise-layer"></div>
+
+    <div class="container">
+        <header>
+            <div class="brand-logo logo-text">
+                <span class="unfiltered-word">UNFILTERED</span> <span>ALPHA</span>
+            </div>
+            <div class="header-actions">
+                <a href="index.html" class="back-link">[ BACK TO PROTOCOL ]</a>
+                <span class="auth-link" id="authToggleBtn">[ AUTH ]</span>
+            </div>
+        </header>
+
+        <main>
+            <div class="terminal-box">
+                <!-- Editable Elements -->
+                <div id="liveTitle" class="loss-title editable-content" contenteditable="false">
+                    [ ARCHIVE_LOG // CRITICAL_FAILURE ]
+                </div>
+                
+                <div id="liveBody" class="loss-body editable-content" contenteditable="false">
+                    Record 041: Three years ago, confirmation bias led me to ignore my own exit parameters on a EUR/USD short. That disciplinary failure cost $15,000 in 40 minutes. It was my last discretionary trade. Today, the algorithm feels nothing and forgives nothing. If you cannot control your emotions, you need the machine.
+                </div>
+
+                <a href="https://t.me/unfilteredalphafeed" target="_blank" class="btn-cta">
+                    [ INITIALIZE PROTOCOL ]
+                </a>
+            </div>
+
+            <!-- Admin Controls -->
+            <div class="admin-controls">
+                
+                <!-- Tool Bar Menu (Appears only during edit) -->
+                <div class="editor-toolbar" id="editorToolbar">
+                    <button class="btn-tool" onclick="insertLink()">[ + LINK / FILE ]</button>
+                    <button class="btn-tool" onclick="insertImage()">[ + IMAGE ]</button>
+                    <button class="btn-tool" onclick="insertVideo()">[ + VIDEO ]</button>
+                    <button class="btn-tool" onclick="insertLineBreak()" style="border-color: var(--steel-grey); color: var(--steel-grey);">[ ⏎ BREAK ]</button>
+                </div>
+
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn-admin" id="btnEditSite" style="display: none;">[ EDIT SITE ]</button>
+                    <button class="btn-admin btn-save" id="btnApplyChanges">[ APPLY CHANGES ]</button>
+                </div>
+                
+            </div>
+            <div id="saveFeedback" style="text-align: center; margin-top: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; height: 20px;"></div>
+        </main>
+    </div>
+
+    <!-- LOGIN MODAL -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-content">
+            <div class="close-modal" id="closeLoginBtn">[ X ]</div>
+            <div class="modal-header">ARCHITECT AUTH</div>
+            <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--steel-grey); margin-bottom: 1.5rem;">
+                * Direct edit access restricted to authenticated architects.
+            </p>
+            <div class="input-group">
+                <label>> IDENTIFIER (EMAIL)</label>
+                <input type="email" id="adminEmail" placeholder="architect@..." autocomplete="off">
+            </div>
+            <div class="input-group" style="margin-bottom: 1.5rem;">
+                <label>> PASSPHRASE</label>
+                <input type="password" id="adminPass" placeholder="••••••••">
+            </div>
+            <div id="loginError" style="color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 1rem; text-align: center; display: none;">[SYS_ERROR] Invalid credentials.</div>
+            <button class="btn-login" id="executeLoginBtn">[ VERIFY CLEARANCE ]</button>
+        </div>
+    </div>
+
+    <script>
+        // --- SUPABASE CONFIGURATION ---
+        const SUPABASE_URL = 'https://qtpuipgkytzjnckkkwnl.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_eA2g7-rTvcPcfz_dVl2aWg_Ca5P7t93';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // --- UI ELEMENTS ---
+        const authToggleBtn = document.getElementById('authToggleBtn');
+        const loginModal = document.getElementById('loginModal');
+        const closeLoginBtn = document.getElementById('closeLoginBtn');
+        const executeLoginBtn = document.getElementById('executeLoginBtn');
+        const loginError = document.getElementById('loginError');
+
+        const btnEditSite = document.getElementById('btnEditSite');
+        const btnApplyChanges = document.getElementById('btnApplyChanges');
+        const editorToolbar = document.getElementById('editorToolbar');
+        const saveFeedback = document.getElementById('saveFeedback');
+        
+        const liveTitle = document.getElementById('liveTitle');
+        const liveBody = document.getElementById('liveBody');
+
+        // --- 1. FETCH CONTENT ON LOAD ---
+        async function loadSiteContent() {
+            try {
+                const { data, error } = await supabaseClient.from('logs').select('*').eq('log_type', 'loss_config').order('created_at', { ascending: false }).limit(1);
+                if (error) throw error;
+                
+                if (data && data.length > 0 && data[0].value_text) {
+                    const config = JSON.parse(data[0].value_text);
+                    if(config.title) liveTitle.innerHTML = config.title;
+                    if(config.body) liveBody.innerHTML = config.body;
+                }
+            } catch (err) {
+                console.error("Failed to load content from server.", err);
+            }
+        }
+
+        // --- 2. AUTHENTICATION FLOW ---
+        async function checkSession() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                authToggleBtn.innerText = '[ LOGOUT ]';
+                btnEditSite.style.display = 'block'; 
+            } else {
+                authToggleBtn.innerText = '[ AUTH ]';
+                btnEditSite.style.display = 'none';
+                disableEditing();
+            }
+        }
+
+        authToggleBtn.addEventListener('click', async () => {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                await supabaseClient.auth.signOut();
+                checkSession();
+            } else {
+                loginModal.style.display = 'flex';
+                loginError.style.display = 'none';
+            }
+        });
+
+        closeLoginBtn.addEventListener('click', () => { loginModal.style.display = 'none'; });
+
+        executeLoginBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('adminEmail').value.trim();
+            const pass = document.getElementById('adminPass').value;
+            
+            if(!email || !pass) { loginError.innerText = "[SYS_ERROR] Credentials required."; loginError.style.display = 'block'; return; }
+
+            executeLoginBtn.innerText = '[ VERIFYING... ]';
+            loginError.style.display = 'none';
+
+            try {
+                const { error } = await supabaseClient.auth.signInWithPassword({ email: email, password: pass });
+                if (error) throw error;
+                
+                loginModal.style.display = 'none';
+                checkSession();
+            } catch (error) {
+                loginError.innerText = "[SYS_ERROR] Access denied."; loginError.style.display = 'block';
+            } finally {
+                executeLoginBtn.innerText = '[ VERIFY CLEARANCE ]';
+            }
+        });
+
+        // --- 3. INLINE EDITING LOGIC (WYSIWYG) ---
+        btnEditSite.addEventListener('click', () => {
+            liveTitle.setAttribute('contenteditable', 'true');
+            liveBody.setAttribute('contenteditable', 'true');
+            
+            btnEditSite.style.display = 'none';
+            btnApplyChanges.style.display = 'block';
+            editorToolbar.style.display = 'flex'; // Muestra las herramientas
+
+            // Auto-focus on body to start typing/inserting
+            liveBody.focus();
+        });
+
+        function disableEditing() {
+            liveTitle.setAttribute('contenteditable', 'false');
+            liveBody.setAttribute('contenteditable', 'false');
+            
+            btnApplyChanges.style.display = 'none';
+            editorToolbar.style.display = 'none';
+
+            supabaseClient.auth.getSession().then(({ data: { session } }) => {
+                if (session) btnEditSite.style.display = 'block';
+            });
+        }
+
+        btnApplyChanges.addEventListener('click', async () => {
+            btnApplyChanges.innerText = '[ SAVING TO CLOUD... ]';
+            btnApplyChanges.style.pointerEvents = 'none';
+            saveFeedback.innerText = '';
+
+            const newContent = {
+                title: liveTitle.innerHTML.trim(),
+                body: liveBody.innerHTML.trim()
+            };
+
+            try {
+                await supabaseClient.from('logs').delete().eq('log_type', 'loss_config');
+                const payload = JSON.stringify(newContent);
+                const { error } = await supabaseClient.from('logs').insert([{ 
+                    log_time: '[SYS_UPDATE]', 
+                    action_text: 'Loss Page Inline Edit', 
+                    value_text: payload, 
+                    log_type: 'loss_config' 
+                }]);
+                if (error) throw error;
+
+                saveFeedback.style.color = "var(--electric-cyan)";
+                saveFeedback.innerText = "[ SUCCESS ] DATABASE UPDATED.";
+                disableEditing();
+
+            } catch (err) {
+                saveFeedback.style.color = "var(--crimson-war)";
+                saveFeedback.innerText = "[ ERROR ] CLOUD SYNC FAILED.";
+            } finally {
+                btnApplyChanges.innerText = '[ APPLY CHANGES ]';
+                btnApplyChanges.style.pointerEvents = 'auto';
+                setTimeout(() => { saveFeedback.innerText = ''; }, 3000);
+            }
+        });
+
+        // --- 4. INSERTION TOOLS (IMAGEN, VIDEO, LINK) ---
+        function insertHTMLAtCursor(html) {
+            let sel, range;
+            if (window.getSelection) {
+                sel = window.getSelection();
+                if (sel.getRangeAt && sel.rangeCount) {
+                    range = sel.getRangeAt(0);
+                    
+                    // Asegurar que estamos dentro de liveBody o liveTitle, sino forzamos el foco en liveBody
+                    let isInside = false;
+                    let node = range.commonAncestorContainer;
+                    while (node) {
+                        if (node === liveBody || node === liveTitle) { isInside = true; break; }
+                        node = node.parentNode;
+                    }
+                    if (!isInside) {
+                        liveBody.focus();
+                        range = document.createRange();
+                        range.selectNodeContents(liveBody);
+                        range.collapse(false); 
+                        sel.removeAllRanges();
+                        sel.addRange(range);
+                    }
+
+                    range.deleteContents();
+                    let el = document.createElement("div");
+                    el.innerHTML = html;
+                    let frag = document.createDocumentFragment(), node_child, lastNode;
+                    while ( (node_child = el.firstChild) ) {
+                        lastNode = frag.appendChild(node_child);
+                    }
+                    range.insertNode(frag);
+                    if (lastNode) {
+                        range = range.cloneRange();
+                        range.setStartAfter(lastNode);
+                        range.collapse(true);
+                        sel.removeAllRanges();
+                        sel.addRange(range);
+                    }
+                }
+            }
+        }
+
+        function insertLink() {
+            const url = prompt("Enter URL (e.g. Google Drive PDF, Website):", "https://");
+            if (!url) return;
+            const text = prompt("Enter the text for this link:", "Download File");
+            if (url && text) {
+                const html = `<a href="${url}" target="_blank" style="color: var(--electric-cyan); text-decoration: underline; text-underline-offset: 4px; font-weight: bold; background: rgba(0, 242, 255, 0.05); padding: 2px 5px;">[ ${text} ]</a>&nbsp;`;
+                insertHTMLAtCursor(html);
+            }
+        }
+
+        function insertImage() {
+            const url = prompt("Enter Image URL (e.g. Cloudinary, Imgur):", "https://");
+            if (url) {
+                const html = `<br><img src="${url}" style="max-width:100%; border: 1px solid var(--crimson-war); margin: 1rem 0; box-shadow: 0 0 15px rgba(255,49,49,0.1);" alt="Archived Image" /><br>&nbsp;`;
+                insertHTMLAtCursor(html);
+            }
+        }
+
+        function insertVideo() {
+            const url = prompt("Enter Video URL (Must be .mp4, e.g. Cloudinary):", "https://");
+            if (url) {
+                const html = `<br><div contenteditable="false" style="margin: 1rem 0; border: 1px solid var(--crimson-war); background: #000; box-shadow: 0 0 15px rgba(255,49,49,0.1);"><video controls style="width:100%; display:block;"><source src="${url}" type="video/mp4"></video></div><br>&nbsp;`;
+                insertHTMLAtCursor(html);
+            }
+        }
+
+        function insertLineBreak() {
+            insertHTMLAtCursor(`<br><br>`);
+        }
+
+        // Initialization
+        loadSiteContent();
+        checkSession();
+
+    </script>
+</body>
+</html>

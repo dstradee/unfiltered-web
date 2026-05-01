@@ -247,12 +247,23 @@
                     <input type="datetime-local" id="offerTimer" style="border-color: var(--hot-pink); color: var(--hot-pink); font-size: 1.1rem; text-align: center; height: 55px;">
                 </div>
                 
-                <!-- NUEVO SELECTOR DE COLOR DUAL (PICKER + HEX) -->
+                <!-- SELECTOR DE COLOR DUAL (PICKER + HEX) PARA OFERTA -->
                 <div>
                     <label style="color: var(--hot-pink);">> BANNER COLOR (HEX)</label>
                     <div style="display: flex; gap: 0.5rem; align-items: center;">
-                        <input type="color" id="offerColorPicker" value="#FF007F" style="border-color: var(--hot-pink); width: 60px; height: 55px; padding: 0.2rem; cursor: pointer;" oninput="document.getElementById('offerColorHex').value = this.value">
-                        <input type="text" id="offerColorHex" value="#FF007F" style="border-color: var(--hot-pink); color: var(--hot-pink); font-size: 1.2rem; text-align: center; height: 55px; text-transform: uppercase;" oninput="document.getElementById('offerColorPicker').value = this.value">
+                        <input type="color" id="offerColorPicker" value="#FF007F" 
+                            style="border-color: var(--hot-pink); width: 60px; height: 55px; padding: 0.2rem; cursor: pointer;" 
+                            oninput="document.getElementById('offerColorHex').value = this.value">
+                        
+                        <input type="text" id="offerColorHex" value="#FF007F" 
+                            style="border-color: var(--hot-pink); color: var(--hot-pink); font-size: 1.2rem; text-align: center; height: 55px; text-transform: uppercase;" 
+                            oninput="
+                                let val = this.value.trim();
+                                if(!val.startsWith('#') && val.length > 0) val = '#' + val;
+                                if(/^#[0-9A-Fa-f]{6}$/.test(val)) {
+                                    document.getElementById('offerColorPicker').value = val;
+                                }
+                            ">
                     </div>
                 </div>
 
@@ -317,7 +328,7 @@
             <hr style="border: none; border-top: 1px solid rgba(148, 163, 184, 0.2); margin: 2rem 0;">
 
             <label style="color: var(--smoke-white);">> REGISTERED BUTTONS</label>
-            <!-- CONTENEDOR DE BOTONES (AHORA CON SELECTOR DE COLOR) -->
+            <!-- CONTENEDOR DE BOTONES -->
             <div id="savedButtonsContainer" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.8rem;">
             </div>
 
@@ -427,7 +438,11 @@
         async function activateDiscountMode() {
             const mode = document.querySelector('input[name="offerMode"]:checked').value;
             const title = document.getElementById('offerTitle').value.trim() || 'LIMITED ACCESS PROTOCOL';
-            const colorHex = document.getElementById('offerColorHex').value || '#FF007F'; // Usamos el input de texto como principal
+            
+            // Garantizar que el HEX sea válido antes de enviar
+            let colorHex = document.getElementById('offerColorHex').value.trim();
+            if(!colorHex.startsWith('#') && /^[0-9A-Fa-f]{6}$/.test(colorHex)) colorHex = '#' + colorHex;
+            if(!colorHex) colorHex = '#FF007F';
             
             let val = "";
             if (mode === 'spots') {
@@ -556,7 +571,7 @@
             }
         }
 
-        // --- SISTEMA DE BOTONES ACTUALIZADO (CON COLOR DUAL) ---
+        // --- SISTEMA DE BOTONES ACTUALIZADO (CON COLOR DUAL Y SEGURO) ---
         let savedButtons = JSON.parse(localStorage.getItem('admin_saved_buttons')) || [];
         
         function renderSavedButtons() {
@@ -567,8 +582,8 @@
                 return;
             }
             savedButtons.forEach(btnId => {
-                // Recupera el color guardado de forma local para este botón (por comodidad), por defecto Cyan
                 let savedColor = localStorage.getItem('color_' + btnId) || '#00F2FF';
+                let pickerColor = savedColor.startsWith('#') ? savedColor : '#00F2FF';
 
                 container.innerHTML += `
                     <div class="saved-btn-row">
@@ -576,13 +591,21 @@
                         
                         <div style="display: flex; gap: 0.5rem; align-items: center; background-color: rgba(2,6,23,0.5); padding: 0.3rem 0.5rem; border: 1px solid rgba(148,163,184,0.3);">
                             <span style="color: var(--steel-grey); font-size: 0.7rem; font-family: monospace;">COLOR:</span>
-                            <input type="color" id="btnColorPicker_${btnId}" value="${savedColor}" 
+                            
+                            <input type="color" id="btnColorPicker_${btnId}" value="${pickerColor}" 
                                 style="width: 30px; height: 30px; border: none; padding: 0; cursor: pointer; background: transparent;" 
                                 oninput="document.getElementById('btnColorHex_${btnId}').value = this.value; localStorage.setItem('color_${btnId}', this.value);">
                             
                             <input type="text" id="btnColorHex_${btnId}" value="${savedColor}" 
                                 style="width: 80px; height: 30px; padding: 0.2rem; font-size: 0.8rem; text-align: center; border: 1px solid var(--steel-grey); background: var(--vantablack); color: var(--electric-cyan); text-transform: uppercase;" 
-                                oninput="document.getElementById('btnColorPicker_${btnId}').value = this.value; localStorage.setItem('color_${btnId}', this.value);">
+                                oninput="
+                                    let val = this.value.trim(); 
+                                    if(!val.startsWith('#') && val.length > 0) val = '#' + val;
+                                    if(/^#[0-9A-Fa-f]{6}$/.test(val)) { 
+                                        document.getElementById('btnColorPicker_${btnId}').value = val; 
+                                    }
+                                    localStorage.setItem('color_${btnId}', this.value);
+                                ">
                         </div>
 
                         <div class="saved-btn-actions">
@@ -607,8 +630,12 @@
             const feedback = document.getElementById('btnToggleFeedback');
             feedback.style.color = 'var(--neon-purple)'; feedback.innerText = `Sending command to ${btnId}...`;
             
-            // Ahora mandamos el estado y el color en formato JSON
-            const payloadData = JSON.stringify({ state: btnState, color: colorHex || "#00F2FF" });
+            // Garantizar un HEX válido
+            let safeColor = colorHex ? colorHex.trim() : "#00F2FF";
+            if(!safeColor.startsWith('#') && /^[0-9A-Fa-f]{6}$/.test(safeColor)) safeColor = '#' + safeColor;
+            if(!safeColor) safeColor = "#00F2FF";
+
+            const payloadData = JSON.stringify({ state: btnState, color: safeColor });
 
             try {
                 await supabaseClient.from('logs').delete().eq('log_type', 'button_toggle').eq('action_text', btnId);
@@ -630,11 +657,14 @@
         async function loadLogs() {
             const container = document.getElementById('logsContainer');
             try {
-                const { data, error } = await supabaseClient.from('logs').select('*').order('created_at', { ascending: false });
+                // AUMENTADO A 100 PARA EVITAR QUE SE BORREN LOS BOTONES EN MEMORIA
+                const { data, error } = await supabaseClient.from('logs').select('*').order('created_at', { ascending: false }).limit(100);
                 if (error) throw error;
                 if (data.length === 0) { container.innerHTML = '<div class="msg-neutral" style="text-align:center;">[ EMPTY ] No records found.</div>'; return; }
                 container.innerHTML = ''; 
-                data.forEach(log => {
+                
+                // Mostrar solo los últimos 15 visualmente en el admin para no saturar
+                data.slice(0, 15).forEach(log => {
                     let borderColor = 'var(--steel-grey)'; let valueColor = 'var(--steel-grey)';
                     if(log.log_type === 'positive') { borderColor = 'var(--electric-cyan)'; valueColor = 'var(--electric-cyan)'; } 
                     else if (log.log_type === 'negative') { borderColor = 'var(--crimson-war)'; valueColor = 'var(--crimson-war)'; }
@@ -652,14 +682,13 @@
                     if (log.log_type === 'button_toggle') {
                         displayAction = `ID Switch: <strong style="color: var(--smoke-white);">${displayAction}</strong>`;
                         
-                        // Parsear el nuevo JSON de botones para mostrarlo en el log
                         try {
                             const btnConfig = JSON.parse(log.value_text);
-                            const stateText = btnConfig.state.toUpperCase();
+                            const stateText = btnConfig.state ? btnConfig.state.toUpperCase() : "TOGGLED";
                             const colorDot = btnConfig.color ? `<span style="display:inline-block; width:10px; height:10px; background-color:${btnConfig.color}; border-radius:50%; margin-left:8px; border:1px solid #fff;"></span> ${btnConfig.color}` : '';
                             displayValue = `<span style="color: ${btnConfig.state === 'show' ? 'var(--electric-cyan)' : 'var(--crimson-war)'}; font-weight: bold;">[ ${stateText} ] ${colorDot}</span>`;
                         } catch(e) {
-                            displayValue = `<span style="color: ${log.value_text === 'show' ? 'var(--electric-cyan)' : 'var(--crimson-war)'}; font-weight: bold;">[ ${log.value_text.toUpperCase()} ]</span>`;
+                            displayValue = `<span style="color: ${log.value_text === 'show' ? 'var(--electric-cyan)' : 'var(--crimson-war)'}; font-weight: bold;">[ TOGGLED ]</span>`;
                         }
 
                     } else if (log.log_type === 'drop_code') {

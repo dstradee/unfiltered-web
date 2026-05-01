@@ -11,6 +11,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
 
+    <!-- SUPABASE PARA CONECTAR CON EL PANEL DE ADMIN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         :root {
             --obsidian-navy: #0B1A30;
@@ -46,6 +49,48 @@
             background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E'); 
         }
 
+        /* --- TOP NAV (BACK TO HOME) --- */
+        .top-nav {
+            position: fixed; top: 2rem; left: 2rem; z-index: 100;
+        }
+        .btn-back { 
+            background: transparent; border: 1px solid var(--steel-grey); color: var(--steel-grey); 
+            padding: 0.6rem 1.2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; 
+            text-decoration: none; cursor: pointer; transition: all 0.2s; 
+        }
+        .btn-back:hover { 
+            border-color: var(--electric-cyan); color: var(--electric-cyan); 
+            background-color: rgba(0, 242, 255, 0.05); 
+        }
+
+        /* --- EMERGENCY MACRO BANNER --- */
+        .emergency-vignette { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 50; display: none; }
+        .emergency-vignette.active { display: block; animation: pulse-red 2s infinite; }
+        @keyframes pulse-red { 0% { box-shadow: inset 0 0 20px rgba(255, 49, 49, 0.1); } 50% { box-shadow: inset 0 0 120px rgba(255, 49, 49, 0.4); } 100% { box-shadow: inset 0 0 20px rgba(255, 49, 49, 0.1); } }
+
+        .emergency-banner {
+            background-color: var(--crimson-war); color: var(--smoke-white); text-align: center; padding: 0.8rem;
+            font-family: 'JetBrains Mono', monospace; font-size: 1rem; font-weight: 800; letter-spacing: 2px;
+            display: none; width: 100%; position: fixed; top: 0; left: 0; z-index: 1000; box-shadow: 0 5px 20px rgba(255, 49, 49, 0.4);
+        }
+
+        /* --- MARQUEE SCROLLING BANNER (BOTTOM) --- */
+        .marquee-container {
+            position: fixed; bottom: 0; left: 0; width: 100%; padding: 0.6rem 0;
+            background-color: #FF007F; /* Cambia dinámicamente por JS */
+            color: var(--vantablack); overflow: hidden; white-space: nowrap; z-index: 1000;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.5); display: none;
+        }
+        .marquee-text {
+            display: inline-block; padding-left: 100%;
+            font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 1rem; letter-spacing: 2px;
+            animation: marquee 25s linear infinite;
+        }
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+
         /* --- TERMINAL BOX --- */
         .container { position: relative; z-index: 10; width: 100%; max-width: 600px; padding: 2rem; }
         
@@ -59,10 +104,10 @@
         .terminal-box.trap-active {
             border-color: var(--crimson-war);
             background-color: rgba(2, 6, 23, 0.95);
-            animation: red-pulse 2s infinite;
+            animation: red-pulse-box 2s infinite;
         }
 
-        @keyframes red-pulse {
+        @keyframes red-pulse-box {
             0% { box-shadow: inset 0 0 10px rgba(255, 49, 49, 0.1), 0 0 20px rgba(255, 49, 49, 0.2); }
             50% { box-shadow: inset 0 0 40px rgba(255, 49, 49, 0.3), 0 0 60px rgba(255, 49, 49, 0.4); }
             100% { box-shadow: inset 0 0 10px rgba(255, 49, 49, 0.1), 0 0 20px rgba(255, 49, 49, 0.2); }
@@ -128,18 +173,31 @@
         .diag-text { color: var(--smoke-white); }
 
         @media (max-width: 768px) {
+            .top-nav { top: 1rem; left: 1rem; }
             .container { padding: 1rem; }
             .terminal-box { padding: 1.5rem; }
             .terminal-header { font-size: 2rem; }
             .error-title { font-size: 1.8rem; }
+            .marquee-text { font-size: 0.85rem; }
         }
     </style>
 </head>
 <body>
 
+    <!-- OVERLAYS DE EMERGENCIA -->
+    <div class="emergency-banner" id="emergencyBanner">[ HIGH IMPACT MACRO EVENT // TRADING RESTRICTED ]</div>
+    <div class="emergency-vignette" id="redAlert"></div>
+
+    <!-- BOTÓN VOLVER (NAV) -->
+    <div class="top-nav">
+        <a href="index.html" class="btn-back">< BACK TO PROTOCOL ></a>
+    </div>
+
+    <!-- BACKGROUNDS -->
     <div class="blueprint-layer"></div>
     <div class="noise-layer"></div>
 
+    <!-- MAIN TERMINAL CONTENT -->
     <div class="container">
         <div class="terminal-box" id="terminalBox">
             
@@ -221,7 +279,13 @@
         </div>
     </div>
 
+    <!-- MARQUESINA SCROLLING BANNER -->
+    <div class="marquee-container" id="marqueeBanner">
+        <div class="marquee-text" id="marqueeText"></div>
+    </div>
+
     <script>
+        // --- LÓGICA DEL DIAGNÓSTICO ---
         const btnRun = document.getElementById('btnRun');
         const formState = document.getElementById('formState');
         const loadingState = document.getElementById('loadingState');
@@ -234,7 +298,6 @@
         const line3 = document.getElementById('line3');
 
         btnRun.addEventListener('click', () => {
-            // Validate if user selected options (optional, but good for UX)
             const q1 = document.getElementById('q1').value;
             const q2 = document.getElementById('q2').value;
             const q3 = document.getElementById('q3').value;
@@ -251,25 +314,113 @@
                 return;
             }
 
-            // Hide Form, Show Loading
             formState.style.display = 'none';
             loadingState.style.display = 'block';
 
-            // Simulate Terminal Lines (3.5 seconds total flow)
             setTimeout(() => { line1.style.opacity = '1'; }, 400);
             setTimeout(() => { line2.style.opacity = '1'; }, 1400);
             setTimeout(() => { line3.style.opacity = '1'; }, 2400);
 
-            // Trigger Final Trap
             setTimeout(() => {
                 loadingState.style.display = 'none';
-                tHeader.style.display = 'none'; // Hide normal header to add impact
+                tHeader.style.display = 'none'; 
                 
                 finalState.style.display = 'block';
                 terminalBox.classList.add('trap-active');
                 
-            }, 3500); // Exactly 3.5s as requested
+            }, 3500); 
         });
+
+        // --- LÓGICA DE BASE DE DATOS (LEER ALERTAS Y BANNERS) ---
+        const SUPABASE_URL = 'https://qtpuipgkytzjnckkkwnl.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_eA2g7-rTvcPcfz_dVl2aWg_Ca5P7t93';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        const redAlert = document.getElementById('redAlert');
+        const emergencyBanner = document.getElementById('emergencyBanner');
+        
+        const marqueeBanner = document.getElementById('marqueeBanner');
+        const marqueeText = document.getElementById('marqueeText');
+
+        async function fetchSystemState() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('logs')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(10); 
+
+                if (error) throw error;
+
+                // 1. MACRO NEWS (ROJO)
+                let isEmergencyActive = false;
+                const emergencyLog = data.find(log => log.log_type === 'news_alert');
+                
+                if (emergencyLog && emergencyLog.value_text !== "0") {
+                    const endTime = parseInt(emergencyLog.value_text);
+                    const now = new Date().getTime();
+                    if (endTime > now) {
+                        isEmergencyActive = true;
+                        setTimeout(() => {
+                            redAlert.classList.remove('active');
+                            emergencyBanner.style.display = 'none';
+                        }, endTime - now);
+                    }
+                }
+
+                if (isEmergencyActive) {
+                    redAlert.classList.add('active');
+                    emergencyBanner.style.display = 'block';
+                } else {
+                    redAlert.classList.remove('active');
+                    emergencyBanner.style.display = 'none';
+                }
+
+                // 2. DYNAMIC OFFER SCROLLING BANNER
+                const discountLog = data.find(log => log.log_type === 'discount_alert');
+
+                if (discountLog && discountLog.value_text !== "0") {
+                    let configData = {};
+                    try {
+                        configData = JSON.parse(discountLog.value_text);
+                    } catch(e) {
+                        const parts = discountLog.value_text.split('|');
+                        configData = { mode: 'spots', value: parts[0], color: parts[1] || 'var(--hot-pink)', title: 'LIMITED ACCESS PROTOCOL' };
+                    }
+
+                    // Determinar el texto del banner
+                    let availabilityText = configData.mode === 'spots' ? `${configData.value} SPOTS LEFT` : `LIMITED TIME OFFER`;
+                    let title = configData.title || 'LIMITED ACCESS PROTOCOL';
+                    
+                    // Crear un bloque de texto que se repetirá para rellenar la marquesina
+                    let singleBlock = ` [!] ${title} // ${discountLog.action_text.replace(/<[^>]*>?/gm, '')} // ${availabilityText} [!] `;
+                    
+                    // Repetimos el bloque 8 veces para que llene bien la pantalla y fluya
+                    marqueeText.innerText = singleBlock.repeat(8);
+                    
+                    // Aplicar el color exacto seleccionado en el admin
+                    marqueeBanner.style.backgroundColor = configData.color || 'var(--hot-pink)';
+                    marqueeBanner.style.display = 'block';
+
+                } else {
+                    marqueeBanner.style.display = 'none';
+                }
+
+            } catch (err) {
+                console.error("System Error reading DB", err);
+            }
+        }
+
+        // Ejecutar al cargar la página
+        fetchSystemState();
+
+        // Escuchar cambios en tiempo real por si el admin enciende algo de golpe
+        supabaseClient.channel('public:logs:analysis')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'logs' }, payload => {
+                fetchSystemState(); 
+            })
+            .subscribe();
+
     </script>
 </body>
 </html>

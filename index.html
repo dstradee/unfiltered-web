@@ -97,18 +97,24 @@
         p { color: var(--steel-grey); line-height: 1.6; font-size: 1.1rem; }
 
         .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 0 2rem; width: 100%; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        /* HEADER & HAMBURGER */
         header { padding: 4rem 0 3rem 0; display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid rgba(148, 163, 184, 0.1); }
         .brand-logo { display: flex; align-items: baseline; gap: 8px; font-size: 2rem; }
         .unfiltered-word { border-bottom: 2px solid var(--electric-cyan); padding-bottom: 2px; }
+        .header-controls { display: flex; align-items: center; gap: 1.5rem; }
         .auth-link { font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); text-decoration: none; font-size: 0.85rem; letter-spacing: 1px; transition: color 0.2s ease; }
         .auth-link:hover { color: var(--electric-cyan); }
+        .hamburger-btn { display: none; background: transparent; border: none; color: var(--electric-cyan); font-size: 2rem; cursor: pointer; }
 
         main { flex: 1; display: flex; flex-direction: column; justify-content: center; padding-bottom: 15vh; } 
         .system-status { display: inline-block; background-color: rgba(0, 242, 255, 0.05); border-left: 3px solid var(--electric-cyan); padding: 8px 16px; margin-bottom: 2rem; text-transform: uppercase; }
         .hero-title { font-size: clamp(4rem, 8vw, 7rem); line-height: 0.9; margin-bottom: 1.5rem; text-shadow: 4px 4px 0px var(--vantablack); }
         .hero-subtitle { max-width: 600px; margin-bottom: 3rem; }
+        .hero-subtitle .short-text { display: none; } /* Default desktop hidden */
 
-        .terminal-box { background-color: var(--vantablack); border: 1px solid rgba(148, 163, 184, 0.2); padding: 2rem; max-width: 700px; position: relative; }
+        /* TERMINAL BOX */
+        .terminal-box { background-color: var(--vantablack); border: 1px solid rgba(148, 163, 184, 0.2); padding: 2rem; max-width: 700px; position: relative; margin-bottom: 2rem; }
         .terminal-header { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 1rem; margin-bottom: 1.5rem; }
         .terminal-line { display: flex; gap: 1rem; margin-bottom: 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
         .t-time { color: var(--steel-grey); min-width: 90px; }
@@ -118,9 +124,10 @@
         .blinking-cursor { display: inline-block; width: 10px; height: 1em; background-color: var(--electric-cyan); animation: blink 1s step-end infinite; vertical-align: text-bottom; margin-left: 5px; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        .action-area { display: flex; gap: 1.5rem; margin-top: 2rem; flex-wrap: wrap; }
+        /* ACTION AREA / BUTTONS */
+        .action-area { display: flex; gap: 1.5rem; flex-wrap: wrap; }
         
-        /* BOTONES FLEX ORDER FIX */
+        /* Flex Order Support from DB */
         .action-area .btn { order: 99; display: inline-block; padding: 1rem 2rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; text-align: center; }
         
         .btn-primary { background-color: transparent; color: var(--electric-cyan); border: 1px solid var(--electric-cyan); box-shadow: inset 0 0 0 transparent, 0 0 10px rgba(0, 242, 255, 0.1); }
@@ -131,6 +138,11 @@
 
         .btn-gold { background-color: transparent; color: var(--alert-gold); border: 1px solid var(--alert-gold); box-shadow: inset 0 0 0 transparent, 0 0 10px rgba(255, 215, 0, 0.1); }
         .btn-gold:hover { background-color: rgba(255, 215, 0, 0.1); box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.2), 0 0 15px rgba(255, 215, 0, 0.2); }
+
+        /* Wrappers para estructuración móvil (transparentes en Desktop) */
+        .carousel-container-mobile { display: contents; }
+        .hamburger-menu-mobile { display: contents; }
+        .close-menu { display: none; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(4px); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 1rem; }
         .modal-content { background-color: var(--obsidian-navy); border: 1px solid var(--electric-cyan); padding: 2.5rem; width: 100%; max-width: 600px; box-shadow: 0 0 30px rgba(0, 242, 255, 0.15); position: relative; max-height: 90vh; overflow-y: auto; }
@@ -152,28 +164,83 @@
 
         #loginError { color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 1rem; text-align: center; display: none; }
 
+        /* ========================================================== */
+        /* MOBILE OPTIMIZATION (HIGH CONVERSION FOCUS)                */
+        /* ========================================================== */
         @media (max-width: 768px) {
-            main { padding-bottom: 25vh !important; }
+            main { padding-top: 1rem; justify-content: flex-start; padding-bottom: 25vh !important; }
             
+            /* Clean Above the Fold */
+            .system-status { display: none !important; }
+            .hero-title { font-size: 3.2rem; margin-bottom: 1rem; line-height: 1; }
+            .hero-subtitle { margin-bottom: 1.5rem; }
+            .hero-subtitle .long-text { display: none; }
+            .hero-subtitle .short-text { display: inline; font-size: 1.1rem; }
+
+            /* Hamburger Navbar */
+            header { align-items: center; padding: 2rem 0; }
+            .brand-logo { font-size: 1.5rem; }
+            .hamburger-btn { display: block; }
+            
+            .hamburger-menu-mobile {
+                position: fixed; top: 0; right: -100%; width: 280px; height: 100vh;
+                background: rgba(2, 6, 23, 0.98); border-left: 1px solid var(--electric-cyan);
+                z-index: 9999; display: flex; flex-direction: column; padding: 3rem 2rem; gap: 1.5rem;
+                transition: right 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            }
+            .hamburger-menu-mobile.open { right: 0; }
+            .hamburger-menu-mobile .btn { width: 100%; display: block; order: initial !important; }
+            .close-menu { display: block; color: var(--steel-grey); font-family: 'JetBrains Mono', monospace; text-align: right; cursor: pointer; margin-bottom: 2rem; font-weight: bold; border-bottom: 1px solid rgba(148,163,184,0.2); padding-bottom: 1rem;}
+
+            /* Terminal to Dynamic Ticker */
+            .terminal-box {
+                padding: 0.5rem 1rem; height: 45px; border-radius: 4px;
+                background: rgba(2, 6, 23, 0.8); border: 1px solid var(--electric-cyan);
+                overflow: hidden; display: flex; align-items: center;
+                margin-bottom: 2rem;
+            }
+            .terminal-header { display: none; }
+            .terminal-body {
+                width: 100%; display: flex; flex-direction: column;
+                animation: marquee-up 12s cubic-bezier(0.8, 0, 0.2, 1) infinite;
+            }
+            .terminal-line { min-height: 45px; margin: 0; display: flex; align-items: center; }
+            .t-time { display: none; }
+            .t-action { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 0.8rem; }
+            .t-value { font-size: 0.8rem; margin-left: 8px; }
+
+            @keyframes marquee-up {
+                0%, 15% { transform: translateY(0); }
+                20%, 35% { transform: translateY(-45px); }
+                40%, 55% { transform: translateY(-90px); }
+                60%, 75% { transform: translateY(-135px); }
+                80%, 95% { transform: translateY(-180px); }
+                100% { transform: translateY(0); }
+            }
+
+            /* Main CTA & Carousel */
+            .action-area { flex-direction: column; gap: 1rem; width: 100%; }
+            .main-cta-mobile { width: 100%; font-size: 1.1rem; padding: 1.2rem; order: -1 !important; }
+            
+            .carousel-container-mobile { 
+                display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; 
+                width: 100vw; margin-left: -2rem; padding: 0 2rem 1rem 2rem; 
+                scrollbar-width: none; 
+            }
+            .carousel-container-mobile::-webkit-scrollbar { display: none; }
+            .carousel-container-mobile .btn { scroll-snap-align: center; flex: 0 0 85%; margin: 0; order: initial !important;}
+
+            /* Discount Banner */
             .discount-banner { padding: 0.6rem 1rem; }
             .discount-content { flex-direction: column; gap: 0.3rem; text-align: center; }
             .discount-title { font-size: 1.3rem; }
             .discount-msg { font-size: 0.85rem; }
             .discount-timer { font-size: 1.2rem; padding: 0.2rem 0.5rem; width: 100%; max-width: 220px; }
 
-            .hero-title { font-size: 3.5rem; }
-            .terminal-box { padding: 1.5rem 1rem; }
-            .terminal-line { flex-wrap: wrap; gap: 0.3rem; }
-            .t-time { width: 100%; font-size: 0.75rem; opacity: 0.7; margin-bottom: -0.2rem; }
             .calc-grid { grid-template-columns: 1fr; gap: 1rem; }
             .calc-group[style] { grid-column: span 1 !important; }
             
-            .btn { width: 100%; }
-
-            .toast-notification {
-                width: 90%; left: 5%; right: auto; top: -150px; 
-                transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            }
+            .toast-notification { width: 90%; left: 5%; right: auto; top: -150px; transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
             .toast-notification.show { top: 20px; right: auto; }
         }
 
@@ -225,7 +292,11 @@
             <div class="brand-logo logo-text">
                 <span class="unfiltered-word">UNFILTERED</span> <span>ALPHA</span>
             </div>
-            <a href="#" class="auth-link" id="openLoginBtn">[ AUTH ]</a>
+            
+            <div class="header-controls">
+                <a href="#" class="auth-link" id="openLoginBtn">[ AUTH ]</a>
+                <button class="hamburger-btn" id="mobileMenuBtn">☰</button>
+            </div>
         </header>
 
         <main>
@@ -236,9 +307,11 @@
             <h1 class="hero-title">STOP BEING THE EXIT LIQUIDITY.</h1>
             
             <p class="hero-subtitle">
-                Most traders follow the herd. We follow the code. Every day, the Architect provides the blueprint to survive the market manipulation. Are you reading the code or providing the liquidity?
+                <span class="long-text">Most traders follow the herd. We follow the code. Every day, the Architect provides the blueprint to survive the market manipulation. Are you reading the code or providing the liquidity?</span>
+                <span class="short-text">We follow the code. Are you reading it, or providing liquidity?</span>
             </p>
 
+            <!-- TERMINAL BOX -->
             <div class="terminal-box">
                 <div class="terminal-header code-data">
                     <span>> THE_PROTOCOL_TERMINAL</span>
@@ -254,17 +327,30 @@
                 </div>
             </div>
 
-            <!-- THE BUTTONS -->
+            <!-- ACTION AREA WITH EMBEDDED CAROUSEL AND HAMBURGER MENU -->
             <div class="action-area" id="actionArea">
-                <a href="analysis.html" class="btn btn-primary" id="btn-dg" style="box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);">[ START FREE ANALYSIS ]</a>
-                <a href="#" class="btn btn-primary" id="btn-calculadora">[ CALCULATOR ]</a>
-                <a href="loss.html" class="btn" id="btn-loss" style="color: #FF3131; border: 1px solid #FF3131; background: rgba(255,49,49,0.05);">[ CRITICAL FAILURE LOG ]</a>
-                <a href="#" class="btn btn-gold" id="btn-VIP">[ VIP ACCESS ]</a>
-                <a href="#" class="btn btn-purple" id="btn-drop" style="display: none;">[ DROP ACCESS ]</a>
+                
+                <!-- PRIMARY CTA (Always visible above the fold on mobile) -->
+                <a href="analysis.html" class="btn btn-primary main-cta-mobile" id="btn-dg" style="box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);">[ START FREE ANALYSIS ]</a>
+                
+                <!-- CAROUSEL (Horizontal swipe on mobile) -->
+                <div class="carousel-container-mobile">
+                    <a href="#" class="btn btn-primary" id="btn-calculadora">[ CALCULATOR ]</a>
+                    <a href="loss.html" class="btn" id="btn-loss" style="color: #FF3131; border: 1px solid #FF3131; background: rgba(255,49,49,0.05);">[ CRITICAL FAILURE LOG ]</a>
+                </div>
+
+                <!-- HAMBURGER MENU (Hidden overlay on mobile) -->
+                <div class="hamburger-menu-mobile" id="hamburgerMenu">
+                    <div class="close-menu" id="closeMenuBtn">[ X ] CLOSE PROTOCOL</div>
+                    <a href="#" class="btn btn-gold" id="btn-VIP">[ VIP ACCESS ]</a>
+                    <a href="#" class="btn btn-purple" id="btn-drop" style="display: none;">[ DROP ACCESS ]</a>
+                </div>
+
             </div>
         </main>
     </div>
 
+    <!-- CALC MODAL -->
     <div class="modal-overlay" id="calcModal">
         <div class="modal-content">
             <div class="close-modal" id="closeCalcBtn">[ X ]</div>
@@ -296,6 +382,7 @@
         </div>
     </div>
 
+    <!-- LOGIN MODAL -->
     <div class="modal-overlay" id="loginModal">
         <div class="modal-content" style="max-width: 400px;">
             <div class="close-modal" id="closeLoginBtn">[ X ]</div>
@@ -318,6 +405,7 @@
         </div>
     </div>
 
+    <!-- DROP MODAL -->
     <div class="modal-overlay" id="dropModal">
         <div class="modal-content" style="max-width: 400px; border-color: var(--matrix-green); box-shadow: 0 0 30px rgba(0, 255, 65, 0.15);">
             <div class="close-modal" id="closeDropBtn">[ X ]</div>
@@ -341,6 +429,7 @@
         </div>
     </div>
 
+    <!-- VIP MODAL -->
     <div class="modal-overlay" id="vipModal">
         <div class="modal-content" style="max-width: 400px; border-color: var(--alert-gold); box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);">
             <div class="close-modal" id="closeVipBtn">[ X ]</div>
@@ -389,6 +478,16 @@
 
         let currentDropCode = ""; 
         let countdownInterval; 
+
+        // --- HAMBURGER MENU LOGIC ---
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const hamburgerMenu = document.getElementById('hamburgerMenu');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+
+        if(mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', () => { hamburgerMenu.classList.add('open'); });
+            closeMenuBtn.addEventListener('click', () => { hamburgerMenu.classList.remove('open'); });
+        }
 
         async function fetchTerminalLogs() {
             try {
@@ -486,12 +585,9 @@
                 }
 
                 // --- 2.5 BUTTON VISIBILITY, COLOR OVERRIDE & ORDER ---
-                
-                // Primero: resetear todos los botones al orden por defecto (99) para que queden al final si no están en la lista
                 const allButtons = document.querySelectorAll('.action-area .btn');
                 allButtons.forEach(b => b.style.order = '99');
 
-                // Aplicar el orden guardado
                 const orderLog = data.find(log => log.log_type === 'button_order');
                 if (orderLog && orderLog.value_text) {
                     try {
@@ -499,7 +595,7 @@
                         orderArray.forEach((btnId, index) => {
                             const btnElement = document.getElementById(btnId);
                             if (btnElement) {
-                                btnElement.style.order = index + 1; // Asignar el orden en flexbox
+                                btnElement.style.order = index + 1; 
                             }
                         });
                     } catch(e){}
@@ -573,7 +669,7 @@
                 // IGNORE HIDDEN CONFIG LOGS
                 const visibleData = data.filter(log => 
                     !['news_alert', 'discount_alert', 'toast_alert', 'button_toggle', 'button_order', 'drop_code', 'drop_config', 'loss_config'].includes(log.log_type)
-                ).slice(0, 4);
+                ).slice(0, 5); // Aumentado a 5 líneas para que el scroll tenga sentido
                 
                 const sortedData = visibleData.reverse();
 
@@ -728,7 +824,15 @@
         openDropBtn.addEventListener('click', (e) => { e.preventDefault(); dropModal.style.display = 'flex'; dropPinInput.value = ''; dropErrorMsg.style.display = 'none'; });
         closeDropBtn.addEventListener('click', () => { dropModal.style.display = 'none'; });
 
-        openVipBtn.addEventListener('click', (e) => { e.preventDefault(); vipModal.style.display = 'flex'; vipEmail.value = ''; vipPass.value = ''; vipErrorMsg.style.display = 'none'; });
+        openVipBtn.addEventListener('click', (e) => { 
+            e.preventDefault(); 
+            // Cerrar menú hamburguesa si está abierto
+            if(hamburgerMenu) hamburgerMenu.classList.remove('open');
+            vipModal.style.display = 'flex'; 
+            vipEmail.value = ''; 
+            vipPass.value = ''; 
+            vipErrorMsg.style.display = 'none'; 
+        });
         closeVipBtn.addEventListener('click', () => { vipModal.style.display = 'none'; });
 
         window.addEventListener('click', (e) => { 

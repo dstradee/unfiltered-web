@@ -103,7 +103,7 @@
         .brand-logo { display: flex; align-items: baseline; gap: 8px; font-size: 2rem; }
         .unfiltered-word { border-bottom: 2px solid var(--electric-cyan); padding-bottom: 2px; }
         .header-controls { display: flex; align-items: center; gap: 1.5rem; }
-        .auth-link { font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); text-decoration: none; font-size: 0.85rem; letter-spacing: 1px; transition: color 0.2s ease; }
+        .auth-link { font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); text-decoration: none; font-size: 0.85rem; letter-spacing: 1px; transition: color 0.2s ease; cursor: pointer;}
         .auth-link:hover { color: var(--electric-cyan); }
         .hamburger-btn { display: none; background: transparent; border: none; color: var(--electric-cyan); font-size: 2rem; cursor: pointer; }
 
@@ -140,9 +140,9 @@
         .btn-gold:hover { background-color: rgba(255, 215, 0, 0.1); box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.2), 0 0 15px rgba(255, 215, 0, 0.2); }
 
         /* Wrappers para estructuración móvil (transparentes en Desktop) */
-        .carousel-container-mobile { display: contents; }
         .hamburger-menu-mobile { display: contents; }
         .close-menu { display: none; }
+        .mobile-auth-btn { display: none; } /* Oculto en PC, visible en menú hamburguesa móvil */
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(4px); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 1rem; }
         .modal-content { background-color: var(--obsidian-navy); border: 1px solid var(--electric-cyan); padding: 2.5rem; width: 100%; max-width: 600px; box-shadow: 0 0 30px rgba(0, 242, 255, 0.15); position: relative; max-height: 90vh; overflow-y: auto; }
@@ -177,11 +177,14 @@
             .hero-subtitle .long-text { display: none; }
             .hero-subtitle .short-text { display: inline; font-size: 1.1rem; }
 
-            /* Hamburger Navbar */
-            header { align-items: center; padding: 2rem 0; }
-            .brand-logo { font-size: 1.5rem; }
+            /* Hamburger Navbar & Header Cleaning */
+            header { flex-direction: row; align-items: center; padding: 1.5rem 0; gap: 1rem; }
+            .brand-logo { font-size: 1.6rem; letter-spacing: 4px; }
+            .header-controls { display: flex; align-items: center; gap: 1rem; }
+            .auth-link.desktop-auth { display: none; } /* Ocultamos el AUTH del header para no chocar con el texto */
             .hamburger-btn { display: block; }
             
+            /* El menú lateral oscuro */
             .hamburger-menu-mobile {
                 position: fixed; top: 0; right: -100%; width: 280px; height: 100vh;
                 background: rgba(2, 6, 23, 0.98); border-left: 1px solid var(--electric-cyan);
@@ -189,12 +192,14 @@
                 transition: right 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
             }
             .hamburger-menu-mobile.open { right: 0; }
-            .hamburger-menu-mobile .btn { width: 100%; display: block; order: initial !important; }
+            .hamburger-menu-mobile .btn { width: 100%; display: block; order: initial !important; margin: 0;}
             .close-menu { display: block; color: var(--steel-grey); font-family: 'JetBrains Mono', monospace; text-align: right; cursor: pointer; margin-bottom: 2rem; font-weight: bold; border-bottom: 1px solid rgba(148,163,184,0.2); padding-bottom: 1rem;}
+            .mobile-auth-btn { display: block; margin-top: auto; border: 1px solid var(--steel-grey); color: var(--steel-grey); text-align: center; padding: 1rem; font-family: monospace; font-weight: bold; text-decoration: none;}
 
-            /* Terminal to Dynamic Ticker */
+            /* Terminal to Dynamic Ticker (Más ancho y pegado a los bordes) */
             .terminal-box {
-                padding: 0.5rem 1rem; height: 45px; border-radius: 4px;
+                width: 100%; max-width: 100%;
+                padding: 0.5rem 10px; height: 45px; border-radius: 4px;
                 background: rgba(2, 6, 23, 0.8); border: 1px solid var(--electric-cyan);
                 overflow: hidden; display: flex; align-items: center;
                 margin-bottom: 2rem;
@@ -218,17 +223,9 @@
                 100% { transform: translateY(0); }
             }
 
-            /* Main CTA & Carousel */
+            /* Main CTA */
             .action-area { flex-direction: column; gap: 1rem; width: 100%; }
             .main-cta-mobile { width: 100%; font-size: 1.1rem; padding: 1.2rem; order: -1 !important; }
-            
-            .carousel-container-mobile { 
-                display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; 
-                width: 100vw; margin-left: -2rem; padding: 0 2rem 1rem 2rem; 
-                scrollbar-width: none; 
-            }
-            .carousel-container-mobile::-webkit-scrollbar { display: none; }
-            .carousel-container-mobile .btn { scroll-snap-align: center; flex: 0 0 85%; margin: 0; order: initial !important;}
 
             /* Discount Banner */
             .discount-banner { padding: 0.6rem 1rem; }
@@ -294,7 +291,9 @@
             </div>
             
             <div class="header-controls">
-                <a href="#" class="auth-link" id="openLoginBtn">[ AUTH ]</a>
+                <!-- Desktop Auth Link -->
+                <a href="#" class="auth-link desktop-auth open-login-trigger">[ AUTH ]</a>
+                <!-- Mobile Hamburger -->
                 <button class="hamburger-btn" id="mobileMenuBtn">☰</button>
             </div>
         </header>
@@ -327,23 +326,24 @@
                 </div>
             </div>
 
-            <!-- ACTION AREA WITH EMBEDDED CAROUSEL AND HAMBURGER MENU -->
+            <!-- ACTION AREA WITH EMBEDDED HAMBURGER MENU -->
             <div class="action-area" id="actionArea">
                 
-                <!-- PRIMARY CTA (Always visible above the fold on mobile) -->
+                <!-- PRIMARY CTA (Always visible above the fold) -->
                 <a href="analysis.html" class="btn btn-primary main-cta-mobile" id="btn-dg" style="box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);">[ START FREE ANALYSIS ]</a>
                 
-                <!-- CAROUSEL (Horizontal swipe on mobile) -->
-                <div class="carousel-container-mobile">
-                    <a href="#" class="btn btn-primary" id="btn-calculadora">[ CALCULATOR ]</a>
-                    <a href="loss.html" class="btn" id="btn-loss" style="color: #FF3131; border: 1px solid #FF3131; background: rgba(255,49,49,0.05);">[ CRITICAL FAILURE LOG ]</a>
-                </div>
-
-                <!-- HAMBURGER MENU (Hidden overlay on mobile) -->
+                <!-- HAMBURGER MENU (Hidden overlay on mobile, normal flex items on PC) -->
                 <div class="hamburger-menu-mobile" id="hamburgerMenu">
                     <div class="close-menu" id="closeMenuBtn">[ X ] CLOSE PROTOCOL</div>
+                    
+                    <!-- Secondary Buttons -->
+                    <a href="#" class="btn btn-primary" id="btn-calculadora">[ CALCULATOR ]</a>
+                    <a href="loss.html" class="btn" id="btn-loss" style="color: #FF3131; border: 1px solid #FF3131; background: rgba(255,49,49,0.05);">[ CRITICAL FAILURE LOG ]</a>
                     <a href="#" class="btn btn-gold" id="btn-VIP">[ VIP ACCESS ]</a>
                     <a href="#" class="btn btn-purple" id="btn-drop" style="display: none;">[ DROP ACCESS ]</a>
+                    
+                    <!-- Mobile Auth Link -->
+                    <a href="#" class="mobile-auth-btn open-login-trigger">[ ARCHITECT AUTH ]</a>
                 </div>
 
             </div>
@@ -669,7 +669,7 @@
                 // IGNORE HIDDEN CONFIG LOGS
                 const visibleData = data.filter(log => 
                     !['news_alert', 'discount_alert', 'toast_alert', 'button_toggle', 'button_order', 'drop_code', 'drop_config', 'loss_config'].includes(log.log_type)
-                ).slice(0, 5); // Aumentado a 5 líneas para que el scroll tenga sentido
+                ).slice(0, 5);
                 
                 const sortedData = visibleData.reverse();
 
@@ -789,7 +789,6 @@
         const closeCalcBtn = document.getElementById('closeCalcBtn');
         
         const loginModal = document.getElementById('loginModal');
-        const openLoginBtn = document.getElementById('openLoginBtn');
         const closeLoginBtn = document.getElementById('closeLoginBtn');
         const executeLoginBtn = document.getElementById('executeLoginBtn');
         const loginErrorMsg = document.getElementById('loginError');
@@ -815,18 +814,38 @@
         const resultBox = document.getElementById('resultBox');
         const upsellBtn = document.getElementById('upsellBtn');
 
-        openCalcBtn.addEventListener('click', (e) => { e.preventDefault(); calcModal.style.display = 'flex'; calculateExpectancy(); });
+        // Event listeners for Modals
+        openCalcBtn.addEventListener('click', (e) => { 
+            e.preventDefault(); 
+            if(hamburgerMenu) hamburgerMenu.classList.remove('open');
+            calcModal.style.display = 'flex'; 
+            calculateExpectancy(); 
+        });
         closeCalcBtn.addEventListener('click', () => { calcModal.style.display = 'none'; });
         
-        openLoginBtn.addEventListener('click', (e) => { e.preventDefault(); loginModal.style.display = 'flex'; loginErrorMsg.style.display = 'none'; });
+        // Multi-trigger for AUTH login (desktop + mobile menu)
+        const openLoginBtns = document.querySelectorAll('.open-login-trigger');
+        openLoginBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => { 
+                e.preventDefault(); 
+                if(hamburgerMenu) hamburgerMenu.classList.remove('open');
+                loginModal.style.display = 'flex'; 
+                loginErrorMsg.style.display = 'none'; 
+            });
+        });
         closeLoginBtn.addEventListener('click', () => { loginModal.style.display = 'none'; });
 
-        openDropBtn.addEventListener('click', (e) => { e.preventDefault(); dropModal.style.display = 'flex'; dropPinInput.value = ''; dropErrorMsg.style.display = 'none'; });
+        openDropBtn.addEventListener('click', (e) => { 
+            e.preventDefault(); 
+            if(hamburgerMenu) hamburgerMenu.classList.remove('open');
+            dropModal.style.display = 'flex'; 
+            dropPinInput.value = ''; 
+            dropErrorMsg.style.display = 'none'; 
+        });
         closeDropBtn.addEventListener('click', () => { dropModal.style.display = 'none'; });
 
         openVipBtn.addEventListener('click', (e) => { 
             e.preventDefault(); 
-            // Cerrar menú hamburguesa si está abierto
             if(hamburgerMenu) hamburgerMenu.classList.remove('open');
             vipModal.style.display = 'flex'; 
             vipEmail.value = ''; 

@@ -140,7 +140,6 @@
         .btn-gold:hover { background-color: rgba(255, 215, 0, 0.1); box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.2), 0 0 15px rgba(255, 215, 0, 0.2); }
 
         /* Wrappers para estructuración móvil (transparentes en Desktop) */
-        .carousel-container-mobile { display: contents; }
         .hamburger-menu-mobile { display: contents; }
         .close-menu { display: none; }
         .mobile-auth-btn { display: none; } /* Oculto en PC, visible en menú hamburguesa móvil */
@@ -197,20 +196,24 @@
             .close-menu { display: block; color: var(--steel-grey); font-family: 'JetBrains Mono', monospace; text-align: right; cursor: pointer; margin-bottom: 2rem; font-weight: bold; border-bottom: 1px solid rgba(148,163,184,0.2); padding-bottom: 1rem;}
             .mobile-auth-btn { display: block; margin-top: auto; border: 1px solid var(--steel-grey); color: var(--steel-grey); text-align: center; padding: 1rem; font-family: monospace; font-weight: bold; text-decoration: none;}
 
-            /* Terminal to Dynamic Ticker (Más ancho y alto) */
+            /* Terminal to Dynamic Ticker (Más ancho y centrado verticalmente) */
             .terminal-box {
                 width: 100%; max-width: 100%;
                 padding: 0 1rem; height: 65px; border-radius: 4px;
                 background: rgba(2, 6, 23, 0.8); border: 1px solid var(--electric-cyan);
-                overflow: hidden; display: flex; align-items: center;
+                overflow: hidden; display: flex; align-items: center; justify-content: flex-start;
                 margin-bottom: 2rem;
             }
             .terminal-header { display: none; }
             .terminal-body {
                 width: 100%; display: flex; flex-direction: column;
+                /* El centro exacto de la caja se consigue asegurando que el line-height y height sean iguales a la caja */
                 animation: marquee-up 12s cubic-bezier(0.8, 0, 0.2, 1) infinite;
             }
-            .terminal-line { min-height: 65px; margin: 0; display: flex; align-items: center; }
+            .terminal-line { 
+                height: 65px; margin: 0; 
+                display: flex; align-items: center; justify-content: flex-start; 
+            }
             .t-time { display: none; }
             .t-action { white-space: normal; overflow: hidden; text-overflow: ellipsis; font-size: 0.85rem; line-height: 1.4; }
             .t-value { font-size: 0.85rem; margin-left: 8px; flex-shrink: 0;}
@@ -224,18 +227,14 @@
                 100% { transform: translateY(0); }
             }
 
-            /* Main CTA & Carousel */
-            .action-area { flex-direction: column; gap: 1rem; width: 100%; }
-            .main-cta-mobile { width: 100%; font-size: 1.1rem; padding: 1.2rem; order: -1 !important; }
+            /* Botones del Action Area */
+            .action-area { flex-direction: column; gap: 0.8rem; width: 100%; }
             
-            /* Todos los botones secundarios están en el carrusel de la pantalla principal */
-            .carousel-container-mobile { 
-                display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; 
-                width: 100vw; margin-left: -2rem; padding: 0 2rem 1rem 2rem; 
-                scrollbar-width: none; 
-            }
-            .carousel-container-mobile::-webkit-scrollbar { display: none; }
-            .carousel-container-mobile .btn { scroll-snap-align: center; flex: 0 0 85%; margin: 0; order: initial !important;}
+            /* Todos los botones que decidas que sean visibles en móvil tendrán exactamente este tamaño */
+            .action-area .btn { width: 100%; padding: 1.2rem; font-size: 1rem; margin: 0; }
+            
+            /* El main CTA destaca */
+            .main-cta-mobile { font-size: 1.1rem !important; order: -1 !important; margin-bottom: 0.5rem; }
 
             /* Discount Banner */
             .discount-banner { padding: 0.6rem 1rem; }
@@ -342,18 +341,18 @@
                 <!-- PRIMARY CTA (Always visible above the fold) -->
                 <a href="analysis.html" class="btn btn-primary main-cta-mobile" id="btn-dg" style="box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);">[ START FREE ANALYSIS ]</a>
                 
-                <!-- CAROUSEL (Horizontal swipe on mobile, regular flex wrap on PC) -->
-                <!-- All secondary buttons are here so they stay on the main screen -->
-                <div class="carousel-container-mobile">
-                    <a href="#" class="btn btn-primary" id="btn-calculadora">[ CALCULATOR ]</a>
-                    <a href="loss.html" class="btn" id="btn-loss" style="color: #FF3131; border: 1px solid #FF3131; background: rgba(255,49,49,0.05);">[ CRITICAL FAILURE LOG ]</a>
-                    <a href="#" class="btn btn-gold" id="btn-VIP">[ VIP ACCESS ]</a>
-                    <a href="#" class="btn btn-purple" id="btn-drop" style="display: none;">[ DROP ACCESS ]</a>
-                </div>
+                <!-- THESE BUTTONS SHOW ON SCREEN ON PC, BUT ON MOBILE THEY ARE MOVED INTO THE HAMBURGER VIA JAVASCRIPT -->
+                <a href="loss.html" class="btn secondary-btn" id="btn-loss" style="color: #FF3131; border: 1px solid #FF3131; background: rgba(255,49,49,0.05); display: none;">[ CRITICAL FAILURE LOG ]</a>
+                <a href="#" class="btn secondary-btn" id="btn-drop" style="display: none;">[ DROP ACCESS ]</a>
+                <a href="#" class="btn secondary-btn" id="btn-calculadora" style="display: none;">[ CALCULATOR ]</a>
+                <a href="#" class="btn secondary-btn" id="btn-VIP" style="display: none;">[ VIP ACCESS ]</a>
 
                 <!-- HAMBURGER MENU (Hidden overlay on mobile, hidden on PC) -->
                 <div class="hamburger-menu-mobile" id="hamburgerMenu">
                     <div class="close-menu" id="closeMenuBtn">[ X ] CLOSE PROTOCOL</div>
+                    
+                    <!-- Container for buttons moved via JS -->
+                    <div id="mobileMenuBtnContainer" style="display: flex; flex-direction: column; gap: 1rem;"></div>
                     
                     <!-- Mobile Auth Link -->
                     <a href="#" class="mobile-auth-btn open-login-trigger">[ ARCHITECT AUTH ]</a>
@@ -480,6 +479,8 @@
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const terminalOutput = document.getElementById('terminal-output');
+        const actionArea = document.getElementById('actionArea');
+        const mobileMenuBtnContainer = document.getElementById('mobileMenuBtnContainer');
         
         const redAlert = document.getElementById('redAlert');
         const emergencyBanner = document.getElementById('emergencyBanner');
@@ -501,6 +502,35 @@
             mobileMenuBtn.addEventListener('click', () => { hamburgerMenu.classList.add('open'); });
             closeMenuBtn.addEventListener('click', () => { hamburgerMenu.classList.remove('open'); });
         }
+
+        // --- MOBILE BUTTON ROUTING LOGIC ---
+        // Lista de botones que SIEMPRE deben quedarse en la pantalla principal si se están mostrando
+        const MAIN_SCREEN_BUTTONS = ['btn-loss', 'btn-drop'];
+
+        function routeButtonsForMobile() {
+            const isMobile = window.innerWidth <= 768;
+            const secondaryBtns = document.querySelectorAll('.secondary-btn');
+            
+            secondaryBtns.forEach(btn => {
+                // Solo movemos el botón si está visible (es decir, si el admin lo tiene en "show")
+                if (btn.style.display !== 'none') {
+                    if (isMobile) {
+                        // Si estamos en móvil, comprobamos si el botón es de los "Elegidos" para la pantalla principal
+                        if (MAIN_SCREEN_BUTTONS.includes(btn.id)) {
+                            actionArea.appendChild(btn); // Lo dejamos en la pantalla principal
+                        } else {
+                            mobileMenuBtnContainer.appendChild(btn); // Lo mandamos a las 3 rayitas
+                        }
+                    } else {
+                        // En PC, todos vuelven al Action Area normal
+                        actionArea.appendChild(btn);
+                    }
+                }
+            });
+        }
+
+        // Ejecutar al cargar y al redimensionar la pantalla
+        window.addEventListener('resize', routeButtonsForMobile);
 
         async function fetchTerminalLogs() {
             try {
@@ -599,9 +629,6 @@
 
                 // --- 2.5 BUTTON VISIBILITY, COLOR OVERRIDE & ORDER ---
                 
-                const allButtons = document.querySelectorAll('.action-area .btn');
-                allButtons.forEach(b => b.style.order = '99');
-
                 const orderLog = data.find(log => log.log_type === 'button_order');
                 if (orderLog && orderLog.value_text) {
                     try {
@@ -677,13 +704,15 @@
                     }
                 }
 
+                // Llamamos a la función para enrutar los botones a donde toca (pantalla o menú)
+                routeButtonsForMobile();
+
                 // --- 3. TERMINAL ---
                 terminalOutput.innerHTML = ''; 
                 
-                // IGNORE HIDDEN CONFIG LOGS
                 const visibleData = data.filter(log => 
                     !['news_alert', 'discount_alert', 'toast_alert', 'button_toggle', 'button_order', 'drop_code', 'drop_config', 'loss_config'].includes(log.log_type)
-                ).slice(0, 4);
+                ).slice(0, 5);
                 
                 const sortedData = visibleData.reverse();
 
@@ -724,7 +753,6 @@
                 
                 if (payload.eventType === 'INSERT') {
                     
-                    // SILENTLY IGNORE BACKGROUND CONFIG UPDATES SO NO POPUP APPEARS
                     const hiddenToastTypes = ['button_toggle', 'button_order', 'drop_code', 'drop_config', 'loss_config'];
                     if (payload.new && hiddenToastTypes.includes(payload.new.log_type)) {
                         return; 

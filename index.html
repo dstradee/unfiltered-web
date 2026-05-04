@@ -97,6 +97,8 @@
         p { color: var(--steel-grey); line-height: 1.6; font-size: 1.1rem; }
 
         .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 0 2rem; width: 100%; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        /* HEADER & HAMBURGER */
         header { padding: 4rem 0 3rem 0; display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid rgba(148, 163, 184, 0.1); }
         .brand-logo { display: flex; align-items: baseline; gap: 8px; font-size: 2rem; }
         .unfiltered-word { border-bottom: 2px solid var(--electric-cyan); padding-bottom: 2px; }
@@ -111,7 +113,8 @@
         .hero-subtitle { max-width: 600px; margin-bottom: 3rem; }
         .hero-subtitle .short-text { display: none; } /* Default desktop hidden */
 
-        .terminal-box { background-color: var(--vantablack); border: 1px solid rgba(148, 163, 184, 0.2); padding: 2rem; max-width: 700px; position: relative; margin-bottom: 2rem;}
+        /* TERMINAL BOX */
+        .terminal-box { background-color: var(--vantablack); border: 1px solid rgba(148, 163, 184, 0.2); padding: 2rem; max-width: 700px; position: relative; margin-bottom: 2rem; }
         .terminal-header { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 1rem; margin-bottom: 1.5rem; }
         .terminal-line { display: flex; gap: 1rem; margin-bottom: 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
         .t-time { color: var(--steel-grey); min-width: 90px; }
@@ -124,8 +127,8 @@
         /* ACTION AREA / BUTTONS */
         .action-area { display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center; }
         
-        /* Fallback for all buttons */
-        .btn { display: inline-block; padding: 1rem 2rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; text-align: center; border: 1px solid var(--electric-cyan); color: var(--electric-cyan); }
+        /* Flex Order Support from DB */
+        .action-area .btn { order: 99; display: inline-block; padding: 1rem 2rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease; text-decoration: none; text-align: center; }
         
         .btn-primary { background-color: transparent; color: var(--electric-cyan); border: 1px solid var(--electric-cyan); box-shadow: inset 0 0 0 transparent, 0 0 10px rgba(0, 242, 255, 0.1); }
         .btn-primary:hover { background-color: rgba(0, 242, 255, 0.1); box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.2), 0 0 15px rgba(0, 242, 255, 0.2); }
@@ -136,14 +139,11 @@
         .btn-gold { background-color: transparent; color: var(--alert-gold); border: 1px solid var(--alert-gold); box-shadow: inset 0 0 0 transparent, 0 0 10px rgba(255, 215, 0, 0.1); }
         .btn-gold:hover { background-color: rgba(255, 215, 0, 0.1); box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.2), 0 0 15px rgba(255, 215, 0, 0.2); }
 
-        /* PC Desktop overrides (Make wrappers invisible to flexbox) */
-        @media (min-width: 769px) {
-            .carousel-wrapper { display: contents; }
-        }
-
-        .hamburger-menu-mobile { display: none; }
+        /* Wrappers para estructuración móvil (transparentes en Desktop) */
+        .carousel-wrapper { display: contents; }
+        .hamburger-menu-mobile { display: contents; }
         .close-menu { display: none; }
-        .mobile-auth-btn { display: none; }
+        .mobile-auth-btn { display: none; } /* Oculto en PC, visible en menú hamburguesa móvil */
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(4px); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 1rem; }
         .modal-content { background-color: var(--obsidian-navy); border: 1px solid var(--electric-cyan); padding: 2.5rem; width: 100%; max-width: 600px; box-shadow: 0 0 30px rgba(0, 242, 255, 0.15); position: relative; max-height: 90vh; overflow-y: auto; }
@@ -191,7 +191,7 @@
                 transition: right 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
             }
             .hamburger-menu-mobile.open { right: 0; }
-            .hamburger-menu-mobile .btn { width: 100%; display: block; margin: 0;}
+            .hamburger-menu-mobile .btn { width: 100%; display: block; order: initial !important; margin: 0;}
             .close-menu { display: block; color: var(--steel-grey); font-family: 'JetBrains Mono', monospace; text-align: right; cursor: pointer; margin-bottom: 2rem; font-weight: bold; border-bottom: 1px solid rgba(148,163,184,0.2); padding-bottom: 1rem;}
             .mobile-auth-btn { display: block; margin-top: auto; border: 1px solid var(--steel-grey); color: var(--steel-grey); text-align: center; padding: 1rem; font-family: monospace; font-weight: bold; text-decoration: none;}
 
@@ -225,14 +225,14 @@
                 100% { transform: translateY(0); }
             }
 
-            /* Botones del Action Area en Móvil */
+            /* Botones del Action Area en Móvil (Secundarios más pequeños y finos) */
             .action-area { flex-direction: column; gap: 0.8rem; width: 100%; }
-            .action-area .btn { width: 100%; padding: 1.2rem; font-size: 1rem; margin: 0; }
+            .action-area .btn { width: 100%; padding: 0.9rem; font-size: 0.8rem; margin: 0; }
             
-            /* Main CTA */
-            .main-cta-mobile { font-size: 1.1rem !important; order: -2 !important; margin-bottom: 0.5rem; }
+            /* Main CTA (Se mantiene GRANDE y protagonista) */
+            .main-cta-mobile { font-size: 1.1rem !important; padding: 1.2rem !important; order: -2 !important; margin-bottom: 0.5rem; }
 
-            /* Carrusel (Solo para Loss y Drop) */
+            /* Carrusel (Solo para Loss y Drop en móvil) */
             .carousel-wrapper { 
                 display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; 
                 width: 100vw; margin-left: -2rem; padding: 0 2rem 1rem 2rem; 
@@ -340,33 +340,35 @@
                 </div>
             </div>
 
-            <!-- ACTION AREA -->
+            <!-- ACTION AREA WITH EMBEDDED HAMBURGER MENU -->
             <div class="action-area" id="actionArea">
                 
-                <!-- PRIMARY CTA -->
+                <!-- PRIMARY CTA (Always visible above the fold) -->
                 <a href="analysis.html" class="btn btn-primary main-cta-mobile" id="btn-dg" style="box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);">[ START FREE ANALYSIS ]</a>
                 
-                <!-- CAROUSEL WRAPPER (Acts as a swipe row on mobile, invisible wrapper on PC) -->
-                <div class="carousel-wrapper" id="carouselWrapper"></div>
+                <!-- THESE BUTTONS SHOW ON SCREEN ON PC, BUT ON MOBILE THEY ARE MOVED INTO THE HAMBURGER VIA JAVASCRIPT -->
+                <div class="carousel-wrapper" id="carouselWrapper">
+                    <!-- Javascript inserta aquí Loss y Drop en móvil -->
+                </div>
+                
+                <a href="loss.html" class="btn secondary-btn" id="btn-loss" style="color: #FF3131; border: 1px solid #FF3131; background: rgba(255,49,49,0.05); display: none;">[ CRITICAL FAILURE LOG ]</a>
+                <a href="#" class="btn secondary-btn" id="btn-drop" style="display: none;">[ DROP ACCESS ]</a>
+                <a href="#" class="btn secondary-btn" id="btn-calculadora" style="display: none;">[ CALCULATOR ]</a>
+                <a href="#" class="btn secondary-btn" id="btn-VIP" style="display: none;">[ VIP ACCESS ]</a>
+
+                <!-- HAMBURGER MENU (Hidden overlay on mobile, hidden on PC) -->
+                <div class="hamburger-menu-mobile" id="hamburgerMenu">
+                    <div class="close-menu" id="closeMenuBtn">[ X ] CLOSE PROTOCOL</div>
+                    
+                    <!-- Container for buttons moved via JS -->
+                    <div id="mobileMenuBtnContainer" style="display: flex; flex-direction: column; gap: 1rem;"></div>
+                    
+                    <!-- Mobile Auth Link -->
+                    <a href="#" class="mobile-auth-btn open-login-trigger">[ ARCHITECT AUTH ]</a>
+                </div>
 
             </div>
         </main>
-    </div>
-
-    <!-- HAMBURGER MENU (Rendered outside main layout for mobile) -->
-    <div class="hamburger-menu-mobile" id="hamburgerMenu">
-        <div class="close-menu" id="closeMenuBtn">[ X ] CLOSE PROTOCOL</div>
-        
-        <!-- Container for dynamically moved buttons -->
-        <div id="mobileMenuBtnContainer" style="display: flex; flex-direction: column; gap: 1rem;">
-            <!-- Buttons initialize here, JS routes them later -->
-            <a href="loss.html" class="btn" id="btn-loss" style="color: #FF3131; border: 1px solid #FF3131; background: rgba(255,49,49,0.05); display: none;">[ CRITICAL FAILURE LOG ]</a>
-            <a href="#" class="btn btn-purple" id="btn-drop" style="display: none;">[ DROP ACCESS ]</a>
-            <a href="#" class="btn btn-primary" id="btn-calculadora" style="display: none;">[ CALCULATOR ]</a>
-            <a href="#" class="btn btn-gold" id="btn-VIP" style="display: none;">[ VIP ACCESS ]</a>
-        </div>
-        
-        <a href="#" class="mobile-auth-btn open-login-trigger">[ ARCHITECT AUTH ]</a>
     </div>
 
     <!-- CALC MODAL -->
@@ -517,21 +519,20 @@
 
         function routeButtonsForMobile() {
             const isMobile = window.innerWidth <= 768;
-            // Todos los botones que empiecen por "btn-" (excepto el main)
-            const allBtns = document.querySelectorAll('.btn[id^="btn-"]:not(#btn-dg)');
+            const secondaryBtns = document.querySelectorAll('.secondary-btn');
             
-            allBtns.forEach(btn => {
-                if (isMobile) {
-                    if (MAIN_SCREEN_BUTTONS.includes(btn.id)) {
-                        carouselWrapper.appendChild(btn); 
+            secondaryBtns.forEach(btn => {
+                if (btn.style.display !== 'none') {
+                    if (isMobile) {
+                        if (MAIN_SCREEN_BUTTONS.includes(btn.id)) {
+                            carouselWrapper.appendChild(btn); 
+                        } else {
+                            mobileMenuBtnContainer.appendChild(btn); 
+                        }
                     } else {
-                        mobileMenuBtnContainer.appendChild(btn); 
+                        // En PC, todo vuelve al Action Area principal
+                        actionArea.appendChild(btn);
                     }
-                    if (btn.style.display !== 'none') btn.style.display = 'block'; 
-                } else {
-                    // Desktop: Todo al wrapper (actúa transparente en PC)
-                    carouselWrapper.appendChild(btn);
-                    if (btn.style.display !== 'none') btn.style.display = 'inline-block'; 
                 }
             });
         }
@@ -640,7 +641,9 @@
                         const orderArray = JSON.parse(orderLog.value_text);
                         orderArray.forEach((btnId, index) => {
                             const btnElement = document.getElementById(btnId);
-                            if (btnElement) btnElement.style.order = index + 1; 
+                            if (btnElement) {
+                                btnElement.style.order = index + 1; 
+                            }
                         });
                     } catch(e){}
                 }
@@ -694,11 +697,10 @@
                                     this.style.boxShadow = `inset 0 0 0 transparent, 0 0 10px ${shadowColor}`;
                                 };
                             } else if (!config.color && config.state === 'show') {
-                                // Fallback for newly added buttons without color
-                                btnElement.style.color = 'var(--electric-cyan)';
-                                btnElement.style.borderColor = 'var(--electric-cyan)';
-                                btnElement.style.boxShadow = 'none';
-                                btnElement.style.backgroundColor = 'transparent';
+                                btnElement.style.color = '';
+                                btnElement.style.borderColor = '';
+                                btnElement.style.boxShadow = '';
+                                btnElement.style.backgroundColor = '';
                                 btnElement.onmouseenter = null;
                                 btnElement.onmouseleave = null;
                             }
@@ -708,7 +710,7 @@
                     }
                 }
 
-                // Call routing AFTER everything is displayed properly
+                // Llamamos a la función para enrutar los botones a donde toca (pantalla o menú)
                 routeButtonsForMobile();
 
                 // --- 3. TERMINAL ---
@@ -717,7 +719,7 @@
                 // IGNORE HIDDEN CONFIG LOGS
                 const visibleData = data.filter(log => 
                     !['news_alert', 'discount_alert', 'toast_alert', 'button_toggle', 'button_order', 'drop_code', 'drop_config', 'loss_config'].includes(log.log_type)
-                ).slice(0, 4);
+                ).slice(0, 5); // 5 líneas para que el scroll encaje perfecto
                 
                 const sortedData = visibleData.reverse();
 
@@ -738,7 +740,7 @@
                 });
 
                 terminalOutput.innerHTML += `
-                    <div class="terminal-line" style="margin-top: 1.5rem;">
+                    <div class="terminal-line">
                         <span class="t-value">> C:\\Alpha_Feed\\Awaiting_Input</span><span class="blinking-cursor"></span>
                     </div>
                 `;
@@ -758,7 +760,6 @@
                 
                 if (payload.eventType === 'INSERT') {
                     
-                    // SILENTLY IGNORE BACKGROUND CONFIG UPDATES SO NO POPUP APPEARS
                     const hiddenToastTypes = ['button_toggle', 'button_order', 'drop_code', 'drop_config', 'loss_config'];
                     if (payload.new && hiddenToastTypes.includes(payload.new.log_type)) {
                         return; 

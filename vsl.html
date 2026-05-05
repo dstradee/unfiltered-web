@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE MACHINE MINDSET | Unfiltered Alpha</title>
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Z90RHTXWGV"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-Z90RHTXWGV');
+    </script>
+
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --obsidian-navy: #0B1A30;
+            --electric-cyan: #00F2FF;
+            --crimson-war: #FF3131;
+            --smoke-white: #F8FAFC;
+            --steel-grey: #94A3B8;
+            --vantablack: #020617;
+            --alert-gold: #FFD700;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
+
+        body {
+            background-color: var(--obsidian-navy); color: var(--smoke-white);
+            font-family: 'Inter', sans-serif; min-height: 100vh;
+            display: flex; flex-direction: column; overflow-x: hidden; position: relative;
+        }
+
+        /* --- BACKGROUND (Blueprint & Noise) --- */
+        .blueprint-layer { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; 
+            background-color: var(--obsidian-navy);
+            background-image: 
+                linear-gradient(rgba(0, 242, 255, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 242, 255, 0.15) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.6; mix-blend-mode: screen; 
+        }
+        .noise-layer { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1; opacity: 0.06; background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E'); }
+
+        .container { position: relative; z-index: 10; max-width: 900px; margin: 0 auto; padding: 0 2rem; width: 100%; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        /* HEADER (Minimalist) */
+        header { padding: 3rem 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(148, 163, 184, 0.1); }
+        .brand-logo { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 8px; color: var(--smoke-white); }
+        .unfiltered-word { border-bottom: 2px solid var(--electric-cyan); padding-bottom: 2px; }
+        
+        .auth-link { font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); text-decoration: none; font-size: 0.75rem; letter-spacing: 1px; transition: color 0.2s ease; cursor: pointer; }
+        .auth-link:hover { color: var(--electric-cyan); }
+
+        /* VSL MAIN CONTENT */
+        main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 3rem 0 10vh 0; text-align: center; } 
+        
+        .vsl-headline { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 6vw, 5rem); letter-spacing: 4px; line-height: 1; margin-bottom: 1rem; text-shadow: 4px 4px 0px var(--vantablack); }
+        .vsl-subhead { font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); font-size: 1rem; max-width: 700px; margin-bottom: 2.5rem; line-height: 1.6; }
+
+        /* CUSTOM VIDEO PLAYER */
+        .video-wrapper { 
+            width: 100%; background-color: var(--vantablack); border: 1px solid var(--electric-cyan); 
+            box-shadow: 0 0 40px rgba(0, 242, 255, 0.15); margin-bottom: 3rem; position: relative;
+            transition: all 0.3s ease;
+        }
+        .video-header { 
+            display: flex; justify-content: space-between; padding: 0.8rem 1.5rem; 
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2); font-family: 'JetBrains Mono', monospace; 
+            font-size: 0.75rem; font-weight: bold; color: var(--electric-cyan);
+            background: rgba(2, 6, 23, 0.8);
+        }
+        .video-container { position: relative; width: 100%; padding-top: 56.25%; /* 16:9 Aspect Ratio */ background-color: #000; }
+        .video-container video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; outline: none; }
+
+        /* GIANT CTA BUTTON */
+        .giant-cta {
+            display: inline-block; width: 100%; max-width: 600px; padding: 1.5rem 2rem; 
+            font-family: 'JetBrains Mono', monospace; font-weight: 900; font-size: 1.5rem; 
+            text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: all 0.2s ease; 
+            text-decoration: none; text-align: center; border: none;
+            background-color: var(--electric-cyan); color: var(--vantablack);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
+            animation: pulse-cta 2s infinite;
+        }
+        .giant-cta:hover { transform: scale(1.02); box-shadow: 0 0 40px rgba(0, 242, 255, 0.6); }
+
+        @keyframes pulse-cta {
+            0% { box-shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(0, 242, 255, 0.6); }
+            100% { box-shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
+        }
+
+        /* --- ADMIN MODALS & CONTROLS --- */
+        .btn-edit-float { position: fixed; bottom: 30px; right: 30px; background-color: var(--smoke-white); color: var(--vantablack); padding: 1rem 1.5rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; cursor: pointer; z-index: 100; border: none; box-shadow: 0 0 20px rgba(255, 255, 255, 0.2); display: none; }
+        .btn-edit-float:hover { background-color: var(--steel-grey); }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(4px); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 1rem; }
+        .modal-content { background-color: var(--obsidian-navy); border: 1px solid var(--electric-cyan); padding: 2.5rem; width: 100%; max-width: 600px; box-shadow: 0 0 30px rgba(0, 242, 255, 0.15); position: relative; max-height: 90vh; overflow-y: auto; }
+        .close-modal { position: absolute; top: 1rem; right: 1.5rem; color: var(--steel-grey); font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; cursor: pointer; transition: color 0.2s; }
+        .close-modal:hover { color: var(--crimson-war); }
+        .modal-header { font-family: 'Bebas Neue', sans-serif; font-size: 2.5rem; color: var(--smoke-white); letter-spacing: 2px; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 0.5rem; }
+        
+        .input-group { margin-bottom: 1.2rem; }
+        .input-group label { display: block; font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); font-size: 0.85rem; margin-bottom: 0.5rem; }
+        .input-group input, .input-group textarea { width: 100%; background-color: var(--vantablack); border: 1px solid var(--steel-grey); color: var(--electric-cyan); padding: 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; outline: none; }
+        .input-group input:focus, .input-group textarea:focus { border-color: var(--electric-cyan); }
+        .input-group textarea { resize: vertical; min-height: 60px; }
+
+        .btn-modal { display: block; width: 100%; padding: 1rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem; text-align: center; text-decoration: none; border: 1px solid var(--electric-cyan); background-color: transparent; color: var(--electric-cyan); cursor: pointer; transition: all 0.2s; }
+        .btn-modal:hover { background-color: rgba(0, 242, 255, 0.1); }
+
+        /* Cloudinary Guide */
+        .guide-box { background-color: rgba(2, 6, 23, 0.5); border-left: 2px solid var(--alert-gold); padding: 1rem; margin-bottom: 1.5rem; font-family: 'Inter', sans-serif; font-size: 0.8rem; color: var(--steel-grey); }
+        .guide-box h4 { color: var(--alert-gold); margin-bottom: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;}
+
+        @media (max-width: 768px) {
+            header { padding: 2rem 0; }
+            .vsl-headline { font-size: 2.8rem; }
+            .vsl-subhead { font-size: 0.85rem; padding: 0 1rem; }
+            .giant-cta { font-size: 1.2rem; padding: 1.2rem; }
+            .video-header { font-size: 0.65rem; padding: 0.6rem 1rem; }
+            .modal-content { padding: 1.5rem; }
+            .btn-edit-float { bottom: 15px; right: 15px; padding: 0.8rem 1rem; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="blueprint-layer"></div>
+    <div class="noise-layer"></div>
+
+    <div class="container">
+        <!-- HEADER -->
+        <header>
+            <div class="brand-logo logo-text">
+                <span class="unfiltered-word" id="logoAccent">UNFILTERED</span> <span>ALPHA</span>
+            </div>
+            <span class="auth-link" id="authToggleBtn">[ AUTH ]</span>
+        </header>
+
+        <!-- VSL CONTENT -->
+        <main>
+            <h1 class="vsl-headline" id="displayHeadline">THE MACHINE MINDSET</h1>
+            <p class="vsl-subhead" id="displaySubhead">Unlearn retail theory. Observe the institutional footprint. If you cannot control your emotions, you need the machine.</p>
+            
+            <div class="video-wrapper" id="displayWrapper">
+                <div class="video-header" id="displayVideoHeader">
+                    <span>> DECRYPTING_TRANSMISSION</span>
+                    <span>[ SIGNAL_SECURED ]</span>
+                </div>
+                <div class="video-container">
+                    <video id="displayVideo" controls controlslist="nodownload">
+                        <!-- Default test video provided as requested -->
+                        <source id="displayVideoSrc" src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                        [SYS_ERROR] Video playback failed.
+                    </video>
+                </div>
+            </div>
+
+            <a href="https://unfilteredalpha.gumroad.com/l/qoabdg" target="_blank" class="giant-cta" id="displayBtn">
+                [ ACCESS THE VAULT ]
+            </a>
+        </main>
+    </div>
+
+    <!-- FLOAT EDIT BUTTON -->
+    <button class="btn-edit-float" id="btnEditMode">[ ⚙️ EDIT VSL SYSTEM ]</button>
+
+    <!-- LOGIN MODAL -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-content" style="max-width: 400px; border-color: var(--smoke-white); box-shadow: 0 0 30px rgba(248, 250, 252, 0.1);">
+            <div class="close-modal" id="closeLoginBtn">[ X ]</div>
+            <div class="modal-header" style="color: var(--smoke-white); border-bottom-color: rgba(255,255,255,0.2);">ARCHITECT AUTH</div>
+            
+            <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--steel-grey); margin-bottom: 1.5rem;">
+                * System locked. VSL routing restricted to authorized personnel.
+            </p>
+
+            <div class="input-group">
+                <label style="color: var(--smoke-white);">> IDENTIFIER (EMAIL)</label>
+                <input type="email" id="adminEmail" placeholder="architect@..." autocomplete="off" style="border-color: var(--steel-grey); color: var(--electric-cyan);">
+            </div>
+            <div class="input-group" style="margin-bottom: 1.5rem;">
+                <label style="color: var(--smoke-white);">> PASSPHRASE</label>
+                <input type="password" id="adminPass" placeholder="••••••••" style="border-color: var(--steel-grey); color: var(--electric-cyan);">
+            </div>
+            
+            <div id="loginError" style="color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 1rem; text-align: center; display: none;">[SYS_ERROR] Invalid credentials.</div>
+
+            <button type="button" class="btn-modal" style="color: var(--vantablack); background: var(--smoke-white); border-color: var(--smoke-white);" id="executeLoginBtn">
+                [ VERIFY CLEARANCE ]
+            </button>
+        </div>
+    </div>
+
+    <!-- CMS / EDITOR MODAL -->
+    <div class="modal-overlay" id="editorModal">
+        <div class="modal-content">
+            <div class="close-modal" id="closeEditorBtn">[ X ]</div>
+            <div class="modal-header" style="color: var(--electric-cyan);">VSL SYSTEM EDITOR</div>
+
+            <!-- THEME COLOR PICKER -->
+            <div class="input-group" style="margin-bottom: 1.5rem; border-left: 3px solid var(--electric-cyan); padding-left: 1rem;">
+                <label>> THEME COLOR (HEX)</label>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <input type="color" id="editThemeColorPicker" value="#00F2FF" style="width: 40px; height: 35px; border:none; background:transparent; cursor:pointer;" oninput="document.getElementById('editThemeColorHex').value = this.value">
+                    <input type="text" id="editThemeColorHex" value="#00F2FF" style="text-align: center; padding: 0.4rem; height: 35px;" oninput="let val = this.value.trim(); if(!val.startsWith('#') && val.length>0) val='#'+val; if(/^#[0-9A-Fa-f]{6}$/.test(val)){document.getElementById('editThemeColorPicker').value=val;}">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>> MAIN HEADLINE</label>
+                <input type="text" id="editHeadline" placeholder="Ex: THE MACHINE MINDSET">
+            </div>
+
+            <div class="input-group">
+                <label>> SUBHEADLINE TEXT</label>
+                <textarea id="editSubhead" placeholder="Write your subheadline here..."></textarea>
+            </div>
+
+            <!-- CLOUDINARY GUIDE -->
+            <div class="guide-box">
+                <h4>>> UPLOADING A VIDEO</h4>
+                Upload your VSL to <strong>Cloudinary.com</strong>, copy the URL of the media file, and paste it here. It MUST end in <strong>.mp4</strong>.
+            </div>
+
+            <div class="input-group">
+                <label>> VIDEO URL (.MP4)</label>
+                <input type="url" id="editVideo" placeholder="https://res.cloudinary.com/.../video.mp4">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
+                <div class="input-group">
+                    <label>> CTA BUTTON TEXT</label>
+                    <input type="text" id="editBtnText" placeholder="Ex: [ ACCESS THE VAULT ]">
+                </div>
+                <div class="input-group">
+                    <label>> CTA BUTTON LINK (URL)</label>
+                    <input type="url" id="editBtnLink" placeholder="https://gumroad.com/...">
+                </div>
+            </div>
+
+            <!-- SAVE BUTTON -->
+            <button type="button" class="btn-modal" style="margin-top: 1rem;" id="saveConfigBtn">
+                [ SAVE & DEPLOY TO VSL ]
+            </button>
+            <div id="saveFeedback" style="text-align: center; margin-top: 1rem; font-family: monospace; font-size: 0.85rem; height: 20px;"></div>
+            
+        </div>
+    </div>
+
+    <script>
+        // --- SUPABASE CONFIGURATION ---
+        const SUPABASE_URL = 'https://qtpuipgkytzjnckkkwnl.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_eA2g7-rTvcPcfz_dVl2aWg_Ca5P7t93';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // --- DEFAULT TEMPLATE ---
+        const defaultVSLTemplate = {
+            themeColor: "#00F2FF",
+            headline: "THE MACHINE MINDSET",
+            subhead: "Unlearn retail theory. Observe the institutional footprint. If you cannot control your emotions, you need the machine.",
+            video: "https://www.w3schools.com/html/mov_bbb.mp4",
+            btnText: "[ ACCESS THE VAULT ]",
+            btnLink: "https://unfilteredalpha.gumroad.com/l/qoabdg"
+        };
+
+        // --- UI ELEMENTS ---
+        const elHeadline = document.getElementById('displayHeadline');
+        const elSubhead = document.getElementById('displaySubhead');
+        const elVideoSrc = document.getElementById('displayVideoSrc');
+        const elVideo = document.getElementById('displayVideo');
+        const elBtn = document.getElementById('displayBtn');
+        const elWrapper = document.getElementById('displayWrapper');
+        const elVideoHeader = document.getElementById('displayVideoHeader');
+        const elLogoAccent = document.getElementById('logoAccent');
+
+        const inputThemeColorHex = document.getElementById('editThemeColorHex');
+        const inputThemeColorPicker = document.getElementById('editThemeColorPicker');
+        const inputHeadline = document.getElementById('editHeadline');
+        const inputSubhead = document.getElementById('editSubhead');
+        const inputVideo = document.getElementById('editVideo');
+        const inputBtnText = document.getElementById('editBtnText');
+        const inputBtnLink = document.getElementById('editBtnLink');
+
+        const authToggleBtn = document.getElementById('authToggleBtn');
+        const loginModal = document.getElementById('loginModal');
+        const editorModal = document.getElementById('editorModal');
+        const closeLoginBtn = document.getElementById('closeLoginBtn');
+        const closeEditorBtn = document.getElementById('closeEditorBtn');
+        const btnEditMode = document.getElementById('btnEditMode');
+        const executeLoginBtn = document.getElementById('executeLoginBtn');
+        const saveConfigBtn = document.getElementById('saveConfigBtn');
+        const loginErrorMsg = document.getElementById('loginError');
+        const saveFeedback = document.getElementById('saveFeedback');
+
+        // --- MODAL LOGIC ---
+        authToggleBtn.addEventListener('click', async () => {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                await supabaseClient.auth.signOut();
+                checkSession();
+            } else {
+                loginModal.style.display = 'flex';
+                loginErrorMsg.style.display = 'none';
+            }
+        });
+        
+        closeLoginBtn.addEventListener('click', () => { loginModal.style.display = 'none'; });
+        btnEditMode.addEventListener('click', () => { editorModal.style.display = 'flex'; });
+        closeEditorBtn.addEventListener('click', () => { editorModal.style.display = 'none'; });
+
+        // --- DYNAMIC INJECTION (HEX to RGB converter for shadows) ---
+        function hexToRgba(hex, opacity) {
+            let c;
+            if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+                c= hex.substring(1).split('');
+                if(c.length== 3){
+                    c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+                }
+                c= '0x'+c.join('');
+                return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+opacity+')';
+            }
+            return `rgba(0, 242, 255, ${opacity})`; // fallback cyan
+        }
+
+        // --- 1. LOAD CONFIGURATION ---
+        async function loadVSLConfig() {
+            try {
+                const { data, error } = await supabaseClient.from('logs').select('*').eq('log_type', 'vsl_config').order('created_at', { ascending: false }).limit(1);
+                if (error) throw error;
+                
+                let configToApply = defaultVSLTemplate;
+                if (data && data.length > 0 && data[0].value_text) {
+                    configToApply = JSON.parse(data[0].value_text);
+                }
+                
+                applyConfigToPage(configToApply);
+                populateEditor(configToApply);
+
+            } catch (err) {
+                console.error("Failed to load VSL config", err);
+                applyConfigToPage(defaultVSLTemplate);
+                populateEditor(defaultVSLTemplate);
+            }
+        }
+
+        function applyConfigToPage(config) {
+            let color = config.themeColor || '#00F2FF';
+            let shadowGlow = hexToRgba(color, 0.3);
+            let shadowHeavy = hexToRgba(color, 0.6);
+            let borderGlow = hexToRgba(color, 0.15);
+
+            // Apply Colors
+            elLogoAccent.style.borderBottomColor = color;
+            elWrapper.style.borderColor = color;
+            elWrapper.style.boxShadow = `0 0 40px ${borderGlow}`;
+            elVideoHeader.style.color = color;
+            
+            elBtn.style.backgroundColor = color;
+            // Injecting custom keyframes for the pulsing CTA button based on theme color
+            const style = document.createElement('style');
+            style.innerHTML = `
+                @keyframes custom-pulse-cta {
+                    0% { box-shadow: 0 0 10px ${shadowGlow}; }
+                    50% { box-shadow: 0 0 30px ${shadowHeavy}; }
+                    100% { box-shadow: 0 0 10px ${shadowGlow}; }
+                }
+                .giant-cta { animation: custom-pulse-cta 2s infinite !important; }
+            `;
+            document.head.appendChild(style);
+
+            // Apply Text
+            elHeadline.innerText = config.headline || "THE MACHINE MINDSET";
+            elSubhead.innerText = config.subhead || "";
+            elBtn.innerText = config.btnText || "[ ACCESS THE VAULT ]";
+            elBtn.href = config.btnLink || "#";
+
+            // Apply Video
+            if(config.video && elVideoSrc.src !== config.video) {
+                elVideoSrc.src = config.video;
+                elVideo.load(); 
+            }
+        }
+
+        function populateEditor(config) {
+            inputThemeColorHex.value = config.themeColor || '#00F2FF';
+            inputThemeColorPicker.value = config.themeColor || '#00F2FF';
+            inputHeadline.value = config.headline || "";
+            inputSubhead.value = config.subhead || "";
+            inputVideo.value = config.video || "";
+            inputBtnText.value = config.btnText || "";
+            inputBtnLink.value = config.btnLink || "";
+        }
+
+        // --- 2. AUTHENTICATION ---
+        async function checkSession() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                authToggleBtn.innerText = '[ LOGOUT ]';
+                btnEditMode.style.display = 'block'; 
+            } else {
+                authToggleBtn.innerText = '[ AUTH ]';
+                btnEditMode.style.display = 'none'; 
+            }
+        }
+
+        executeLoginBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('adminEmail').value.trim();
+            const pass = document.getElementById('adminPass').value;
+            
+            if(!email || !pass) { loginErrorMsg.innerText = "[SYS_ERROR] Credentials required."; loginErrorMsg.style.display = 'block'; return; }
+            executeLoginBtn.innerText = '[ VERIFYING... ]';
+            loginErrorMsg.style.display = 'none';
+
+            try {
+                const { error } = await supabaseClient.auth.signInWithPassword({ email: email, password: pass });
+                if (error) throw error;
+                loginModal.style.display = 'none';
+                checkSession();
+            } catch (error) {
+                loginErrorMsg.innerText = "[SYS_ERROR] Access denied."; loginErrorMsg.style.display = 'block';
+                executeLoginBtn.innerText = '[ VERIFY CLEARANCE ]';
+            }
+        });
+
+        // --- 3. SAVE TO DATABASE ---
+        saveConfigBtn.addEventListener('click', async () => {
+            saveConfigBtn.innerText = '[ SAVING... ]';
+            saveConfigBtn.style.pointerEvents = 'none';
+            saveFeedback.innerText = '';
+
+            let safeColor = inputThemeColorHex.value.trim();
+            if(!safeColor.startsWith('#') && /^[0-9A-Fa-f]{6}$/.test(safeColor)) safeColor = '#' + safeColor;
+            if(!safeColor) safeColor = '#00F2FF';
+
+            const newConfig = {
+                themeColor: safeColor,
+                headline: inputHeadline.value.trim(),
+                subhead: inputSubhead.value.trim(),
+                video: inputVideo.value.trim(),
+                btnText: inputBtnText.value.trim(),
+                btnLink: inputBtnLink.value.trim()
+            };
+
+            try {
+                // Delete old config to keep DB clean
+                await supabaseClient.from('logs').delete().eq('log_type', 'vsl_config');
+                // Insert new JSON config
+                const payload = JSON.stringify(newConfig);
+                const { error } = await supabaseClient.from('logs').insert([{ 
+                    log_time: '[SYS_UPDATE]', action_text: 'VSL Layout Configured', value_text: payload, log_type: 'vsl_config' 
+                }]);
+                
+                if (error) throw error;
+                
+                saveFeedback.style.color = "var(--electric-cyan)";
+                saveFeedback.innerText = "[ SUCCESS ] PROTOCOL UPDATED.";
+                
+                applyConfigToPage(newConfig);
+
+                setTimeout(() => { editorModal.style.display = 'none'; saveFeedback.innerText = ''; }, 1000);
+            } catch(e) {
+                saveFeedback.style.color = "var(--crimson-war)";
+                saveFeedback.innerText = "[ ERROR ] CLOUD SYNC FAILED.";
+            } finally {
+                saveConfigBtn.innerText = '[ SAVE & DEPLOY TO VSL ]';
+                saveConfigBtn.style.pointerEvents = 'auto';
+            }
+        });
+
+        // GA4 CTA Tracker
+        elBtn.addEventListener('click', () => {
+            if (typeof gtag === 'function') {
+                gtag('event', 'generate_lead', {
+                    'event_category': 'conversion',
+                    'event_label': 'VSL Giant CTA Click'
+                });
+            }
+        });
+
+        // GA4 Video Tracker
+        elVideo.addEventListener('play', () => {
+            if (typeof gtag === 'function') {
+                gtag('event', 'video_start', {
+                    'video_title': 'VSL Main Video'
+                });
+            }
+        }, { once: true }); // Solo lo registra una vez por recarga
+
+        // Initialization
+        loadVSLConfig();
+        checkSession();
+
+        // Realtime Listener
+        supabaseClient.channel('public:vsl')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'logs', filter: 'log_type=eq.vsl_config' }, payload => {
+                if (payload.new && payload.new.value_text) {
+                    applyConfigToPage(JSON.parse(payload.new.value_text));
+                }
+            })
+            .subscribe();
+
+    </script>
+</body>
+</html>

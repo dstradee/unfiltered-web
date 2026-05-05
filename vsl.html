@@ -39,7 +39,7 @@
             display: flex; flex-direction: column; overflow-x: hidden; position: relative;
         }
 
-        /* --- BACKGROUND (Blueprint & Noise) --- */
+        /* --- BACKGROUND --- */
         .blueprint-layer { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; 
             background-color: var(--obsidian-navy);
@@ -51,20 +51,17 @@
         }
         .noise-layer { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1; opacity: 0.06; background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E'); }
 
-        .container { position: relative; z-index: 10; max-width: 900px; margin: 0 auto; padding: 0 2rem; width: 100%; display: flex; flex-direction: column; min-height: 100vh; }
+        .container { position: relative; z-index: 10; max-width: 900px; margin: 0 auto; padding: 2rem; width: 100%; display: flex; flex-direction: column; min-height: 100vh; justify-content: center; align-items: center; text-align: center; }
         
         /* HEADER (Minimalist) */
-        header { padding: 3rem 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(148, 163, 184, 0.1); }
-        .brand-logo { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 8px; color: var(--smoke-white); }
+        header { position: absolute; top: 0; left: 0; width: 100%; padding: 2rem; display: flex; justify-content: space-between; align-items: center; z-index: 20; }
+        .brand-logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 4px; color: var(--smoke-white); }
         .unfiltered-word { border-bottom: 2px solid var(--electric-cyan); padding-bottom: 2px; }
         
         .auth-link { font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); text-decoration: none; font-size: 0.75rem; letter-spacing: 1px; transition: color 0.2s ease; cursor: pointer; }
         .auth-link:hover { color: var(--electric-cyan); }
 
-        /* VSL MAIN CONTENT */
-        main { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 3rem 0 10vh 0; text-align: center; } 
-        
-        .vsl-headline { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 6vw, 5rem); letter-spacing: 4px; line-height: 1; margin-bottom: 1rem; text-shadow: 4px 4px 0px var(--vantablack); }
+        .vsl-headline { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 6vw, 5rem); letter-spacing: 4px; line-height: 1; margin-bottom: 1rem; margin-top: 3rem; text-shadow: 4px 4px 0px var(--vantablack); }
         .vsl-subhead { font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); font-size: 1rem; max-width: 700px; margin-bottom: 2.5rem; line-height: 1.6; }
 
         /* CUSTOM VIDEO PLAYER */
@@ -79,26 +76,41 @@
             font-size: 0.75rem; font-weight: bold; color: var(--electric-cyan);
             background: rgba(2, 6, 23, 0.8);
         }
-        .video-container { position: relative; width: 100%; padding-top: 56.25%; /* 16:9 Aspect Ratio */ background-color: #000; }
+        .video-container { position: relative; width: 100%; padding-top: 56.25%; background-color: #000; }
         .video-container video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; outline: none; }
 
-        /* GIANT CTA BUTTON */
-        .giant-cta {
-            display: inline-block; width: 100%; max-width: 600px; padding: 1.5rem 2rem; 
-            font-family: 'JetBrains Mono', monospace; font-weight: 900; font-size: 1.5rem; 
-            text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: all 0.2s ease; 
-            text-decoration: none; text-align: center; border: none;
-            background-color: var(--electric-cyan); color: var(--vantablack);
-            box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
-            animation: pulse-cta 2s infinite;
+        /* --- ACCESS GATE (FORM) --- */
+        .gate-container {
+            display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 600px; gap: 1rem;
         }
-        .giant-cta:hover { transform: scale(1.02); box-shadow: 0 0 40px rgba(0, 242, 255, 0.6); }
+        
+        .gate-input {
+            width: 100%; padding: 1.2rem; background-color: rgba(2, 6, 23, 0.8); 
+            border: 1px solid var(--steel-grey); color: var(--electric-cyan); 
+            font-family: 'JetBrains Mono', monospace; font-size: 1rem; text-align: center;
+            outline: none; transition: all 0.3s ease; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        .gate-input:focus { border-color: var(--electric-cyan); box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.1); }
+        .gate-input::placeholder { color: var(--steel-grey); opacity: 0.6; }
 
-        @keyframes pulse-cta {
-            0% { box-shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
-            50% { box-shadow: 0 0 30px rgba(0, 242, 255, 0.6); }
-            100% { box-shadow: 0 0 10px rgba(0, 242, 255, 0.3); }
+        .gate-error {
+            color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; 
+            font-size: 0.85rem; font-weight: bold; display: none; text-align: center;
         }
+
+        .giant-cta {
+            display: inline-block; width: 100%; padding: 1.5rem 2rem; 
+            font-family: 'JetBrains Mono', monospace; font-weight: 900; font-size: 1.5rem; 
+            text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: all 0.3s ease; 
+            text-decoration: none; text-align: center; border: 1px solid var(--electric-cyan);
+            background-color: transparent; color: var(--electric-cyan);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.1);
+        }
+        .giant-cta:hover:not(:disabled) { 
+            background-color: var(--electric-cyan); color: var(--vantablack);
+            box-shadow: 0 0 40px rgba(0, 242, 255, 0.4); 
+        }
+        .giant-cta:disabled { cursor: not-allowed; opacity: 0.7; }
 
         /* --- ADMIN MODALS & CONTROLS --- */
         .btn-edit-float { position: fixed; bottom: 30px; right: 30px; background-color: var(--smoke-white); color: var(--vantablack); padding: 1rem 1.5rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; cursor: pointer; z-index: 100; border: none; box-shadow: 0 0 20px rgba(255, 255, 255, 0.2); display: none; }
@@ -119,16 +131,17 @@
         .btn-modal { display: block; width: 100%; padding: 1rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem; text-align: center; text-decoration: none; border: 1px solid var(--electric-cyan); background-color: transparent; color: var(--electric-cyan); cursor: pointer; transition: all 0.2s; }
         .btn-modal:hover { background-color: rgba(0, 242, 255, 0.1); }
 
-        /* Cloudinary Guide */
         .guide-box { background-color: rgba(2, 6, 23, 0.5); border-left: 2px solid var(--alert-gold); padding: 1rem; margin-bottom: 1.5rem; font-family: 'Inter', sans-serif; font-size: 0.8rem; color: var(--steel-grey); }
         .guide-box h4 { color: var(--alert-gold); margin-bottom: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;}
 
         @media (max-width: 768px) {
-            header { padding: 2rem 0; }
-            .vsl-headline { font-size: 2.8rem; }
+            .container { padding: 1rem; }
+            header { padding: 1rem; }
+            .vsl-headline { font-size: 2.5rem; margin-top: 2rem;}
             .vsl-subhead { font-size: 0.85rem; padding: 0 1rem; }
             .giant-cta { font-size: 1.2rem; padding: 1.2rem; }
             .video-header { font-size: 0.65rem; padding: 0.6rem 1rem; }
+            .gate-input { font-size: 0.9rem; padding: 1rem; }
             .modal-content { padding: 1.5rem; }
             .btn-edit-float { bottom: 15px; right: 15px; padding: 0.8rem 1rem; font-size: 0.8rem; }
         }
@@ -139,38 +152,38 @@
     <div class="blueprint-layer"></div>
     <div class="noise-layer"></div>
 
+    <header>
+        <div class="brand-logo logo-text">
+            <span class="unfiltered-word" id="logoAccent">UNFILTERED</span> <span>ALPHA</span>
+        </div>
+        <span class="auth-link" id="authToggleBtn">[ AUTH ]</span>
+    </header>
+
     <div class="container">
-        <!-- HEADER -->
-        <header>
-            <div class="brand-logo logo-text">
-                <span class="unfiltered-word" id="logoAccent">UNFILTERED</span> <span>ALPHA</span>
-            </div>
-            <span class="auth-link" id="authToggleBtn">[ AUTH ]</span>
-        </header>
-
         <!-- VSL CONTENT -->
-        <main>
-            <h1 class="vsl-headline" id="displayHeadline">THE MACHINE MINDSET</h1>
-            <p class="vsl-subhead" id="displaySubhead">Unlearn retail theory. Observe the institutional footprint. If you cannot control your emotions, you need the machine.</p>
-            
-            <div class="video-wrapper" id="displayWrapper">
-                <div class="video-header" id="displayVideoHeader">
-                    <span>> DECRYPTING_TRANSMISSION</span>
-                    <span>[ SIGNAL_SECURED ]</span>
-                </div>
-                <div class="video-container">
-                    <video id="displayVideo" controls controlslist="nodownload">
-                        <!-- Default test video provided as requested -->
-                        <source id="displayVideoSrc" src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-                        [SYS_ERROR] Video playback failed.
-                    </video>
-                </div>
+        <h1 class="vsl-headline" id="displayHeadline">THE MACHINE MINDSET</h1>
+        <p class="vsl-subhead" id="displaySubhead">Unlearn retail theory. Observe the institutional footprint. If you cannot control your emotions, you need the machine.</p>
+        
+        <div class="video-wrapper" id="displayWrapper">
+            <div class="video-header" id="displayVideoHeader">
+                <span>> DECRYPTING_TRANSMISSION</span>
+                <span>[ SIGNAL_SECURED ]</span>
             </div>
+            <div class="video-container">
+                <video id="displayVideo" controls controlslist="nodownload">
+                    <source id="displayVideoSrc" src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                    [SYS_ERROR] Video playback failed.
+                </video>
+            </div>
+        </div>
 
-            <a href="https://unfilteredalpha.gumroad.com/l/qoabdg" target="_blank" class="giant-cta" id="displayBtn">
-                [ ACCESS THE VAULT ]
-            </a>
-        </main>
+        <!-- STRICT ENCLOSURE GATE -->
+        <div class="gate-container">
+            <input type="text" id="license_key" class="gate-input" placeholder="Enter your Gumroad License Key..." autocomplete="off">
+            <div id="gate_error" class="gate-error">Invalid or already used key.</div>
+            <button id="verify_btn" class="giant-cta">[ ACCESS THE VAULT ]</button>
+        </div>
+
     </div>
 
     <!-- FLOAT EDIT BUTTON -->
@@ -228,7 +241,6 @@
                 <textarea id="editSubhead" placeholder="Write your subheadline here..."></textarea>
             </div>
 
-            <!-- CLOUDINARY GUIDE -->
             <div class="guide-box">
                 <h4>>> UPLOADING A VIDEO</h4>
                 Upload your VSL to <strong>Cloudinary.com</strong>, copy the URL of the media file, and paste it here. It MUST end in <strong>.mp4</strong>.
@@ -244,10 +256,6 @@
                     <label>> CTA BUTTON TEXT</label>
                     <input type="text" id="editBtnText" placeholder="Ex: [ ACCESS THE VAULT ]">
                 </div>
-                <div class="input-group">
-                    <label>> CTA BUTTON LINK (URL)</label>
-                    <input type="url" id="editBtnLink" placeholder="https://gumroad.com/...">
-                </div>
             </div>
 
             <!-- SAVE BUTTON -->
@@ -260,27 +268,23 @@
     </div>
 
     <script>
-        // --- SUPABASE CONFIGURATION ---
         const SUPABASE_URL = 'https://qtpuipgkytzjnckkkwnl.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_eA2g7-rTvcPcfz_dVl2aWg_Ca5P7t93';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // --- DEFAULT TEMPLATE ---
         const defaultVSLTemplate = {
             themeColor: "#00F2FF",
             headline: "THE MACHINE MINDSET",
             subhead: "Unlearn retail theory. Observe the institutional footprint. If you cannot control your emotions, you need the machine.",
             video: "https://www.w3schools.com/html/mov_bbb.mp4",
-            btnText: "[ ACCESS THE VAULT ]",
-            btnLink: "https://unfilteredalpha.gumroad.com/l/qoabdg"
+            btnText: "[ ACCESS THE VAULT ]"
         };
 
-        // --- UI ELEMENTS ---
         const elHeadline = document.getElementById('displayHeadline');
         const elSubhead = document.getElementById('displaySubhead');
         const elVideoSrc = document.getElementById('displayVideoSrc');
         const elVideo = document.getElementById('displayVideo');
-        const elBtn = document.getElementById('displayBtn');
+        const verifyBtn = document.getElementById('verify_btn');
         const elWrapper = document.getElementById('displayWrapper');
         const elVideoHeader = document.getElementById('displayVideoHeader');
         const elLogoAccent = document.getElementById('logoAccent');
@@ -291,7 +295,6 @@
         const inputSubhead = document.getElementById('editSubhead');
         const inputVideo = document.getElementById('editVideo');
         const inputBtnText = document.getElementById('editBtnText');
-        const inputBtnLink = document.getElementById('editBtnLink');
 
         const authToggleBtn = document.getElementById('authToggleBtn');
         const loginModal = document.getElementById('loginModal');
@@ -304,7 +307,10 @@
         const loginErrorMsg = document.getElementById('loginError');
         const saveFeedback = document.getElementById('saveFeedback');
 
-        // --- MODAL LOGIC ---
+        const licenseInput = document.getElementById('license_key');
+        const errorMsg = document.getElementById('gate_error');
+
+        // --- AUTH & MODALS ---
         authToggleBtn.addEventListener('click', async () => {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
@@ -320,34 +326,26 @@
         btnEditMode.addEventListener('click', () => { editorModal.style.display = 'flex'; });
         closeEditorBtn.addEventListener('click', () => { editorModal.style.display = 'none'; });
 
-        // --- DYNAMIC INJECTION (HEX to RGB converter for shadows) ---
         function hexToRgba(hex, opacity) {
             let c;
             if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
                 c= hex.substring(1).split('');
-                if(c.length== 3){
-                    c= [c[0], c[0], c[1], c[1], c[2], c[2]];
-                }
+                if(c.length== 3){ c= [c[0], c[0], c[1], c[1], c[2], c[2]]; }
                 c= '0x'+c.join('');
                 return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+opacity+')';
             }
-            return `rgba(0, 242, 255, ${opacity})`; // fallback cyan
+            return `rgba(0, 242, 255, ${opacity})`; 
         }
 
-        // --- 1. LOAD CONFIGURATION ---
-        async function loadVSLConfig() {
+        async function loadVSLContent() {
             try {
                 const { data, error } = await supabaseClient.from('logs').select('*').eq('log_type', 'vsl_config').order('created_at', { ascending: false }).limit(1);
-                if (error) throw error;
-                
                 let configToApply = defaultVSLTemplate;
                 if (data && data.length > 0 && data[0].value_text) {
                     configToApply = JSON.parse(data[0].value_text);
                 }
-                
                 applyConfigToPage(configToApply);
                 populateEditor(configToApply);
-
             } catch (err) {
                 console.error("Failed to load VSL config", err);
                 applyConfigToPage(defaultVSLTemplate);
@@ -357,36 +355,25 @@
 
         function applyConfigToPage(config) {
             let color = config.themeColor || '#00F2FF';
-            let shadowGlow = hexToRgba(color, 0.3);
-            let shadowHeavy = hexToRgba(color, 0.6);
+            let shadowGlow = hexToRgba(color, 0.1);
             let borderGlow = hexToRgba(color, 0.15);
 
-            // Apply Colors
             elLogoAccent.style.borderBottomColor = color;
             elWrapper.style.borderColor = color;
             elWrapper.style.boxShadow = `0 0 40px ${borderGlow}`;
             elVideoHeader.style.color = color;
             
-            elBtn.style.backgroundColor = color;
-            // Injecting custom keyframes for the pulsing CTA button based on theme color
-            const style = document.createElement('style');
-            style.innerHTML = `
-                @keyframes custom-pulse-cta {
-                    0% { box-shadow: 0 0 10px ${shadowGlow}; }
-                    50% { box-shadow: 0 0 30px ${shadowHeavy}; }
-                    100% { box-shadow: 0 0 10px ${shadowGlow}; }
-                }
-                .giant-cta { animation: custom-pulse-cta 2s infinite !important; }
-            `;
-            document.head.appendChild(style);
+            verifyBtn.style.color = color;
+            verifyBtn.style.borderColor = color;
+            verifyBtn.innerText = config.btnText || "[ ACCESS THE VAULT ]";
 
-            // Apply Text
+            // Guardamos el color en el dataset para usarlo luego si hace hover o click
+            verifyBtn.dataset.themeColor = color;
+            verifyBtn.style.boxShadow = `0 0 20px ${shadowGlow}`;
+
             elHeadline.innerText = config.headline || "THE MACHINE MINDSET";
             elSubhead.innerText = config.subhead || "";
-            elBtn.innerText = config.btnText || "[ ACCESS THE VAULT ]";
-            elBtn.href = config.btnLink || "#";
 
-            // Apply Video
             if(config.video && elVideoSrc.src !== config.video) {
                 elVideoSrc.src = config.video;
                 elVideo.load(); 
@@ -400,10 +387,8 @@
             inputSubhead.value = config.subhead || "";
             inputVideo.value = config.video || "";
             inputBtnText.value = config.btnText || "";
-            inputBtnLink.value = config.btnLink || "";
         }
 
-        // --- 2. AUTHENTICATION ---
         async function checkSession() {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
@@ -435,7 +420,6 @@
             }
         });
 
-        // --- 3. SAVE TO DATABASE ---
         saveConfigBtn.addEventListener('click', async () => {
             saveConfigBtn.innerText = '[ SAVING... ]';
             saveConfigBtn.style.pointerEvents = 'none';
@@ -450,14 +434,11 @@
                 headline: inputHeadline.value.trim(),
                 subhead: inputSubhead.value.trim(),
                 video: inputVideo.value.trim(),
-                btnText: inputBtnText.value.trim(),
-                btnLink: inputBtnLink.value.trim()
+                btnText: inputBtnText.value.trim()
             };
 
             try {
-                // Delete old config to keep DB clean
                 await supabaseClient.from('logs').delete().eq('log_type', 'vsl_config');
-                // Insert new JSON config
                 const payload = JSON.stringify(newConfig);
                 const { error } = await supabaseClient.from('logs').insert([{ 
                     log_time: '[SYS_UPDATE]', action_text: 'VSL Layout Configured', value_text: payload, log_type: 'vsl_config' 
@@ -480,30 +461,74 @@
             }
         });
 
-        // GA4 CTA Tracker
-        elBtn.addEventListener('click', () => {
-            if (typeof gtag === 'function') {
-                gtag('event', 'generate_lead', {
-                    'event_category': 'conversion',
-                    'event_label': 'VSL Giant CTA Click'
+        // --- VERIFICATION API CALL ---
+        verifyBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            const key = licenseInput.value.trim();
+            if (!key) {
+                errorMsg.innerText = "Please enter a valid license key.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            errorMsg.style.display = 'none';
+            verifyBtn.innerText = "[ VERIFYING PROTOCOL... ]";
+            verifyBtn.disabled = true;
+
+            try {
+                // LLAMADA A VERCEL SERVERLESS FUNCTION
+                const res = await fetch('/api/verify-license', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ license_key: key })
                 });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.error || 'Verification failed');
+                }
+
+                const themeColor = verifyBtn.dataset.themeColor || 'var(--electric-cyan)';
+                verifyBtn.style.backgroundColor = themeColor;
+                verifyBtn.style.color = 'var(--vantablack)';
+                verifyBtn.innerText = "[ ACCESS GRANTED - ENTER NOW ]";
+                
+                if (typeof gtag === 'function') {
+                    gtag('event', 'login', { 'method': 'Gumroad License' });
+                }
+
+                setTimeout(() => {
+                    window.location.href = data.invite_link;
+                }, 800);
+
+            } catch (err) {
+                errorMsg.innerText = err.message || "Invalid or already used key.";
+                errorMsg.style.display = 'block';
+                
+                const originalText = inputBtnText.value.trim() || "[ ACCESS THE VAULT ]";
+                verifyBtn.innerText = originalText;
+                verifyBtn.disabled = false;
+                licenseInput.value = '';
             }
         });
 
-        // GA4 Video Tracker
+        licenseInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                verifyBtn.click();
+            }
+        });
+
         elVideo.addEventListener('play', () => {
             if (typeof gtag === 'function') {
-                gtag('event', 'video_start', {
-                    'video_title': 'VSL Main Video'
-                });
+                gtag('event', 'video_start', { 'video_title': 'VSL Main Video' });
             }
-        }, { once: true }); // Solo lo registra una vez por recarga
+        }, { once: true });
 
-        // Initialization
-        loadVSLConfig();
+        loadVSLContent();
         checkSession();
 
-        // Realtime Listener
         supabaseClient.channel('public:vsl')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'logs', filter: 'log_type=eq.vsl_config' }, payload => {
                 if (payload.new && payload.new.value_text) {

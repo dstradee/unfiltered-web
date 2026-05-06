@@ -20,6 +20,40 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+    <!-- MOTOR DE IDIOMAS UNFILTERED ALPHA -->
+    <script>
+        const lang = localStorage.getItem('unfiltered_lang') || 'en';
+        document.documentElement.lang = lang;
+
+        function applyTranslations() {
+            document.querySelectorAll('[data-en]').forEach(el => {
+                if (lang === 'es' && el.hasAttribute('data-es')) {
+                    el.innerHTML = el.getAttribute('data-es');
+                } else {
+                    el.innerHTML = el.getAttribute('data-en');
+                }
+            });
+            document.querySelectorAll('[placeholder-en]').forEach(el => {
+                if (lang === 'es' && el.hasAttribute('placeholder-es')) {
+                    el.placeholder = el.getAttribute('placeholder-es');
+                } else {
+                    el.placeholder = el.getAttribute('placeholder-en');
+                }
+            });
+            
+            const langBtn = document.getElementById('langToggleBtn');
+            if (langBtn) langBtn.innerText = lang === 'en' ? '[ ES ]' : '[ EN ]';
+        }
+
+        function toggleLanguage() {
+            const current = localStorage.getItem('unfiltered_lang') || 'en';
+            localStorage.setItem('unfiltered_lang', current === 'en' ? 'es' : 'en');
+            window.location.reload();
+        }
+
+        document.addEventListener('DOMContentLoaded', applyTranslations);
+    </script>
+
     <style>
         :root {
             --obsidian-navy: #0B1A30;
@@ -60,6 +94,8 @@
         
         .auth-link { font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); text-decoration: none; font-size: 0.75rem; letter-spacing: 1px; transition: color 0.2s ease; cursor: pointer; }
         .auth-link:hover { color: var(--electric-cyan); }
+        .lang-link { color: var(--alert-gold); font-weight: bold; margin-right: 15px; }
+        .lang-link:hover { color: var(--smoke-white); }
 
         .vsl-headline { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 6vw, 5rem); letter-spacing: 4px; line-height: 1; margin-bottom: 1rem; margin-top: 3rem; text-shadow: 4px 4px 0px var(--vantablack); }
         .vsl-subhead { font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); font-size: 1rem; max-width: 700px; margin-bottom: 2.5rem; line-height: 1.6; }
@@ -128,6 +164,8 @@
         .input-group input:focus, .input-group textarea:focus { border-color: var(--electric-cyan); }
         .input-group textarea { resize: vertical; min-height: 60px; }
 
+        .bilingual-input { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.2rem; }
+
         .btn-modal { display: block; width: 100%; padding: 1rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem; text-align: center; text-decoration: none; border: 1px solid var(--electric-cyan); background-color: transparent; color: var(--electric-cyan); cursor: pointer; transition: all 0.2s; }
         .btn-modal:hover { background-color: rgba(0, 242, 255, 0.1); }
 
@@ -156,7 +194,10 @@
         <div class="brand-logo logo-text">
             <span class="unfiltered-word" id="logoAccent">UNFILTERED</span> <span>ALPHA</span>
         </div>
-        <span class="auth-link" id="authToggleBtn">[ AUTH ]</span>
+        <div>
+            <span class="auth-link lang-link" onclick="toggleLanguage()" id="langToggleBtn">[ ES ]</span>
+            <span class="auth-link" id="authToggleBtn" data-en="[ AUTH ]" data-es="[ AUTENTICACIÓN ]">[ AUTH ]</span>
+        </div>
     </header>
 
     <div class="container">
@@ -166,8 +207,8 @@
         
         <div class="video-wrapper" id="displayWrapper">
             <div class="video-header" id="displayVideoHeader">
-                <span>> DECRYPTING_TRANSMISSION</span>
-                <span>[ SIGNAL_SECURED ]</span>
+                <span data-en="> DECRYPTING_TRANSMISSION" data-es="> DESENCRIPTANDO_TRANSMISIÓN">> DECRYPTING_TRANSMISSION</span>
+                <span data-en="[ SIGNAL_SECURED ]" data-es="[ SEÑAL_ASEGURADA ]">[ SIGNAL_SECURED ]</span>
             </div>
             <div class="video-container">
                 <video id="displayVideo" controls controlslist="nodownload">
@@ -179,15 +220,15 @@
 
         <!-- STRICT ENCLOSURE GATE -->
         <div class="gate-container">
-            <input type="text" id="license_key" class="gate-input" placeholder="Enter your Gumroad License Key..." autocomplete="off">
-            <div id="gate_error" class="gate-error">Invalid or already used key.</div>
+            <input type="text" id="license_key" class="gate-input" placeholder-en="Enter your Gumroad License Key..." placeholder-es="Introduce tu clave de licencia de Gumroad..." autocomplete="off">
+            <div id="gate_error" class="gate-error" data-en="Invalid or already used key." data-es="Clave inválida o ya utilizada.">Invalid or already used key.</div>
             <button id="verify_btn" class="giant-cta">[ ACCESS THE VAULT ]</button>
         </div>
 
     </div>
 
     <!-- FLOAT EDIT BUTTON -->
-    <button class="btn-edit-float" id="btnEditMode">[ ⚙️ EDIT VSL SYSTEM ]</button>
+    <button class="btn-edit-float" id="btnEditMode" data-en="[ ⚙️ EDIT VSL SYSTEM ]" data-es="[ ⚙️ EDITAR SISTEMA VSL ]">[ ⚙️ EDIT VSL SYSTEM ]</button>
 
     <!-- LOGIN MODAL -->
     <div class="modal-overlay" id="loginModal">
@@ -195,22 +236,22 @@
             <div class="close-modal" id="closeLoginBtn">[ X ]</div>
             <div class="modal-header" style="color: var(--smoke-white); border-bottom-color: rgba(255,255,255,0.2);">ARCHITECT AUTH</div>
             
-            <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--steel-grey); margin-bottom: 1.5rem;">
+            <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--steel-grey); margin-bottom: 1.5rem;" data-en="* System locked. VSL routing restricted to authorized personnel." data-es="* Sistema bloqueado. Rutas de VSL restringidas al personal autorizado.">
                 * System locked. VSL routing restricted to authorized personnel.
             </p>
 
             <div class="input-group">
-                <label style="color: var(--smoke-white);">> IDENTIFIER (EMAIL)</label>
-                <input type="email" id="adminEmail" placeholder="architect@..." autocomplete="off" style="border-color: var(--steel-grey); color: var(--electric-cyan);">
+                <label style="color: var(--smoke-white);" data-en="> IDENTIFIER (EMAIL)" data-es="> IDENTIFICADOR (EMAIL)">> IDENTIFIER (EMAIL)</label>
+                <input type="email" id="adminEmail" placeholder-en="architect@..." placeholder-es="arquitecto@..." autocomplete="off" style="border-color: var(--steel-grey); color: var(--electric-cyan);">
             </div>
             <div class="input-group" style="margin-bottom: 1.5rem;">
-                <label style="color: var(--smoke-white);">> PASSPHRASE</label>
+                <label style="color: var(--smoke-white);" data-en="> PASSPHRASE" data-es="> CONTRASEÑA">> PASSPHRASE</label>
                 <input type="password" id="adminPass" placeholder="••••••••" style="border-color: var(--steel-grey); color: var(--electric-cyan);">
             </div>
             
-            <div id="loginError" style="color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 1rem; text-align: center; display: none;">[SYS_ERROR] Invalid credentials.</div>
+            <div id="loginError" style="color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 1rem; text-align: center; display: none;" data-en="[SYS_ERROR] Invalid credentials." data-es="[SYS_ERROR] Credenciales inválidas.">[SYS_ERROR] Invalid credentials.</div>
 
-            <button type="button" class="btn-modal" style="color: var(--vantablack); background: var(--smoke-white); border-color: var(--smoke-white);" id="executeLoginBtn">
+            <button type="button" class="btn-modal" style="color: var(--vantablack); background: var(--smoke-white); border-color: var(--smoke-white);" id="executeLoginBtn" data-en="[ VERIFY CLEARANCE ]" data-es="[ VERIFICAR AUTORIZACIÓN ]">
                 [ VERIFY CLEARANCE ]
             </button>
         </div>
@@ -233,12 +274,18 @@
 
             <div class="input-group">
                 <label>> MAIN HEADLINE</label>
-                <input type="text" id="editHeadline" placeholder="Ex: THE MACHINE MINDSET">
+                <div class="bilingual-input">
+                    <input type="text" id="editHeadline_en" placeholder="[EN] Ex: THE MACHINE MINDSET">
+                    <input type="text" id="editHeadline_es" placeholder="[ES] Ex: LA MENTALIDAD DE LA MÁQUINA">
+                </div>
             </div>
 
             <div class="input-group">
                 <label>> SUBHEADLINE TEXT</label>
-                <textarea id="editSubhead" placeholder="Write your subheadline here..."></textarea>
+                <div class="bilingual-input">
+                    <textarea id="editSubhead_en" placeholder="[ENGLISH] Write your subheadline here..."></textarea>
+                    <textarea id="editSubhead_es" placeholder="[SPANISH] Escribe tu subtítulo aquí..."></textarea>
+                </div>
             </div>
 
             <div class="guide-box">
@@ -251,10 +298,13 @@
                 <input type="url" id="editVideo" placeholder="https://res.cloudinary.com/.../video.mp4">
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
+            <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; margin-top: 1.5rem;">
                 <div class="input-group">
                     <label>> CTA BUTTON TEXT</label>
-                    <input type="text" id="editBtnText" placeholder="Ex: [ ACCESS THE VAULT ]">
+                    <div class="bilingual-input" style="flex-direction: row;">
+                        <input type="text" id="editBtnText_en" placeholder="[EN] Ex: [ ACCESS THE VAULT ]">
+                        <input type="text" id="editBtnText_es" placeholder="[ES] Ex: [ ACCEDER A LA BÓVEDA ]">
+                    </div>
                 </div>
             </div>
 
@@ -274,10 +324,13 @@
 
         const defaultVSLTemplate = {
             themeColor: "#00F2FF",
-            headline: "THE MACHINE MINDSET",
-            subhead: "Unlearn retail theory. Observe the institutional footprint. If you cannot control your emotions, you need the machine.",
+            headline_en: "THE MACHINE MINDSET",
+            headline_es: "LA MENTALIDAD DE LA MÁQUINA",
+            subhead_en: "Unlearn retail theory. Observe the institutional footprint. If you cannot control your emotions, you need the machine.",
+            subhead_es: "Desaprende la teoría retail. Observa la huella institucional. Si no puedes controlar tus emociones, necesitas a la máquina.",
             video: "https://www.w3schools.com/html/mov_bbb.mp4",
-            btnText: "[ ACCESS THE VAULT ]"
+            btnText_en: "[ ACCESS THE VAULT ]",
+            btnText_es: "[ ACCEDER A LA BÓVEDA ]"
         };
 
         const elHeadline = document.getElementById('displayHeadline');
@@ -291,10 +344,13 @@
 
         const inputThemeColorHex = document.getElementById('editThemeColorHex');
         const inputThemeColorPicker = document.getElementById('editThemeColorPicker');
-        const inputHeadline = document.getElementById('editHeadline');
-        const inputSubhead = document.getElementById('editSubhead');
+        const inputHeadline_en = document.getElementById('editHeadline_en');
+        const inputHeadline_es = document.getElementById('editHeadline_es');
+        const inputSubhead_en = document.getElementById('editSubhead_en');
+        const inputSubhead_es = document.getElementById('editSubhead_es');
         const inputVideo = document.getElementById('editVideo');
-        const inputBtnText = document.getElementById('editBtnText');
+        const inputBtnText_en = document.getElementById('editBtnText_en');
+        const inputBtnText_es = document.getElementById('editBtnText_es');
 
         const authToggleBtn = document.getElementById('authToggleBtn');
         const loginModal = document.getElementById('loginModal');
@@ -354,6 +410,8 @@
         }
 
         function applyConfigToPage(config) {
+            const userLang = localStorage.getItem('unfiltered_lang') || 'en';
+
             let color = config.themeColor || '#00F2FF';
             let shadowGlow = hexToRgba(color, 0.1);
             let borderGlow = hexToRgba(color, 0.15);
@@ -365,14 +423,15 @@
             
             verifyBtn.style.color = color;
             verifyBtn.style.borderColor = color;
-            verifyBtn.innerText = config.btnText || "[ ACCESS THE VAULT ]";
+            
+            let finalBtnText = userLang === 'es' ? (config.btnText_es || config.btnText || "[ ACCEDER A LA BÓVEDA ]") : (config.btnText_en || config.btnText || "[ ACCESS THE VAULT ]");
+            verifyBtn.innerText = finalBtnText;
 
-            // Guardamos el color en el dataset para usarlo luego si hace hover o click
             verifyBtn.dataset.themeColor = color;
             verifyBtn.style.boxShadow = `0 0 20px ${shadowGlow}`;
 
-            elHeadline.innerText = config.headline || "THE MACHINE MINDSET";
-            elSubhead.innerText = config.subhead || "";
+            elHeadline.innerText = userLang === 'es' ? (config.headline_es || config.headline || "THE MACHINE MINDSET") : (config.headline_en || config.headline || "THE MACHINE MINDSET");
+            elSubhead.innerText = userLang === 'es' ? (config.subhead_es || config.subhead || "") : (config.subhead_en || config.subhead || "");
 
             if(config.video && elVideoSrc.src !== config.video) {
                 elVideoSrc.src = config.video;
@@ -383,19 +442,27 @@
         function populateEditor(config) {
             inputThemeColorHex.value = config.themeColor || '#00F2FF';
             inputThemeColorPicker.value = config.themeColor || '#00F2FF';
-            inputHeadline.value = config.headline || "";
-            inputSubhead.value = config.subhead || "";
+            
+            inputHeadline_en.value = config.headline_en || config.headline || "";
+            inputHeadline_es.value = config.headline_es || config.headline || "";
+            
+            inputSubhead_en.value = config.subhead_en || config.subhead || "";
+            inputSubhead_es.value = config.subhead_es || config.subhead || "";
+            
             inputVideo.value = config.video || "";
-            inputBtnText.value = config.btnText || "";
+            
+            inputBtnText_en.value = config.btnText_en || config.btnText || "";
+            inputBtnText_es.value = config.btnText_es || config.btnText || "";
         }
 
         async function checkSession() {
             const { data: { session } } = await supabaseClient.auth.getSession();
+            const userLang = localStorage.getItem('unfiltered_lang') || 'en';
             if (session) {
-                authToggleBtn.innerText = '[ LOGOUT ]';
+                authToggleBtn.innerText = userLang === 'es' ? '[ CERRAR SESIÓN ]' : '[ LOGOUT ]';
                 btnEditMode.style.display = 'block'; 
             } else {
-                authToggleBtn.innerText = '[ AUTH ]';
+                authToggleBtn.innerText = userLang === 'es' ? '[ AUTENTICACIÓN ]' : '[ AUTH ]';
                 btnEditMode.style.display = 'none'; 
             }
         }
@@ -404,9 +471,15 @@
             e.preventDefault();
             const email = document.getElementById('adminEmail').value.trim();
             const pass = document.getElementById('adminPass').value;
+            const userLang = localStorage.getItem('unfiltered_lang') || 'en';
             
-            if(!email || !pass) { loginErrorMsg.innerText = "[SYS_ERROR] Credentials required."; loginErrorMsg.style.display = 'block'; return; }
-            executeLoginBtn.innerText = '[ VERIFYING... ]';
+            if(!email || !pass) { 
+                loginErrorMsg.innerText = userLang === 'es' ? "[SYS_ERROR] Credenciales requeridas." : "[SYS_ERROR] Credentials required."; 
+                loginErrorMsg.style.display = 'block'; 
+                return; 
+            }
+            
+            executeLoginBtn.innerText = userLang === 'es' ? '[ VERIFICANDO... ]' : '[ VERIFYING... ]';
             loginErrorMsg.style.display = 'none';
 
             try {
@@ -415,8 +488,9 @@
                 loginModal.style.display = 'none';
                 checkSession();
             } catch (error) {
-                loginErrorMsg.innerText = "[SYS_ERROR] Access denied."; loginErrorMsg.style.display = 'block';
-                executeLoginBtn.innerText = '[ VERIFY CLEARANCE ]';
+                loginErrorMsg.innerText = userLang === 'es' ? "[SYS_ERROR] Acceso denegado." : "[SYS_ERROR] Access denied."; 
+                loginErrorMsg.style.display = 'block';
+                executeLoginBtn.innerText = userLang === 'es' ? '[ VERIFICAR AUTORIZACIÓN ]' : '[ VERIFY CLEARANCE ]';
             }
         });
 
@@ -431,10 +505,13 @@
 
             const newConfig = {
                 themeColor: safeColor,
-                headline: inputHeadline.value.trim(),
-                subhead: inputSubhead.value.trim(),
+                headline_en: inputHeadline_en.value.trim(),
+                headline_es: inputHeadline_es.value.trim(),
+                subhead_en: inputSubhead_en.value.trim(),
+                subhead_es: inputSubhead_es.value.trim(),
                 video: inputVideo.value.trim(),
-                btnText: inputBtnText.value.trim()
+                btnText_en: inputBtnText_en.value.trim(),
+                btnText_es: inputBtnText_es.value.trim()
             };
 
             try {
@@ -464,20 +541,20 @@
         // --- VERIFICATION API CALL ---
         verifyBtn.addEventListener('click', async (e) => {
             e.preventDefault();
+            const userLang = localStorage.getItem('unfiltered_lang') || 'en';
             
             const key = licenseInput.value.trim();
             if (!key) {
-                errorMsg.innerText = "Please enter a valid license key.";
+                errorMsg.innerText = userLang === 'es' ? "Por favor introduce una clave de licencia válida." : "Please enter a valid license key.";
                 errorMsg.style.display = 'block';
                 return;
             }
 
             errorMsg.style.display = 'none';
-            verifyBtn.innerText = "[ VERIFYING PROTOCOL... ]";
+            verifyBtn.innerText = userLang === 'es' ? "[ VERIFICANDO PROTOCOLO... ]" : "[ VERIFYING PROTOCOL... ]";
             verifyBtn.disabled = true;
 
             try {
-                // LLAMADA A VERCEL SERVERLESS FUNCTION
                 const res = await fetch('/api/verify-license', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -493,7 +570,7 @@
                 const themeColor = verifyBtn.dataset.themeColor || 'var(--electric-cyan)';
                 verifyBtn.style.backgroundColor = themeColor;
                 verifyBtn.style.color = 'var(--vantablack)';
-                verifyBtn.innerText = "[ ACCESS GRANTED - ENTER NOW ]";
+                verifyBtn.innerText = userLang === 'es' ? "[ ACCESO CONCEDIDO - ENTRAR AHORA ]" : "[ ACCESS GRANTED - ENTER NOW ]";
                 
                 if (typeof gtag === 'function') {
                     gtag('event', 'login', { 'method': 'Gumroad License' });
@@ -504,10 +581,10 @@
                 }, 800);
 
             } catch (err) {
-                errorMsg.innerText = err.message || "Invalid or already used key.";
+                errorMsg.innerText = userLang === 'es' ? "Clave inválida o ya utilizada." : (err.message || "Invalid or already used key.");
                 errorMsg.style.display = 'block';
                 
-                const originalText = inputBtnText.value.trim() || "[ ACCESS THE VAULT ]";
+                const originalText = userLang === 'es' ? (inputBtnText_es.value.trim() || "[ ACCEDER A LA BÓVEDA ]") : (inputBtnText_en.value.trim() || "[ ACCESS THE VAULT ]");
                 verifyBtn.innerText = originalText;
                 verifyBtn.disabled = false;
                 licenseInput.value = '';

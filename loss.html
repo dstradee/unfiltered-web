@@ -20,6 +20,44 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+    <!-- MOTOR DE IDIOMAS UNFILTERED ALPHA -->
+    <script>
+        const lang = localStorage.getItem('unfiltered_lang') || 'en';
+        document.documentElement.lang = lang;
+
+        function applyTranslations() {
+            document.querySelectorAll('[data-en]').forEach(el => {
+                if (lang === 'es' && el.hasAttribute('data-es')) {
+                    el.innerHTML = el.getAttribute('data-es');
+                } else {
+                    el.innerHTML = el.getAttribute('data-en');
+                }
+            });
+            document.querySelectorAll('[placeholder-en]').forEach(el => {
+                if (lang === 'es' && el.hasAttribute('placeholder-es')) {
+                    el.placeholder = el.getAttribute('placeholder-es');
+                } else {
+                    el.placeholder = el.getAttribute('placeholder-en');
+                }
+            });
+            const langBtn = document.getElementById('langToggleBtn');
+            if (langBtn) langBtn.innerText = lang === 'en' ? '[ ES ]' : '[ EN ]';
+            
+            // Re-render live content block based on lang
+            if(window.liveDataObj && !window.isEditing) {
+                renderLiveContent(window.liveDataObj);
+            }
+        }
+
+        function toggleLanguage() {
+            const current = localStorage.getItem('unfiltered_lang') || 'en';
+            localStorage.setItem('unfiltered_lang', current === 'en' ? 'es' : 'en');
+            window.location.reload();
+        }
+
+        document.addEventListener('DOMContentLoaded', applyTranslations);
+    </script>
+
     <style>
         :root {
             --obsidian-navy: #0B1A30;
@@ -28,6 +66,7 @@
             --smoke-white: #F8FAFC;
             --steel-grey: #94A3B8;
             --vantablack: #020617;
+            --alert-gold: #FFD700;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; border-radius: 0 !important; }
@@ -59,6 +98,8 @@
         /* HEADER LINKS */
         .auth-link, .back-link { font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); text-decoration: none; font-size: 0.85rem; letter-spacing: 1px; transition: color 0.2s ease; cursor: pointer; }
         .auth-link:hover, .back-link:hover { color: var(--electric-cyan); }
+        .lang-link { color: var(--alert-gold); font-weight: bold; }
+        .lang-link:hover { color: var(--smoke-white); }
 
         .header-actions { display: flex; gap: 1.5rem; align-items: center; }
 
@@ -81,13 +122,15 @@
             border: 1px dashed rgba(148, 163, 184, 0.5);
             padding: 10px; min-height: 50px;
             background: rgba(255, 255, 255, 0.02);
-            cursor: text;
+            cursor: text; margin-bottom: 10px;
         }
         .editable-content[contenteditable="true"]:focus {
             border: 1px solid var(--electric-cyan);
             background: rgba(0, 242, 255, 0.05);
             box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.1);
         }
+
+        .edit-label { display: none; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--alert-gold); margin-bottom: 5px; text-transform: uppercase; }
 
         .loss-title { color: var(--crimson-war); font-size: 1.5rem; letter-spacing: 2px; margin-bottom: 2rem; border-bottom: 1px solid rgba(255, 49, 49, 0.3); padding-bottom: 0.5rem; display: inline-block; width: 100%;}
         .loss-body { color: var(--steel-grey); font-size: 1.1rem; line-height: 1.8; margin-bottom: 3rem; width: 100%; }
@@ -166,23 +209,37 @@
                 <span class="unfiltered-word">UNFILTERED</span> <span>ALPHA</span>
             </div>
             <div class="header-actions">
-                <a href="index.html" class="back-link">[ BACK TO PROTOCOL ]</a>
-                <span class="auth-link" id="authToggleBtn">[ AUTH ]</span>
+                <span class="auth-link lang-link" onclick="toggleLanguage()" id="langToggleBtn">[ ES ]</span>
+                <a href="index.html" class="back-link" data-en="[ BACK TO PROTOCOL ]" data-es="[ VOLVER AL PROTOCOLO ]">[ BACK TO PROTOCOL ]</a>
+                <span class="auth-link" id="authToggleBtn" data-en="[ AUTH ]" data-es="[ AUTENTICACIÓN ]">[ AUTH ]</span>
             </div>
         </header>
 
         <main>
             <div class="terminal-box">
-                <!-- Editable Elements -->
-                <div id="liveTitle" class="loss-title editable-content" contenteditable="false">
+                <!-- Titles -->
+                <div class="edit-label" id="lblTitleEn">[ENGLISH] HEADLINE:</div>
+                <div id="liveTitleEn" class="loss-title editable-content" contenteditable="false">
                     [ ARCHIVE_LOG // CRITICAL_FAILURE ]
                 </div>
                 
-                <div id="liveBody" class="loss-body editable-content" contenteditable="false">
+                <div class="edit-label" id="lblTitleEs">[SPANISH] HEADLINE:</div>
+                <div id="liveTitleEs" class="loss-title editable-content" contenteditable="false" style="display: none;">
+                    [ REGISTRO_ARCHIVO // FALLO_CRÍTICO ]
+                </div>
+                
+                <!-- Bodies -->
+                <div class="edit-label" id="lblBodyEn">[ENGLISH] CONTENT BODY:</div>
+                <div id="liveBodyEn" class="loss-body editable-content" contenteditable="false">
                     Record 041: Three years ago, confirmation bias led me to ignore my own exit parameters on a EUR/USD short. That disciplinary failure cost $15,000 in 40 minutes. It was my last discretionary trade. Today, the algorithm feels nothing and forgives nothing. If you cannot control your emotions, you need the machine.
                 </div>
 
-                <a href="https://t.me/unfilteredalphafeed" target="_blank" class="btn-cta">
+                <div class="edit-label" id="lblBodyEs">[SPANISH] CONTENT BODY:</div>
+                <div id="liveBodyEs" class="loss-body editable-content" contenteditable="false" style="display: none;">
+                    Registro 041: Hace tres años, el sesgo de confirmación me llevó a ignorar mis propios parámetros de salida en un corto de EUR/USD. Ese fallo disciplinario costó $15,000 en 40 minutos. Fue mi último trade discrecional. Hoy, el algoritmo no siente nada y no perdona nada. Si no puedes controlar tus emociones, necesitas a la máquina.
+                </div>
+
+                <a href="https://t.me/unfilteredalphafeed" target="_blank" class="btn-cta" data-en="[ INITIALIZE PROTOCOL ]" data-es="[ INICIALIZAR PROTOCOLO ]">
                     [ INITIALIZE PROTOCOL ]
                 </a>
             </div>
@@ -190,7 +247,6 @@
             <!-- Admin Controls -->
             <div class="admin-controls">
                 
-                <!-- Tool Bar Menu (Appears only during edit) -->
                 <div class="editor-toolbar" id="editorToolbar">
                     <button class="btn-tool" onclick="insertLink()">[ + LINK / FILE ]</button>
                     <button class="btn-tool" onclick="insertImage()">[ + IMAGE ]</button>
@@ -212,30 +268,28 @@
     <div class="modal-overlay" id="loginModal">
         <div class="modal-content">
             <div class="close-modal" id="closeLoginBtn">[ X ]</div>
-            <div class="modal-header">ARCHITECT AUTH</div>
-            <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--steel-grey); margin-bottom: 1.5rem;">
+            <div class="modal-header" data-en="ARCHITECT AUTH" data-es="AUTENTICACIÓN DE ARQUITECTO">ARCHITECT AUTH</div>
+            <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: var(--steel-grey); margin-bottom: 1.5rem;" data-en="* Direct edit access restricted to authenticated architects." data-es="* Acceso de edición directa restringido a arquitectos autenticados.">
                 * Direct edit access restricted to authenticated architects.
             </p>
             <div class="input-group">
-                <label>> IDENTIFIER (EMAIL)</label>
-                <input type="email" id="adminEmail" placeholder="architect@..." autocomplete="off">
+                <label data-en="> IDENTIFIER (EMAIL)" data-es="> IDENTIFICADOR (EMAIL)">> IDENTIFIER (EMAIL)</label>
+                <input type="email" id="adminEmail" placeholder-en="architect@..." placeholder-es="arquitecto@..." autocomplete="off">
             </div>
             <div class="input-group" style="margin-bottom: 1.5rem;">
-                <label>> PASSPHRASE</label>
+                <label data-en="> PASSPHRASE" data-es="> CONTRASEÑA">> PASSPHRASE</label>
                 <input type="password" id="adminPass" placeholder="••••••••">
             </div>
-            <div id="loginError" style="color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 1rem; text-align: center; display: none;">[SYS_ERROR] Invalid credentials.</div>
-            <button class="btn-login" id="executeLoginBtn">[ VERIFY CLEARANCE ]</button>
+            <div id="loginError" style="color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 1rem; text-align: center; display: none;" data-en="[SYS_ERROR] Invalid credentials." data-es="[SYS_ERROR] Credenciales inválidas.">[SYS_ERROR] Invalid credentials.</div>
+            <button class="btn-login" id="executeLoginBtn" data-en="[ VERIFY CLEARANCE ]" data-es="[ VERIFICAR AUTORIZACIÓN ]">[ VERIFY CLEARANCE ]</button>
         </div>
     </div>
 
     <script>
-        // --- SUPABASE CONFIGURATION ---
         const SUPABASE_URL = 'https://qtpuipgkytzjnckkkwnl.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_eA2g7-rTvcPcfz_dVl2aWg_Ca5P7t93';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // --- UI ELEMENTS ---
         const authToggleBtn = document.getElementById('authToggleBtn');
         const loginModal = document.getElementById('loginModal');
         const closeLoginBtn = document.getElementById('closeLoginBtn');
@@ -247,33 +301,69 @@
         const editorToolbar = document.getElementById('editorToolbar');
         const saveFeedback = document.getElementById('saveFeedback');
         
-        const liveTitle = document.getElementById('liveTitle');
-        const liveBody = document.getElementById('liveBody');
+        const liveTitleEn = document.getElementById('liveTitleEn');
+        const liveTitleEs = document.getElementById('liveTitleEs');
+        const liveBodyEn = document.getElementById('liveBodyEn');
+        const liveBodyEs = document.getElementById('liveBodyEs');
+        
+        const labels = document.querySelectorAll('.edit-label');
 
-        // --- 1. FETCH CONTENT ON LOAD ---
+        window.liveDataObj = null;
+        window.isEditing = false;
+
+        function renderLiveContent(config) {
+            const userLang = localStorage.getItem('unfiltered_lang') || 'en';
+            
+            if (userLang === 'es') {
+                liveTitleEn.style.display = 'none';
+                liveBodyEn.style.display = 'none';
+                
+                liveTitleEs.style.display = 'inline-block';
+                liveBodyEs.style.display = 'inline-block';
+                
+                liveTitleEs.innerHTML = config.title_es || config.title || "[ REGISTRO_ARCHIVO // FALLO_CRÍTICO ]";
+                liveBodyEs.innerHTML = config.body_es || config.body || "Cargando transmisión...";
+            } else {
+                liveTitleEs.style.display = 'none';
+                liveBodyEs.style.display = 'none';
+                
+                liveTitleEn.style.display = 'inline-block';
+                liveBodyEn.style.display = 'inline-block';
+                
+                liveTitleEn.innerHTML = config.title_en || config.title || "[ ARCHIVE_LOG // CRITICAL_FAILURE ]";
+                liveBodyEn.innerHTML = config.body_en || config.body || "Loading transmission...";
+            }
+            
+            // Background update just in case editor changed it
+            liveTitleEn.innerHTML = config.title_en || config.title || "";
+            liveTitleEs.innerHTML = config.title_es || config.title || "";
+            liveBodyEn.innerHTML = config.body_en || config.body || "";
+            liveBodyEs.innerHTML = config.body_es || config.body || "";
+        }
+
         async function loadSiteContent() {
             try {
                 const { data, error } = await supabaseClient.from('logs').select('*').eq('log_type', 'loss_config').order('created_at', { ascending: false }).limit(1);
                 if (error) throw error;
                 
                 if (data && data.length > 0 && data[0].value_text) {
-                    const config = JSON.parse(data[0].value_text);
-                    if(config.title) liveTitle.innerHTML = config.title;
-                    if(config.body) liveBody.innerHTML = config.body;
+                    window.liveDataObj = JSON.parse(data[0].value_text);
+                    renderLiveContent(window.liveDataObj);
                 }
             } catch (err) {
                 console.error("Failed to load content from server.", err);
             }
         }
 
-        // --- 2. AUTHENTICATION FLOW ---
         async function checkSession() {
             const { data: { session } } = await supabaseClient.auth.getSession();
+            const userLang = localStorage.getItem('unfiltered_lang') || 'en';
+
             if (session) {
-                authToggleBtn.innerText = '[ LOGOUT ]';
+                authToggleBtn.innerText = userLang === 'es' ? '[ CERRAR SESIÓN ]' : '[ LOGOUT ]';
                 btnEditSite.style.display = 'block'; 
             } else {
-                authToggleBtn.innerText = '[ AUTH ]';
+                authToggleBtn.innerText = userLang === 'es' ? '[ AUTENTICACIÓN ]' : '[ AUTH ]';
                 btnEditSite.style.display = 'none';
                 disableEditing();
             }
@@ -296,10 +386,15 @@
             e.preventDefault();
             const email = document.getElementById('adminEmail').value.trim();
             const pass = document.getElementById('adminPass').value;
+            const userLang = localStorage.getItem('unfiltered_lang') || 'en';
             
-            if(!email || !pass) { loginError.innerText = "[SYS_ERROR] Credentials required."; loginError.style.display = 'block'; return; }
+            if(!email || !pass) { 
+                loginError.innerText = userLang === 'es' ? "[SYS_ERROR] Credenciales requeridas." : "[SYS_ERROR] Credentials required."; 
+                loginError.style.display = 'block'; 
+                return; 
+            }
 
-            executeLoginBtn.innerText = '[ VERIFYING... ]';
+            executeLoginBtn.innerText = userLang === 'es' ? '[ VERIFICANDO... ]' : '[ VERIFYING... ]';
             loginError.style.display = 'none';
 
             try {
@@ -309,31 +404,51 @@
                 loginModal.style.display = 'none';
                 checkSession();
             } catch (error) {
-                loginError.innerText = "[SYS_ERROR] Access denied."; loginError.style.display = 'block';
+                loginError.innerText = userLang === 'es' ? "[SYS_ERROR] Acceso denegado." : "[SYS_ERROR] Access denied."; 
+                loginError.style.display = 'block';
             } finally {
-                executeLoginBtn.innerText = '[ VERIFY CLEARANCE ]';
+                executeLoginBtn.innerText = userLang === 'es' ? '[ VERIFICAR AUTORIZACIÓN ]' : '[ VERIFY CLEARANCE ]';
             }
         });
 
-        // --- 3. INLINE EDITING LOGIC (WYSIWYG) ---
+        // --- INLINE EDITING LOGIC ---
         btnEditSite.addEventListener('click', () => {
-            liveTitle.setAttribute('contenteditable', 'true');
-            liveBody.setAttribute('contenteditable', 'true');
+            window.isEditing = true;
+            
+            // Show all boxes to edit EN and ES simultaneously
+            liveTitleEn.style.display = 'inline-block';
+            liveTitleEs.style.display = 'inline-block';
+            liveBodyEn.style.display = 'inline-block';
+            liveBodyEs.style.display = 'inline-block';
+            labels.forEach(l => l.style.display = 'block');
+
+            liveTitleEn.setAttribute('contenteditable', 'true');
+            liveTitleEs.setAttribute('contenteditable', 'true');
+            liveBodyEn.setAttribute('contenteditable', 'true');
+            liveBodyEs.setAttribute('contenteditable', 'true');
             
             btnEditSite.style.display = 'none';
             btnApplyChanges.style.display = 'block';
-            editorToolbar.style.display = 'flex'; // Muestra las herramientas
+            editorToolbar.style.display = 'flex'; 
 
-            // Auto-focus on body to start typing/inserting
-            liveBody.focus();
+            liveBodyEn.focus();
         });
 
         function disableEditing() {
-            liveTitle.setAttribute('contenteditable', 'false');
-            liveBody.setAttribute('contenteditable', 'false');
+            window.isEditing = false;
+            
+            liveTitleEn.setAttribute('contenteditable', 'false');
+            liveTitleEs.setAttribute('contenteditable', 'false');
+            liveBodyEn.setAttribute('contenteditable', 'false');
+            liveBodyEs.setAttribute('contenteditable', 'false');
+            labels.forEach(l => l.style.display = 'none');
             
             btnApplyChanges.style.display = 'none';
             editorToolbar.style.display = 'none';
+
+            if(window.liveDataObj) {
+                renderLiveContent(window.liveDataObj);
+            }
 
             supabaseClient.auth.getSession().then(({ data: { session } }) => {
                 if (session) btnEditSite.style.display = 'block';
@@ -346,8 +461,10 @@
             saveFeedback.innerText = '';
 
             const newContent = {
-                title: liveTitle.innerHTML.trim(),
-                body: liveBody.innerHTML.trim()
+                title_en: liveTitleEn.innerHTML.trim(),
+                title_es: liveTitleEs.innerHTML.trim(),
+                body_en: liveBodyEn.innerHTML.trim(),
+                body_es: liveBodyEs.innerHTML.trim()
             };
 
             try {
@@ -361,6 +478,7 @@
                 }]);
                 if (error) throw error;
 
+                window.liveDataObj = newContent;
                 saveFeedback.style.color = "var(--electric-cyan)";
                 saveFeedback.innerText = "[ SUCCESS ] DATABASE UPDATED.";
                 disableEditing();
@@ -375,7 +493,7 @@
             }
         });
 
-        // --- 4. INSERTION TOOLS (IMAGEN, VIDEO, LINK) ---
+        // --- INSERTION TOOLS ---
         function insertHTMLAtCursor(html) {
             let sel, range;
             if (window.getSelection) {
@@ -383,17 +501,16 @@
                 if (sel.getRangeAt && sel.rangeCount) {
                     range = sel.getRangeAt(0);
                     
-                    // Asegurar que estamos dentro de liveBody o liveTitle, sino forzamos el foco en liveBody
                     let isInside = false;
                     let node = range.commonAncestorContainer;
                     while (node) {
-                        if (node === liveBody || node === liveTitle) { isInside = true; break; }
+                        if (node === liveBodyEn || node === liveTitleEn || node === liveBodyEs || node === liveTitleEs) { isInside = true; break; }
                         node = node.parentNode;
                     }
                     if (!isInside) {
-                        liveBody.focus();
+                        liveBodyEn.focus();
                         range = document.createRange();
-                        range.selectNodeContents(liveBody);
+                        range.selectNodeContents(liveBodyEn);
                         range.collapse(false); 
                         sel.removeAllRanges();
                         sel.addRange(range);
@@ -448,7 +565,6 @@
             insertHTMLAtCursor(`<br><br>`);
         }
 
-        // Initialization
         loadSiteContent();
         checkSession();
 

@@ -189,12 +189,90 @@
         .btn-login { display: block; width: 100%; padding: 1rem; font-family: 'JetBrains Mono', monospace; font-weight: 800; font-size: 0.9rem; text-align: center; text-decoration: none; border: none; background-color: transparent; border: 1px solid var(--electric-cyan); color: var(--electric-cyan); cursor: pointer; transition: all 0.2s; }
         .btn-login:hover { background-color: rgba(0, 242, 255, 0.1); box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.2); }
 
+        /* =======================================================
+           MOBILE OPTIMIZATION - SCALED DOWN TO PREVENT CUT-OFFS
+           ======================================================= */
         @media (max-width: 768px) {
-            header { flex-direction: column; align-items: flex-start; gap: 1.5rem; padding: 2rem 0;}
-            .header-actions { width: 100%; justify-content: space-between; }
-            .terminal-box { padding: 2rem 1.5rem; }
-            .loss-title { font-size: 1.2rem; }
-            .loss-body { font-size: 1rem; }
+            .container { padding: 0 1rem; }
+            
+            header { 
+                flex-direction: column; 
+                align-items: center; 
+                gap: 1rem; 
+                padding: 2rem 0 1rem 0; 
+            }
+            
+            .brand-logo { font-size: 1.5rem; }
+            
+            .header-actions { 
+                width: 100%; 
+                justify-content: center; 
+                gap: 1rem; 
+                flex-wrap: wrap; 
+            }
+            
+            .auth-link, .back-link { 
+                font-size: 0.75rem; 
+            }
+
+            .terminal-box { 
+                padding: 1.5rem 1rem; 
+                width: 100%;
+                border-radius: 4px;
+            }
+            
+            .loss-title { 
+                font-size: 1.1rem; 
+                margin-bottom: 1.5rem;
+            }
+            
+            .loss-body { 
+                font-size: 0.9rem; 
+                line-height: 1.6;
+                margin-bottom: 2rem;
+            }
+
+            .btn-cta { 
+                padding: 1rem; 
+                font-size: 0.9rem; 
+            }
+
+            .admin-controls { 
+                margin-top: 1rem; 
+            }
+            
+            .editor-toolbar { 
+                gap: 0.5rem; 
+                padding: 0.8rem; 
+            }
+            
+            .btn-tool { 
+                padding: 0.5rem 0.8rem; 
+                font-size: 0.7rem; 
+            }
+            
+            .btn-admin { 
+                padding: 0.8rem 1rem; 
+                font-size: 0.8rem; 
+            }
+
+            .modal-content { 
+                padding: 1.5rem; 
+                width: 95%; 
+            }
+            
+            .modal-header { 
+                font-size: 1.8rem; 
+            }
+            
+            .input-group label { 
+                font-size: 0.75rem; 
+            }
+            
+            .input-group input { 
+                padding: 0.6rem; 
+                font-size: 0.85rem; 
+            }
         }
     </style>
 </head>
@@ -254,7 +332,7 @@
                     <button class="btn-tool" onclick="insertLineBreak()" style="border-color: var(--steel-grey); color: var(--steel-grey);">[ ⏎ BREAK ]</button>
                 </div>
 
-                <div style="display: flex; gap: 1rem;">
+                <div style="display: flex; gap: 1rem; width: 100%; justify-content: center;">
                     <button class="btn-admin" id="btnEditSite" style="display: none;">[ EDIT SITE ]</button>
                     <button class="btn-admin btn-save" id="btnApplyChanges">[ APPLY CHANGES ]</button>
                 </div>

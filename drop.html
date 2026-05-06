@@ -147,12 +147,86 @@
         .btn-danger { border-color: var(--crimson-war); color: var(--crimson-war); }
         .btn-danger:hover { background: var(--crimson-war); color: var(--smoke-white); }
 
+        /* =======================================================
+           MOBILE OPTIMIZATION - SCALED DOWN TO PREVENT CUT-OFFS
+           ======================================================= */
         @media (max-width: 768px) {
-            header { flex-direction: column; align-items: flex-start; gap: 1.5rem; padding: 3rem 0 2rem 0;}
-            .header-actions { width: 100%; justify-content: space-between; }
-            .terminal-box { padding: 1.5rem 1rem; }
-            .btn-edit-float { bottom: 15px; right: 15px; padding: 0.8rem 1rem; font-size: 0.8rem; }
-            .bilingual-input { flex-direction: column; }
+            .container { padding: 0 1rem; }
+            
+            header { 
+                flex-direction: column; 
+                align-items: center; 
+                gap: 1rem; 
+                padding: 2rem 0 1rem 0; 
+            }
+            
+            .brand-logo { font-size: 1.5rem; }
+            
+            .header-actions { 
+                width: 100%; 
+                justify-content: center; 
+                gap: 1rem; 
+                flex-wrap: wrap; 
+            }
+            
+            .auth-link, .back-link, .discount-indicator { 
+                font-size: 0.7rem; 
+            }
+            
+            .drop-tab { 
+                padding: 0.6rem 1rem; 
+                font-size: 0.75rem; 
+            }
+            
+            .terminal-box { 
+                padding: 1.2rem 1rem; 
+            }
+            
+            .terminal-header { 
+                flex-direction: column; 
+                align-items: center; 
+                gap: 0.5rem; 
+                font-size: 0.75rem; 
+                text-align: center; 
+            }
+            
+            #displayText { 
+                font-size: 0.85rem; 
+            }
+            
+            .btn { 
+                padding: 0.8rem 1rem; 
+                font-size: 0.8rem; 
+            }
+            
+            .modal-content { 
+                padding: 1.5rem; 
+                width: 95%; 
+            }
+            
+            .modal-header { 
+                font-size: 1.8rem; 
+            }
+            
+            .input-group label { 
+                font-size: 0.75rem; 
+            }
+            
+            .input-group input, .input-group textarea, .input-group select { 
+                padding: 0.6rem; 
+                font-size: 0.85rem; 
+            }
+            
+            .btn-edit-float { 
+                bottom: 15px; 
+                right: 15px; 
+                padding: 0.6rem 0.8rem; 
+                font-size: 0.7rem; 
+            }
+            
+            .bilingual-input { 
+                flex-direction: column; 
+            }
         }
     </style>
 </head>

@@ -109,6 +109,12 @@
         .btn-delete { background: transparent; border: 1px solid var(--crimson-war); color: var(--crimson-war); padding: 0.4rem 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; cursor: pointer; transition: all 0.2s; touch-action: manipulation; }
         .btn-delete:hover { background: var(--crimson-war); color: var(--smoke-white); }
 
+        /* BILINGUAL INPUTS STYLING */
+        .bilingual-input { display: flex; gap: 1rem; margin-top: 0.5rem; }
+        .bilingual-input input { flex: 1; }
+        .lang-badge { display: inline-block; font-size: 0.7rem; color: var(--vantablack); background-color: var(--steel-grey); padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px; }
+
+        /* BUTTON ROW STYLING (DRAG & DROP) */
         .saved-btn-row { background-color: rgba(176, 38, 255, 0.05); border: 1px solid var(--neon-purple); padding: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; transition: all 0.2s; }
         .saved-btn-row.draggable { cursor: grab; }
         .saved-btn-row.dragging { opacity: 0.5; border-style: dashed; border-color: var(--electric-cyan); background-color: rgba(0, 242, 255, 0.05); }
@@ -127,10 +133,6 @@
         
         .move-btn { background: transparent; border: 1px solid var(--steel-grey); color: var(--steel-grey); cursor: pointer; padding: 0.2rem 0.5rem; font-family: monospace; transition: all 0.2s;}
         .move-btn:hover { background: var(--steel-grey); color: var(--vantablack); }
-
-        .bilingual-input { display: flex; gap: 1rem; margin-top: 0.5rem; }
-        .bilingual-input input { flex: 1; }
-        .lang-badge { display: inline-block; font-size: 0.7rem; color: var(--vantablack); background-color: var(--steel-grey); padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px; }
 
         @media (max-width: 768px) { 
             body { padding: 1rem; }
@@ -166,7 +168,6 @@
             <button class="tab-btn tab-logs" onclick="switchTab('panel-logs', this)">[ LOGS ]</button>
         </div>
 
-        <!-- MASTER TERMINAL -->
         <div id="panel-master" class="admin-box active-panel">
             <h1>
                 MASTER TERMINAL 
@@ -219,7 +220,6 @@
             <div id="feedback" class="feedback-msg"></div>
         </div>
 
-        <!-- MACRO NEWS -->
         <div id="panel-news" class="admin-box" style="border-color: var(--crimson-war);">
             <h1 style="color: var(--crimson-war);">[ ! ] MACRO NEWS OVERRIDE</h1>
             <div class="warning-text" style="color: var(--crimson-war); border-color: rgba(255,49,49,0.2);">ACTIVATES RED ALERT MODE.</div>
@@ -234,7 +234,6 @@
             <div id="newsFeedback" class="feedback-msg"></div>
         </div>
 
-        <!-- DYNAMIC OFFER -->
         <div id="panel-desc" class="admin-box" style="border-color: var(--hot-pink);">
             <h1 style="color: var(--hot-pink);">[ ⏳ ] DYNAMIC OFFER</h1>
             <div class="warning-text" style="color: var(--hot-pink); border-color: rgba(255,0,127,0.2);">
@@ -318,7 +317,6 @@
             <div id="descFeedback" class="feedback-msg"></div>
         </div>
 
-        <!-- POP UP ALERT -->
         <div id="panel-popup" class="admin-box" style="border-color: var(--alert-gold);">
             <h1 style="color: var(--alert-gold);">[ 🔔 ] REAL-TIME ALERT</h1>
             <div class="warning-text" style="color: var(--alert-gold); border-color: rgba(255,215,0,0.2);">
@@ -337,7 +335,6 @@
             <div id="popupFeedback" class="feedback-msg"></div>
         </div>
 
-        <!-- BUTTONS MANAGER -->
         <div id="panel-buttons" class="admin-box" style="border-color: var(--neon-purple);">
             <h1 style="color: var(--neon-purple);">[ 🎛️ ] BUTTON VISIBILITY & ORDER</h1>
             <div class="warning-text" style="color: var(--neon-purple); border-color: rgba(176, 38, 255, 0.2);">
@@ -361,7 +358,6 @@
             <div id="btnToggleFeedback" class="feedback-msg" style="margin-top: 2rem;"></div>
         </div>
 
-        <!-- DROP CODE -->
         <div id="panel-drop" class="admin-box" style="border-color: var(--matrix-green);">
             <h1 style="color: var(--matrix-green);">[ 🔐 ] DROP CONFIGURATION</h1>
             <div class="warning-text" style="color: var(--matrix-green); border-color: rgba(0, 255, 65, 0.2);">
@@ -377,7 +373,6 @@
             <div id="dropFeedback" class="feedback-msg"></div>
         </div>
 
-        <!-- LOGS -->
         <div id="panel-logs" class="admin-box">
             <h1 style="color: var(--steel-grey);">
                 ACTIVE LOGS 
@@ -428,7 +423,7 @@
             const linkWord = document.getElementById('linkWord').value.trim();
 
             if (!logTime || !actionTextEn) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Time and English message required.'; return; }
-            if (!actionTextEs) actionTextEs = actionTextEn; // Fallback
+            if (!actionTextEs) actionTextEs = actionTextEn; 
 
             if (linkUrl && linkWord) {
                 const anchorTag = `<a href="${linkUrl}" target="_blank" style="color: var(--electric-cyan); text-decoration: underline; text-underline-offset: 4px; font-weight: bold; cursor: pointer;">${linkWord}</a>`;
@@ -548,7 +543,7 @@
                             spots--; 
                             config.value = spots.toString();
                             const valuePayload = JSON.stringify(config);
-                            const currentMsg = data[0].action_text; // Maintains bilingual JSON structure
+                            const currentMsg = data[0].action_text; 
                             
                             await supabaseClient.from('logs').insert([{ log_time: '[OFFER_UPDATE]', action_text: currentMsg, value_text: valuePayload, log_type: 'discount_alert' }]);
                             document.getElementById('offerSpots').value = spots;
@@ -799,7 +794,6 @@
                 data.slice(0, 15).forEach(log => {
                     let borderColor = 'var(--steel-grey)'; let valueColor = 'var(--steel-grey)';
                     
-                    // Manejar displayAction que ahora puede ser JSON
                     let displayAction = log.action_text;
                     try {
                         let parsed = JSON.parse(log.action_text);

@@ -206,6 +206,9 @@
 
         #loginError { color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 1rem; text-align: center; display: none; }
 
+        /* ========================================================== */
+        /* MOBILE OPTIMIZATION (HIGH CONVERSION FOCUS)                */
+        /* ========================================================== */
         @media (max-width: 768px) {
             main { padding-top: 1rem; justify-content: flex-start; padding-bottom: 25vh !important; }
             .system-status { display: none !important; }
@@ -257,10 +260,21 @@
                 100% { transform: translateY(0); }
             }
 
-            .action-area { flex-direction: column; gap: 0.8rem; width: 100%; }
-            .action-area .btn { width: 100%; padding: 0.9rem; font-size: 0.8rem; margin: 0; }
+            .action-area { flex-direction: column; gap: 0.8rem; width: 100%; align-items: center; }
+            .action-area .btn { width: 100%; padding: 0.9rem; font-size: 0.8rem; margin: 0; box-sizing: border-box; }
             
-            .main-cta-mobile { font-size: 1.1rem !important; padding: 1.2rem !important; order: -2 !important; margin-bottom: 0.5rem; }
+            /* MODIFICACIÓN: BOTÓN CENTRADO Y AJUSTADO AL MARGEN EN MÓVIL */
+            .main-cta-mobile { 
+                font-size: 1.1rem !important; 
+                padding: 1.2rem !important; 
+                order: -2 !important; 
+                margin: 0 auto 0.5rem auto !important; 
+                width: 100% !important;
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+                display: block !important;
+                text-align: center !important;
+            }
 
             .carousel-wrapper { 
                 display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; 
@@ -332,7 +346,6 @@
             </div>
             
             <div class="header-controls">
-                <!-- BOTÓN DE TRADUCCIÓN -->
                 <span class="auth-link desktop-auth lang-link" onclick="toggleLanguage()" id="langToggleBtn">[ ES ]</span>
                 
                 <a href="#" class="auth-link desktop-auth open-login-trigger" data-en="[ AUTH ]" data-es="[ AUTENTICACIÓN ]">[ AUTH ]</a>
@@ -603,12 +616,11 @@
                         configData = { mode: 'spots', value: parts[0], color: parts[1] || 'var(--hot-pink)', title_en: 'LIMITED ACCESS PROTOCOL', title_es: 'PROTOCOLO DE ACCESO LIMITADO' };
                     }
 
-                    // Logica Bilingüe Supabase Action Text (JSON format)
                     let actionStr = discountLog.action_text;
                     try {
                         let parsedAct = JSON.parse(actionStr);
                         actionStr = userLang === 'es' ? (parsedAct.es || parsedAct.en) : parsedAct.en;
-                    } catch(e) {} // Fallback a texto normal
+                    } catch(e) {} 
 
                     discountTitle.innerText = userLang === 'es' ? (configData.title_es || configData.title || 'PROTOCOLO DE ACCESO LIMITADO') : (configData.title_en || configData.title || 'LIMITED ACCESS PROTOCOL');
                     discountMsg.innerHTML = actionStr; 
@@ -688,6 +700,7 @@
 
                 for (const [btnId, config] of Object.entries(buttonStates)) {
                     const btnElement = document.getElementById(btnId);
+                    
                     if (btnElement) {
                         try {
                             btnElement.style.display = config.state === 'show' ? 'inline-block' : 'none';
@@ -697,15 +710,21 @@
                                 if (!safeColor.startsWith('#') && /^[0-9A-Fa-f]{6}$/.test(safeColor)) {
                                     safeColor = '#' + safeColor;
                                 }
+                                
                                 btnElement.style.color = safeColor;
                                 btnElement.style.borderColor = safeColor;
+                                
                                 let shadowColor = safeColor;
-                                if (safeColor.startsWith('#') && safeColor.length === 7) shadowColor = safeColor + '33';
+                                if (safeColor.startsWith('#') && safeColor.length === 7) {
+                                    shadowColor = safeColor + '33';
+                                }
+                                
                                 btnElement.style.boxShadow = `inset 0 0 0 transparent, 0 0 10px ${shadowColor}`;
                                 
                                 btnElement.onmouseenter = function() {
                                     let hoverBg = safeColor;
                                     if (safeColor.startsWith('#') && safeColor.length === 7) hoverBg = safeColor + '1A';
+                                    
                                     this.style.backgroundColor = hoverBg; 
                                     this.style.boxShadow = `inset 0 0 10px ${shadowColor}, 0 0 15px ${shadowColor}`;
                                 };
@@ -720,9 +739,14 @@
                                 btnElement.style.backgroundColor = '';
                                 btnElement.onmouseenter = null;
                                 btnElement.onmouseleave = null;
-                                if (!btnElement.className.includes('-default')) btnElement.classList.add('btn-dg-default');
+                                
+                                if (!btnElement.className.includes('-default')) {
+                                    btnElement.classList.add('btn-dg-default');
+                                }
                             }
-                        } catch(e) { console.error(e); }
+                        } catch(e) {
+                            console.error(e);
+                        }
                     }
                 }
 
@@ -743,7 +767,6 @@
                     else if (log.log_type === 'negative') valueClass = 't-error';
                     else valueClass = 't-time'; 
 
-                    // Parsing Bilingual Logs for Terminal
                     let actionStr = log.action_text;
                     try {
                         let parsed = JSON.parse(actionStr);

@@ -109,7 +109,6 @@
         .btn-delete { background: transparent; border: 1px solid var(--crimson-war); color: var(--crimson-war); padding: 0.4rem 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; cursor: pointer; transition: all 0.2s; touch-action: manipulation; }
         .btn-delete:hover { background: var(--crimson-war); color: var(--smoke-white); }
 
-        /* BUTTON ROW STYLING (DRAG & DROP) */
         .saved-btn-row { background-color: rgba(176, 38, 255, 0.05); border: 1px solid var(--neon-purple); padding: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; transition: all 0.2s; }
         .saved-btn-row.draggable { cursor: grab; }
         .saved-btn-row.dragging { opacity: 0.5; border-style: dashed; border-color: var(--electric-cyan); background-color: rgba(0, 242, 255, 0.05); }
@@ -129,6 +128,10 @@
         .move-btn { background: transparent; border: 1px solid var(--steel-grey); color: var(--steel-grey); cursor: pointer; padding: 0.2rem 0.5rem; font-family: monospace; transition: all 0.2s;}
         .move-btn:hover { background: var(--steel-grey); color: var(--vantablack); }
 
+        .bilingual-input { display: flex; gap: 1rem; margin-top: 0.5rem; }
+        .bilingual-input input { flex: 1; }
+        .lang-badge { display: inline-block; font-size: 0.7rem; color: var(--vantablack); background-color: var(--steel-grey); padding: 2px 6px; border-radius: 4px; vertical-align: middle; margin-left: 5px; }
+
         @media (max-width: 768px) { 
             body { padding: 1rem; }
             .admin-box { padding: 1.5rem; }
@@ -141,6 +144,7 @@
             .flex-row-mobile button { width: 100%; margin-top: 0.5rem; }
             .saved-btn-row { flex-direction: column; align-items: flex-start; }
             .saved-btn-actions { display: flex; width: 100%; justify-content: space-between; }
+            .bilingual-input { flex-direction: column; gap: 0.5rem; }
         }
     </style>
 </head>
@@ -162,6 +166,7 @@
             <button class="tab-btn tab-logs" onclick="switchTab('panel-logs', this)">[ LOGS ]</button>
         </div>
 
+        <!-- MASTER TERMINAL -->
         <div id="panel-master" class="admin-box active-panel">
             <h1>
                 MASTER TERMINAL 
@@ -176,7 +181,10 @@
 
             <div class="form-group">
                 <label>> 2. ACTION / MAIN MESSAGE</label>
-                <input type="text" id="actionText" placeholder="Ex: Retail trap detected. Check the full report." autocomplete="off">
+                <div class="bilingual-input">
+                    <input type="text" id="actionText_en" placeholder="[ENGLISH] Ex: Retail trap detected." autocomplete="off">
+                    <input type="text" id="actionText_es" placeholder="[SPANISH] Ex: Trampa retail detectada." autocomplete="off">
+                </div>
             </div>
 
             <div class="optional-group">
@@ -187,7 +195,7 @@
                         <input type="url" id="linkUrl" placeholder="https://" autocomplete="off">
                     </div>
                     <div>
-                        <label class="optional-label">Word to link (Ex: 'full report')</label>
+                        <label class="optional-label">Word to link (Applies to both EN/ES if it matches)</label>
                         <input type="text" id="linkWord" placeholder="Exact word" autocomplete="off">
                     </div>
                 </div>
@@ -211,6 +219,7 @@
             <div id="feedback" class="feedback-msg"></div>
         </div>
 
+        <!-- MACRO NEWS -->
         <div id="panel-news" class="admin-box" style="border-color: var(--crimson-war);">
             <h1 style="color: var(--crimson-war);">[ ! ] MACRO NEWS OVERRIDE</h1>
             <div class="warning-text" style="color: var(--crimson-war); border-color: rgba(255,49,49,0.2);">ACTIVATES RED ALERT MODE.</div>
@@ -225,6 +234,7 @@
             <div id="newsFeedback" class="feedback-msg"></div>
         </div>
 
+        <!-- DYNAMIC OFFER -->
         <div id="panel-desc" class="admin-box" style="border-color: var(--hot-pink);">
             <h1 style="color: var(--hot-pink);">[ ⏳ ] DYNAMIC OFFER</h1>
             <div class="warning-text" style="color: var(--hot-pink); border-color: rgba(255,0,127,0.2);">
@@ -233,7 +243,10 @@
 
             <div class="form-group">
                 <label style="color: var(--hot-pink);">> BANNER TITLE</label>
-                <input type="text" id="offerTitle" value="LIMITED ACCESS PROTOCOL" placeholder="Ex: FLASH SALE" autocomplete="off" style="border-color: var(--hot-pink); color: var(--hot-pink);">
+                <div class="bilingual-input">
+                    <input type="text" id="offerTitle_en" value="LIMITED ACCESS PROTOCOL" placeholder="[ENGLISH] Ex: FLASH SALE" autocomplete="off" style="border-color: var(--hot-pink); color: var(--hot-pink);">
+                    <input type="text" id="offerTitle_es" value="PROTOCOLO DE ACCESO LIMITADO" placeholder="[SPANISH] Ex: VENTA FLASH" autocomplete="off" style="border-color: var(--hot-pink); color: var(--hot-pink);">
+                </div>
             </div>
 
             <div class="form-group">
@@ -281,7 +294,10 @@
 
             <div class="form-group">
                 <label style="color: var(--hot-pink);">> MAIN MESSAGE</label>
-                <input type="text" id="descMsg" placeholder="Ex: The Protocol is temporarily available." autocomplete="off" style="border-color: var(--hot-pink); color: var(--hot-pink);">
+                <div class="bilingual-input">
+                    <input type="text" id="descMsg_en" placeholder="[EN] The Protocol is temporarily available." autocomplete="off" style="border-color: var(--hot-pink); color: var(--hot-pink);">
+                    <input type="text" id="descMsg_es" placeholder="[ES] El Protocolo está disponible temporalmente." autocomplete="off" style="border-color: var(--hot-pink); color: var(--hot-pink);">
+                </div>
             </div>
 
             <div class="optional-group" style="border-color: var(--hot-pink); background-color: transparent;">
@@ -291,7 +307,7 @@
                         <input type="url" id="descUrl" placeholder="https://" autocomplete="off" style="border-color: var(--hot-pink); color: var(--hot-pink);">
                     </div>
                     <div>
-                        <label class="optional-label" style="color: var(--hot-pink);">Word to link</label>
+                        <label class="optional-label" style="color: var(--hot-pink);">Word to link (Must match exactly in EN or ES)</label>
                         <input type="text" id="descWord" placeholder="Ex: available" autocomplete="off" style="border-color: var(--hot-pink); color: var(--hot-pink);">
                     </div>
                 </div>
@@ -302,6 +318,7 @@
             <div id="descFeedback" class="feedback-msg"></div>
         </div>
 
+        <!-- POP UP ALERT -->
         <div id="panel-popup" class="admin-box" style="border-color: var(--alert-gold);">
             <h1 style="color: var(--alert-gold);">[ 🔔 ] REAL-TIME ALERT</h1>
             <div class="warning-text" style="color: var(--alert-gold); border-color: rgba(255,215,0,0.2);">
@@ -310,14 +327,17 @@
 
             <div class="form-group">
                 <label style="color: var(--alert-gold);">> POP-UP MESSAGE</label>
-                <input type="text" id="popupMsg" placeholder="Ex: New setup published in VIP." autocomplete="off" style="border-color: var(--alert-gold); color: var(--alert-gold);">
+                <div class="bilingual-input">
+                    <input type="text" id="popupMsg_en" placeholder="[ENGLISH] New setup published." autocomplete="off" style="border-color: var(--alert-gold); color: var(--alert-gold);">
+                    <input type="text" id="popupMsg_es" placeholder="[SPANISH] Nuevo setup publicado." autocomplete="off" style="border-color: var(--alert-gold); color: var(--alert-gold);">
+                </div>
             </div>
 
             <button class="btn-execute btn-gold" id="btnPopup" onclick="sendPopupAlert()">[ LAUNCH POP-UP TO ALL USERS ]</button>
             <div id="popupFeedback" class="feedback-msg"></div>
         </div>
 
-        <!-- REORDER AND VISIBILITY PANEL -->
+        <!-- BUTTONS MANAGER -->
         <div id="panel-buttons" class="admin-box" style="border-color: var(--neon-purple);">
             <h1 style="color: var(--neon-purple);">[ 🎛️ ] BUTTON VISIBILITY & ORDER</h1>
             <div class="warning-text" style="color: var(--neon-purple); border-color: rgba(176, 38, 255, 0.2);">
@@ -341,6 +361,7 @@
             <div id="btnToggleFeedback" class="feedback-msg" style="margin-top: 2rem;"></div>
         </div>
 
+        <!-- DROP CODE -->
         <div id="panel-drop" class="admin-box" style="border-color: var(--matrix-green);">
             <h1 style="color: var(--matrix-green);">[ 🔐 ] DROP CONFIGURATION</h1>
             <div class="warning-text" style="color: var(--matrix-green); border-color: rgba(0, 255, 65, 0.2);">
@@ -356,6 +377,7 @@
             <div id="dropFeedback" class="feedback-msg"></div>
         </div>
 
+        <!-- LOGS -->
         <div id="panel-logs" class="admin-box">
             <h1 style="color: var(--steel-grey);">
                 ACTIVE LOGS 
@@ -397,26 +419,35 @@
         async function injectData() {
             const btn = document.getElementById('btnSubmit'); const feedback = document.getElementById('feedback');
             const logTime = document.getElementById('logTime').value.trim();
-            let actionText = document.getElementById('actionText').value.trim();
+            
+            let actionTextEn = document.getElementById('actionText_en').value.trim();
+            let actionTextEs = document.getElementById('actionText_es').value.trim();
             const valueText = document.getElementById('valueText').value.trim();
             const logType = document.querySelector('input[name="logType"]:checked').value;
             const linkUrl = document.getElementById('linkUrl').value.trim();
             const linkWord = document.getElementById('linkWord').value.trim();
 
-            if (!logTime || !actionText) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Missing fields.'; return; }
+            if (!logTime || !actionTextEn) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Time and English message required.'; return; }
+            if (!actionTextEs) actionTextEs = actionTextEn; // Fallback
 
             if (linkUrl && linkWord) {
                 const anchorTag = `<a href="${linkUrl}" target="_blank" style="color: var(--electric-cyan); text-decoration: underline; text-underline-offset: 4px; font-weight: bold; cursor: pointer;">${linkWord}</a>`;
-                if (actionText.includes(linkWord)) { actionText = actionText.replace(linkWord, anchorTag); } 
-                else { actionText += ` <a href="${linkUrl}" target="_blank" style="color: var(--obsidian-navy); background-color: var(--electric-cyan); padding: 2px 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-decoration: none; margin-left: 8px;">[ ${linkWord} ]</a>`; }
+                
+                if (actionTextEn.includes(linkWord)) { actionTextEn = actionTextEn.replace(linkWord, anchorTag); } 
+                else { actionTextEn += ` <a href="${linkUrl}" target="_blank" style="color: var(--obsidian-navy); background-color: var(--electric-cyan); padding: 2px 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-decoration: none; margin-left: 8px;">[ ${linkWord} ]</a>`; }
+                
+                if (actionTextEs.includes(linkWord)) { actionTextEs = actionTextEs.replace(linkWord, anchorTag); } 
+                else { actionTextEs += ` <a href="${linkUrl}" target="_blank" style="color: var(--obsidian-navy); background-color: var(--electric-cyan); padding: 2px 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-decoration: none; margin-left: 8px;">[ ${linkWord} ]</a>`; }
             }
+
+            const actionPayload = JSON.stringify({ en: actionTextEn, es: actionTextEs });
 
             btn.innerText = 'INJECTING...'; btn.style.pointerEvents = 'none'; feedback.innerText = '';
             try {
-                const { error } = await supabaseClient.from('logs').insert([{ log_time: logTime, action_text: actionText, value_text: valueText, log_type: logType }]);
+                const { error } = await supabaseClient.from('logs').insert([{ log_time: logTime, action_text: actionPayload, value_text: valueText, log_type: logType }]);
                 if (error) throw error;
                 feedback.className = 'msg-success'; feedback.innerText = '[SUCCESS] Updated.';
-                document.getElementById('actionText').value = ''; document.getElementById('valueText').value = ''; document.getElementById('linkUrl').value = ''; document.getElementById('linkWord').value = '';
+                document.getElementById('actionText_en').value = ''; document.getElementById('actionText_es').value = ''; document.getElementById('valueText').value = ''; document.getElementById('linkUrl').value = ''; document.getElementById('linkWord').value = '';
                 loadLogs();
             } catch (error) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Injection failed.'; } 
             finally { btn.innerText = '[ INJECT TO PROTOCOL ]'; btn.style.pointerEvents = 'auto'; }
@@ -443,7 +474,8 @@
 
         async function activateDiscountMode() {
             const mode = document.querySelector('input[name="offerMode"]:checked').value;
-            const title = document.getElementById('offerTitle').value.trim() || 'LIMITED ACCESS PROTOCOL';
+            const titleEn = document.getElementById('offerTitle_en').value.trim() || 'LIMITED ACCESS PROTOCOL';
+            const titleEs = document.getElementById('offerTitle_es').value.trim() || 'PROTOCOLO DE ACCESO LIMITADO';
             
             let colorHex = document.getElementById('offerColorHex').value.trim();
             if(!colorHex.startsWith('#') && /^[0-9A-Fa-f]{6}$/.test(colorHex)) colorHex = '#' + colorHex;
@@ -458,26 +490,31 @@
                 if(!val) { document.getElementById('descFeedback').className = 'msg-error'; document.getElementById('descFeedback').innerText = '[ERROR] Missing end date/time.'; return; }
             }
 
-            let msg = document.getElementById('descMsg').value.trim();
+            let msgEn = document.getElementById('descMsg_en').value.trim();
+            let msgEs = document.getElementById('descMsg_es').value.trim() || msgEn;
             const linkUrl = document.getElementById('descUrl').value.trim();
             const linkWord = document.getElementById('descWord').value.trim();
             const feedback = document.getElementById('descFeedback');
             const btn = document.getElementById('btnDesc');
 
-            if(!msg) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Missing Message.'; return; }
+            if(!msgEn) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Missing English Message.'; return; }
 
             if (linkUrl && linkWord) {
                 const anchorTag = `<a href="${linkUrl}" target="_blank" style="color: #000000; text-decoration: underline; text-underline-offset: 4px; font-weight: 900; cursor: pointer;">${linkWord}</a>`;
-                if (msg.includes(linkWord)) { msg = msg.replace(linkWord, anchorTag); } 
-                else { msg += ` <a href="${linkUrl}" target="_blank" style="color: #000000; background-color: rgba(255,255,255,0.8); padding: 2px 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-decoration: none; margin-left: 8px;">[ ${linkWord} ]</a>`; }
+                
+                if (msgEn.includes(linkWord)) { msgEn = msgEn.replace(linkWord, anchorTag); } 
+                else { msgEn += ` <a href="${linkUrl}" target="_blank" style="color: #000000; background-color: rgba(255,255,255,0.8); padding: 2px 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-decoration: none; margin-left: 8px;">[ ${linkWord} ]</a>`; }
+                
+                if (msgEs.includes(linkWord)) { msgEs = msgEs.replace(linkWord, anchorTag); } 
+                else { msgEs += ` <a href="${linkUrl}" target="_blank" style="color: #000000; background-color: rgba(255,255,255,0.8); padding: 2px 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-decoration: none; margin-left: 8px;">[ ${linkWord} ]</a>`; }
             }
+
+            const actionPayload = JSON.stringify({ en: msgEn, es: msgEs });
+            const valuePayload = JSON.stringify({ mode: mode, value: val, color: colorHex, title_en: titleEn, title_es: titleEs });
 
             btn.innerText = 'ACTIVATING...';
             try {
-                const payloadObj = { mode: mode, value: val, color: colorHex, title: title };
-                const valuePayload = JSON.stringify(payloadObj);
-
-                const { error } = await supabaseClient.from('logs').insert([{ log_time: '[OFFER]', action_text: msg, value_text: valuePayload, log_type: 'discount_alert' }]);
+                const { error } = await supabaseClient.from('logs').insert([{ log_time: '[OFFER]', action_text: actionPayload, value_text: valuePayload, log_type: 'discount_alert' }]);
                 if (error) throw error;
                 
                 feedback.style.color = colorHex; 
@@ -502,7 +539,7 @@
                         config = JSON.parse(data[0].value_text); 
                     } catch(e) {
                         const parts = data[0].value_text.split('|');
-                        config = { mode: 'spots', value: parts[0], color: parts[1] || "#FF007F", title: "LIMITED ACCESS PROTOCOL" };
+                        config = { mode: 'spots', value: parts[0], color: parts[1] || "#FF007F", title_en: "LIMITED ACCESS PROTOCOL" };
                     }
 
                     if (config.mode === 'spots') {
@@ -511,12 +548,12 @@
                             spots--; 
                             config.value = spots.toString();
                             const valuePayload = JSON.stringify(config);
-                            const currentMsg = data[0].action_text;
+                            const currentMsg = data[0].action_text; // Maintains bilingual JSON structure
                             
                             await supabaseClient.from('logs').insert([{ log_time: '[OFFER_UPDATE]', action_text: currentMsg, value_text: valuePayload, log_type: 'discount_alert' }]);
                             document.getElementById('offerSpots').value = spots;
                             
-                            feedback.style.color = config.color; 
+                            feedback.style.color = config.color || '#FF007F'; 
                             feedback.innerText = `[ OK ] SPOTS REDUCED TO ${spots}.`;
                             loadLogs();
                         } else {
@@ -535,18 +572,21 @@
         }
 
         async function sendPopupAlert() {
-            const msg = document.getElementById('popupMsg').value.trim();
+            const msgEn = document.getElementById('popupMsg_en').value.trim();
+            const msgEs = document.getElementById('popupMsg_es').value.trim() || msgEn;
             const feedback = document.getElementById('popupFeedback');
             const btn = document.getElementById('btnPopup');
 
-            if(!msg) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Type a message first.'; return; }
+            if(!msgEn) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Type an English message first.'; return; }
+
+            const payload = JSON.stringify({ en: msgEn, es: msgEs });
 
             btn.innerText = 'SENDING...';
             try {
-                const { error } = await supabaseClient.from('logs').insert([{ log_time: '[LIVE_ALERT]', action_text: msg, value_text: "", log_type: 'toast_alert' }]);
+                const { error } = await supabaseClient.from('logs').insert([{ log_time: '[LIVE_ALERT]', action_text: payload, value_text: "", log_type: 'toast_alert' }]);
                 if (error) throw error;
                 feedback.style.color = 'var(--alert-gold)'; feedback.innerText = '[ OK ] Pop-up triggered to all connected users.'; 
-                document.getElementById('popupMsg').value = ''; loadLogs();
+                document.getElementById('popupMsg_en').value = ''; document.getElementById('popupMsg_es').value = ''; loadLogs();
             } catch (error) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Failed to send pop-up.'; 
             } finally { btn.innerText = '[ LAUNCH POP-UP TO ALL USERS ]'; }
         }
@@ -637,7 +677,6 @@
                 `;
             });
 
-            // Add Event Listeners for Native Drag and Drop
             const rows = document.querySelectorAll('.saved-btn-row.draggable');
             rows.forEach(row => {
                 row.addEventListener('dragstart', (e) => {
@@ -739,7 +778,6 @@
             } catch (error) { feedback.className = 'msg-error'; feedback.innerText = '[ERROR] Failed to update button.'; }
         }
         
-        // Initial call
         renderSavedButtons();
         if(savedButtons.length > 0) { syncButtonOrder(savedButtons); }
 
@@ -760,7 +798,16 @@
                 
                 data.slice(0, 15).forEach(log => {
                     let borderColor = 'var(--steel-grey)'; let valueColor = 'var(--steel-grey)';
-                    let displayAction = log.action_text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    
+                    // Manejar displayAction que ahora puede ser JSON
+                    let displayAction = log.action_text;
+                    try {
+                        let parsed = JSON.parse(log.action_text);
+                        if(parsed.en) displayAction = `[EN] ${parsed.en} <br><span style="color:#777; font-size:0.75rem;">[ES] ${parsed.es || 'N/A'}</span>`;
+                    } catch(e) {
+                        displayAction = log.action_text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    }
+                    
                     let displayValue = log.value_text ? `<span style="color: ${valueColor}; font-weight: bold;">[DATA_STORED]</span>` : '';
 
                     if(log.log_type === 'positive') { borderColor = 'var(--electric-cyan)'; valueColor = 'var(--electric-cyan)'; } 
@@ -781,11 +828,16 @@
                         displayAction = `System File: <strong style="color: var(--smoke-white);">loss.html</strong>`;
                         displayValue = `<span style="color: var(--crimson-war); font-weight: bold;">[ LAYOUT UPDATED ]</span>`;
                     }
+                    else if (log.log_type === 'vsl_config') { 
+                        borderColor = 'var(--electric-cyan)'; 
+                        displayAction = `System File: <strong style="color: var(--smoke-white);">vsl.html</strong>`;
+                        displayValue = `<span style="color: var(--electric-cyan); font-weight: bold;">[ LAYOUT UPDATED ]</span>`;
+                    }
 
                     const logEl = document.createElement('div'); logEl.className = 'log-item'; logEl.style.borderLeftColor = borderColor;
                     
                     if (log.log_type === 'button_toggle') {
-                        displayAction = `ID Switch: <strong style="color: var(--smoke-white);">${displayAction}</strong>`;
+                        displayAction = `ID Switch: <strong style="color: var(--smoke-white);">${log.action_text}</strong>`;
                         try {
                             const btnConfig = JSON.parse(log.value_text);
                             const stateText = btnConfig.state ? btnConfig.state.toUpperCase() : "TOGGLED";

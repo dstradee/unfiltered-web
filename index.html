@@ -11,7 +11,6 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-Z90RHTXWGV');
     </script>
 
@@ -22,6 +21,42 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- MOTOR DE IDIOMAS UNFILTERED ALPHA -->
+    <script>
+        const lang = localStorage.getItem('unfiltered_lang') || 'en';
+        document.documentElement.lang = lang;
+
+        function applyTranslations() {
+            document.querySelectorAll('[data-en]').forEach(el => {
+                if (lang === 'es' && el.hasAttribute('data-es')) {
+                    el.innerHTML = el.getAttribute('data-es');
+                } else {
+                    el.innerHTML = el.getAttribute('data-en');
+                }
+            });
+            document.querySelectorAll('[placeholder-en]').forEach(el => {
+                if (lang === 'es' && el.hasAttribute('placeholder-es')) {
+                    el.placeholder = el.getAttribute('placeholder-es');
+                } else {
+                    el.placeholder = el.getAttribute('placeholder-en');
+                }
+            });
+            
+            const langBtn = document.getElementById('langToggleBtn');
+            const langBtnMobile = document.getElementById('langToggleBtnMobile');
+            if (langBtn) langBtn.innerText = lang === 'en' ? '[ ES ]' : '[ EN ]';
+            if (langBtnMobile) langBtnMobile.innerText = lang === 'en' ? '[ ESPAÑOL ]' : '[ ENGLISH ]';
+        }
+
+        function toggleLanguage() {
+            const current = localStorage.getItem('unfiltered_lang') || 'en';
+            localStorage.setItem('unfiltered_lang', current === 'en' ? 'es' : 'en');
+            window.location.reload();
+        }
+
+        document.addEventListener('DOMContentLoaded', applyTranslations);
+    </script>
 
     <style>
         :root {
@@ -55,7 +90,6 @@
             display: none; width: 100%; position: fixed; top: 0; left: 0; z-index: 1000; box-shadow: 0 5px 20px rgba(255, 49, 49, 0.4);
         }
 
-        /* --- DYNAMIC OFFER BANNER --- */
         .discount-banner {
             position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--hot-pink); 
             color: var(--vantablack); 
@@ -98,13 +132,14 @@
 
         .container { position: relative; z-index: 10; max-width: 1200px; margin: 0 auto; padding: 0 2rem; width: 100%; display: flex; flex-direction: column; min-height: 100vh; }
         
-        /* HEADER & HAMBURGER */
         header { padding: 4rem 0 3rem 0; display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid rgba(148, 163, 184, 0.1); }
         .brand-logo { display: flex; align-items: baseline; gap: 8px; font-size: 2rem; }
         .unfiltered-word { border-bottom: 2px solid var(--electric-cyan); padding-bottom: 2px; }
         .header-controls { display: flex; align-items: center; gap: 1.5rem; }
         .auth-link { font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); text-decoration: none; font-size: 0.85rem; letter-spacing: 1px; transition: color 0.2s ease; cursor: pointer;}
         .auth-link:hover { color: var(--electric-cyan); }
+        .lang-link { color: var(--alert-gold); font-weight: bold; }
+        .lang-link:hover { color: var(--smoke-white); }
         .hamburger-btn { display: none; background: transparent; border: none; color: var(--electric-cyan); font-size: 2rem; cursor: pointer; }
 
         main { flex: 1; display: flex; flex-direction: column; justify-content: center; padding-bottom: 15vh; } 
@@ -113,7 +148,6 @@
         .hero-subtitle { max-width: 600px; margin-bottom: 3rem; }
         .hero-subtitle .short-text { display: none; } 
 
-        /* TERMINAL BOX */
         .terminal-box { background-color: var(--vantablack); border: 1px solid rgba(148, 163, 184, 0.2); padding: 2rem; max-width: 700px; position: relative; margin-bottom: 2rem; }
         .terminal-header { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(148, 163, 184, 0.2); padding-bottom: 1rem; margin-bottom: 1.5rem; }
         .terminal-line { display: flex; gap: 1rem; margin-bottom: 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
@@ -124,10 +158,7 @@
         .blinking-cursor { display: inline-block; width: 10px; height: 1em; background-color: var(--electric-cyan); animation: blink 1s step-end infinite; vertical-align: text-bottom; margin-left: 5px; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        /* ACTION AREA / BOTONES PC ORIGINALES */
         .action-area { display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center; }
-        
-        /* Estructura Base Botones */
         .action-area .btn { 
             order: 99; display: inline-block; padding: 1rem 2rem; 
             font-family: 'JetBrains Mono', monospace; font-weight: 800; 
@@ -136,10 +167,8 @@
             text-align: center; 
         }
 
-        /* Fuerza al botón principal a ir primero siempre */
         #btn-dg { order: -2 !important; }
         
-        /* Colores Base Restaurados Perfectos */
         .btn-dg-default { border: 1px solid var(--electric-cyan); color: var(--electric-cyan); background-color: transparent; }
         .btn-dg-default:hover { background-color: rgba(0, 242, 255, 0.1); box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.2), 0 0 15px rgba(0, 242, 255, 0.2); }
 
@@ -152,10 +181,7 @@
         .btn-gold-default { border: 1px solid var(--alert-gold); color: var(--alert-gold); background-color: transparent; }
         .btn-gold-default:hover { background-color: rgba(255, 215, 0, 0.1); box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.2), 0 0 15px rgba(255, 215, 0, 0.2); }
 
-        /* Wrappers móviles ocultos en PC */
-        @media (min-width: 769px) {
-            #carouselWrapper { display: none !important; }
-        }
+        @media (min-width: 769px) { #carouselWrapper { display: none !important; } }
         .hamburger-menu-mobile { display: none; }
         .close-menu { display: none; }
         .mobile-auth-btn { display: none; } 
@@ -180,12 +206,8 @@
 
         #loginError { color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 1rem; text-align: center; display: none; }
 
-        /* ========================================================== */
-        /* MOBILE OPTIMIZATION (HIGH CONVERSION FOCUS)                */
-        /* ========================================================== */
         @media (max-width: 768px) {
             main { padding-top: 1rem; justify-content: flex-start; padding-bottom: 25vh !important; }
-            
             .system-status { display: none !important; }
             .hero-title { font-size: 3.2rem; margin-bottom: 1rem; line-height: 1; }
             .hero-subtitle { margin-bottom: 1.5rem; }
@@ -198,7 +220,6 @@
             .auth-link.desktop-auth { display: none; } 
             .hamburger-btn { display: block; }
             
-            /* Menú lateral oscuro */
             .hamburger-menu-mobile {
                 position: fixed; top: 0; right: -100%; width: 280px; height: 100vh;
                 background: rgba(2, 6, 23, 0.98); border-left: 1px solid var(--electric-cyan);
@@ -210,7 +231,6 @@
             .close-menu { display: block; color: var(--steel-grey); font-family: 'JetBrains Mono', monospace; text-align: right; cursor: pointer; margin-bottom: 2rem; font-weight: bold; border-bottom: 1px solid rgba(148,163,184,0.2); padding-bottom: 1rem;}
             .mobile-auth-btn { display: block; margin-top: auto; border: 1px solid var(--steel-grey); color: var(--steel-grey); text-align: center; padding: 1rem; font-family: monospace; font-weight: bold; text-decoration: none;}
 
-            /* Terminal Ticker Centrado Verticalmente */
             .terminal-box {
                 width: 100%; max-width: 100%;
                 padding: 0 1rem; height: 60px; border-radius: 4px;
@@ -223,10 +243,7 @@
                 width: 100%; display: flex; flex-direction: column;
                 animation: marquee-up 12s cubic-bezier(0.8, 0, 0.2, 1) infinite;
             }
-            .terminal-line { 
-                height: 60px; margin: 0; 
-                display: flex; align-items: center; justify-content: flex-start; 
-            }
+            .terminal-line { height: 60px; margin: 0; display: flex; align-items: center; justify-content: flex-start; }
             .t-time { display: none; }
             .t-action { white-space: normal; overflow: hidden; text-overflow: ellipsis; font-size: 0.85rem; line-height: 1.4; }
             .t-value { font-size: 0.85rem; margin-left: 8px; flex-shrink: 0;}
@@ -245,7 +262,6 @@
             
             .main-cta-mobile { font-size: 1.1rem !important; padding: 1.2rem !important; order: -2 !important; margin-bottom: 0.5rem; }
 
-            /* Carrusel Móvil */
             .carousel-wrapper { 
                 display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; 
                 width: 100vw; margin-left: -2rem; padding: 0 2rem 1rem 2rem; 
@@ -266,42 +282,41 @@
             .toast-notification { width: 90%; left: 5%; right: auto; top: -150px; transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
             .toast-notification.show { top: 20px; right: auto; }
         }
-
     </style>
 </head>
 <body>
 
     <div id="realtimeToast" class="toast-notification">
-        <div class="toast-title" id="toastTitle">[!] URGENT ALPHA</div>
-        <div id="toastMessage">New institutional trace detected in the terminal.</div>
+        <div class="toast-title" id="toastTitle" data-en="[!] URGENT ALPHA" data-es="[!] ALFA URGENTE">[!] URGENT ALPHA</div>
+        <div id="toastMessage" data-en="New institutional trace detected in the terminal." data-es="Nuevo rastro institucional detectado en la terminal.">New institutional trace detected in the terminal.</div>
     </div>
 
     <div class="modal-overlay" id="fomoModal">
         <div class="modal-content" style="border-color: var(--crimson-war); box-shadow: 0 0 30px rgba(255, 49, 49, 0.15);">
             <div class="close-modal" id="closeFomoBtn" style="color: var(--steel-grey);">[ X ]</div>
-            <div class="calc-header" style="color: var(--crimson-war); border-bottom-color: rgba(255,49,49,0.2);">[ SYSTEM ALERT ]</div>
+            <div class="calc-header" style="color: var(--crimson-war); border-bottom-color: rgba(255,49,49,0.2);" data-en="[ SYSTEM ALERT ]" data-es="[ ALERTA DE SISTEMA ]">[ SYSTEM ALERT ]</div>
             
-            <p style="font-family: 'JetBrains Mono', monospace; font-size: 1rem; color: var(--smoke-white); margin-bottom: 1.5rem; line-height: 1.6;">
+            <p style="font-family: 'JetBrains Mono', monospace; font-size: 1rem; color: var(--smoke-white); margin-bottom: 1.5rem; line-height: 1.6;" data-en="A new high-probability setup has just been deployed to <span style='color: var(--electric-cyan);'>The Vault</span>." data-es="Un nuevo setup de alta probabilidad acaba de ser desplegado en <span style='color: var(--electric-cyan);'>La Bóveda</span>.">
                 A new high-probability setup has just been deployed to <span style="color: var(--electric-cyan);">The Vault</span>.
             </p>
-            <p style="font-family: 'Inter', sans-serif; font-size: 0.9rem; color: var(--steel-grey); margin-bottom: 2rem;">
+            <p style="font-family: 'Inter', sans-serif; font-size: 0.9rem; color: var(--steel-grey); margin-bottom: 2rem;" data-en="Retail traders are currently providing liquidity. VIP operators are executing. You are trading blind." data-es="Los traders retail están proveyendo liquidez actualmente. Los operadores VIP están ejecutando. Tú estás operando a ciegas.">
                 Retail traders are currently providing liquidity. VIP operators are executing. You are trading blind.
             </p>
 
-            <a href="https://unfilteredalpha.gumroad.com/l/qoabdg" target="_blank" class="btn btn-primary" style="width: 100%; text-align: center; border-color: var(--crimson-war); color: var(--crimson-war);" id="fomoUpsellBtn">
+            <a href="https://unfilteredalpha.gumroad.com/l/qoabdg" target="_blank" class="btn btn-primary" style="width: 100%; text-align: center; border-color: var(--crimson-war); color: var(--crimson-war);" id="fomoUpsellBtn" data-en="STOP BLEEDING. ACCESS THE PROTOCOL ($27)" data-es="DEJA DE SANGRAR. ACCEDE AL PROTOCOLO ($27)">
                 STOP BLEEDING. ACCESS THE PROTOCOL ($27)
             </a>
         </div>
     </div>
 
-    <div class="emergency-banner" id="emergencyBanner">[ HIGH IMPACT MACRO EVENT // TRADING RESTRICTED ]</div>
+    <div class="emergency-banner" id="emergencyBanner" data-en="[ HIGH IMPACT MACRO EVENT // TRADING RESTRICTED ]" data-es="[ ALERTA MACRO DE ALTO IMPACTO // TRADING RESTRINGIDO ]">[ HIGH IMPACT MACRO EVENT // TRADING RESTRICTED ]</div>
     <div class="emergency-vignette" id="redAlert"></div>
     
     <div class="discount-banner" id="discountBanner">
         <div class="discount-content">
             <div>
-                <div class="discount-title" id="discountTitle">LIMITED ACCESS PROTOCOL</div>
-                <div class="discount-msg" id="discountMsg">Limited spots available.</div>
+                <div class="discount-title" id="discountTitle" data-en="LIMITED ACCESS PROTOCOL" data-es="PROTOCOLO DE ACCESO LIMITADO">LIMITED ACCESS PROTOCOL</div>
+                <div class="discount-msg" id="discountMsg" data-en="Limited spots available." data-es="Plazas limitadas disponibles.">Limited spots available.</div>
             </div>
             <div class="discount-timer" id="discountTimer">00 SPOTS</div>
         </div>
@@ -317,21 +332,24 @@
             </div>
             
             <div class="header-controls">
-                <a href="#" class="auth-link desktop-auth open-login-trigger">[ AUTH ]</a>
+                <!-- BOTÓN DE TRADUCCIÓN -->
+                <span class="auth-link desktop-auth lang-link" onclick="toggleLanguage()" id="langToggleBtn">[ ES ]</span>
+                
+                <a href="#" class="auth-link desktop-auth open-login-trigger" data-en="[ AUTH ]" data-es="[ AUTENTICACIÓN ]">[ AUTH ]</a>
                 <button class="hamburger-btn" id="mobileMenuBtn">☰</button>
             </div>
         </header>
 
         <main>
-            <div class="system-status code-data">
+            <div class="system-status code-data" data-en="[SYSTEM_INITIALIZED // CONNECTION_SECURED]" data-es="[SISTEMA_INICIALIZADO // CONEXIÓN_SEGURA]">
                 [SYSTEM_INITIALIZED // CONNECTION_SECURED]
             </div>
 
-            <h1 class="hero-title">STOP BEING THE EXIT LIQUIDITY.</h1>
+            <h1 class="hero-title" data-en="STOP BEING THE EXIT LIQUIDITY." data-es="DEJA DE SER LA LIQUIDEZ DE SALIDA.">STOP BEING THE EXIT LIQUIDITY.</h1>
             
             <p class="hero-subtitle">
-                <span class="long-text">Most traders follow the herd. We follow the code. Every day, the Architect provides the blueprint to survive the market manipulation. Are you reading the code or providing the liquidity?</span>
-                <span class="short-text">We follow the code. Are you reading it, or providing liquidity?</span>
+                <span class="long-text" data-en="Most traders follow the herd. We follow the code. Every day, the Architect provides the blueprint to survive the market manipulation. Are you reading the code or providing the liquidity?" data-es="La mayoría de los traders siguen al rebaño. Nosotros seguimos el código. Cada día, el Arquitecto provee el mapa para sobrevivir a la manipulación del mercado. ¿Estás leyendo el código, o proveyendo liquidez?">Most traders follow the herd. We follow the code. Every day, the Architect provides the blueprint to survive the market manipulation. Are you reading the code or providing the liquidity?</span>
+                <span class="short-text" data-en="We follow the code. Are you reading it, or providing liquidity?" data-es="Seguimos el código. ¿Lo estás leyendo o proveyendo liquidez?">We follow the code. Are you reading it, or providing liquidity?</span>
             </p>
 
             <!-- TERMINAL BOX -->
@@ -344,7 +362,7 @@
                 <div class="terminal-body" id="terminal-output">
                     <div class="terminal-line">
                         <span class="t-time">[SYS_UPDATE]</span>
-                        <span class="t-action">Establishing secure connection to The Protocol...</span>
+                        <span class="t-action" id="terminalStatusMsg" data-en="Establishing secure connection to The Protocol..." data-es="Estableciendo conexión segura con El Protocolo...">Establishing secure connection to The Protocol...</span>
                         <span class="blinking-cursor"></span>
                     </div>
                 </div>
@@ -353,24 +371,23 @@
             <!-- ACTION AREA -->
             <div class="action-area" id="actionArea">
                 
-                <a href="analysis.html" class="btn btn-dg-default main-cta-mobile" id="btn-dg" style="box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);">[ START FREE ANALYSIS ]</a>
+                <a href="analysis.html" class="btn btn-dg-default main-cta-mobile" id="btn-dg" style="box-shadow: 0 0 15px rgba(0, 242, 255, 0.3);" data-en="[ START FREE ANALYSIS ]" data-es="[ INICIAR ANÁLISIS GRATUITO ]">[ START FREE ANALYSIS ]</a>
                 
-                <!-- MOBILE CAROUSEL WRAPPER (Invisible en PC) -->
                 <div class="carousel-wrapper" id="carouselWrapper"></div>
                 
-                <!-- DEFAULT BUTTONS (ESTILOS PROTEGIDOS) -->
-                <a href="loss.html" class="btn btn-loss-default secondary-btn" id="btn-loss" style="display: none;">[ CRITICAL FAILURE LOG ]</a>
-                <a href="#" class="btn btn-purple-default secondary-btn" id="btn-drop" style="display: none;">[ DROP ACCESS ]</a>
-                <a href="#" class="btn btn-dg-default secondary-btn" id="btn-calculadora" style="display: none;">[ CALCULATOR ]</a>
-                <a href="#" class="btn btn-gold-default secondary-btn" id="btn-VIP" style="display: none;">[ VIP ACCESS ]</a>
+                <a href="loss.html" class="btn btn-loss-default secondary-btn" id="btn-loss" style="display: none;" data-en="[ CRITICAL FAILURE LOG ]" data-es="[ REGISTRO DE FALLO CRÍTICO ]">[ CRITICAL FAILURE LOG ]</a>
+                <a href="#" class="btn btn-purple-default secondary-btn" id="btn-drop" style="display: none;" data-en="[ DROP ACCESS ]" data-es="[ ACCESO AL DROP ]">[ DROP ACCESS ]</a>
+                <a href="#" class="btn btn-dg-default secondary-btn" id="btn-calculadora" style="display: none;" data-en="[ CALCULATOR ]" data-es="[ CALCULADORA ]">[ CALCULATOR ]</a>
+                <a href="#" class="btn btn-gold-default secondary-btn" id="btn-VIP" style="display: none;" data-en="[ VIP ACCESS ]" data-es="[ ACCESO VIP ]">[ VIP ACCESS ]</a>
 
                 <!-- HAMBURGER MENU MÓVIL -->
                 <div class="hamburger-menu-mobile" id="hamburgerMenu">
-                    <div class="close-menu" id="closeMenuBtn">[ X ] CLOSE PROTOCOL</div>
+                    <div class="close-menu" id="closeMenuBtn" data-en="[ X ] CLOSE PROTOCOL" data-es="[ X ] CERRAR PROTOCOLO">[ X ] CLOSE PROTOCOL</div>
                     
                     <div id="mobileMenuBtnContainer" style="display: flex; flex-direction: column; gap: 1rem;"></div>
                     
-                    <a href="#" class="mobile-auth-btn open-login-trigger">[ ARCHITECT AUTH ]</a>
+                    <a href="#" class="mobile-auth-btn" onclick="toggleLanguage()" id="langToggleBtnMobile" data-en="[ ESPAÑOL ]" data-es="[ ENGLISH ]">[ ESPAÑOL ]</a>
+                    <a href="#" class="mobile-auth-btn open-login-trigger" style="margin-top: 10px;" data-en="[ ARCHITECT AUTH ]" data-es="[ AUTENTICACIÓN ]">[ ARCHITECT AUTH ]</a>
                 </div>
 
             </div>
@@ -381,29 +398,29 @@
     <div class="modal-overlay" id="calcModal">
         <div class="modal-content">
             <div class="close-modal" id="closeCalcBtn">[ X ]</div>
-            <div class="calc-header">PROTOCOL VALIDATOR</div>
+            <div class="calc-header" data-en="PROTOCOL VALIDATOR" data-es="VALIDADOR DEL PROTOCOLO">PROTOCOL VALIDATOR</div>
             
             <div class="calc-grid">
                 <div class="calc-group">
-                    <label>> WIN RATE (%)</label>
+                    <label data-en="> WIN RATE (%)" data-es="> TASA DE ACIERTO (%)">> WIN RATE (%)</label>
                     <input type="number" id="winRate" value="35" min="1" max="100">
                 </div>
                 <div class="calc-group">
-                    <label>> RISK PER TRADE (%)</label>
+                    <label data-en="> RISK PER TRADE (%)" data-es="> RIESGO POR OPERACIÓN (%)">> RISK PER TRADE (%)</label>
                     <input type="number" id="riskPct" value="1" min="0.1" step="0.1">
                 </div>
                 <div class="calc-group" style="grid-column: span 2;">
-                    <label>> REWARD PER TRADE (PROFIT %)</label>
+                    <label data-en="> REWARD PER TRADE (PROFIT %)" data-es="> BENEFICIO POR OPERACIÓN (%)">> REWARD PER TRADE (PROFIT %)</label>
                     <input type="number" id="rewardPct" value="3" min="0.1" step="0.1">
                 </div>
             </div>
 
             <div class="calc-result-box status-neutral" id="resultBox">
                 <div class="calc-expectancy" id="expectancyVal">0.00%</div>
-                <div class="calc-verdict" id="verdictText">AWAITING DATA INPUT</div>
+                <div class="calc-verdict" id="verdictText" data-en="AWAITING DATA INPUT" data-es="ESPERANDO INGRESO DE DATOS">AWAITING DATA INPUT</div>
             </div>
 
-            <a href="https://unfilteredalpha.gumroad.com/l/qoabdg" target="_blank" class="btn btn-primary" style="width: 100%; text-align: center; display: none;" id="upsellBtn">
+            <a href="https://unfilteredalpha.gumroad.com/l/qoabdg" target="_blank" class="btn btn-primary" style="width: 100%; text-align: center; display: none;" id="upsellBtn" data-en="SECURE THE PROTOCOL NOW ($27)" data-es="ASEGURA EL PROTOCOLO AHORA ($27)">
                 SECURE THE PROTOCOL NOW ($27)
             </a>
         </div>
@@ -413,20 +430,20 @@
     <div class="modal-overlay" id="loginModal">
         <div class="modal-content" style="max-width: 400px;">
             <div class="close-modal" id="closeLoginBtn">[ X ]</div>
-            <div class="calc-header" style="font-size: 2rem;">VAULT ACCESS</div>
+            <div class="calc-header" style="font-size: 2rem;" data-en="VAULT ACCESS" data-es="ACCESO A LA BÓVEDA">VAULT ACCESS</div>
             
             <div class="calc-group" style="margin-bottom: 1rem;">
-                <label>> IDENTIFIER (EMAIL)</label>
-                <input type="email" id="adminEmail" placeholder="architect@..." autocomplete="off">
+                <label data-en="> IDENTIFIER (EMAIL)" data-es="> IDENTIFICADOR (EMAIL)">> IDENTIFIER (EMAIL)</label>
+                <input type="email" id="adminEmail" placeholder-en="architect@..." placeholder-es="arquitecto@..." autocomplete="off">
             </div>
             <div class="calc-group" style="margin-bottom: 1.5rem;">
-                <label>> PASSPHRASE</label>
+                <label data-en="> PASSPHRASE" data-es="> CONTRASEÑA">> PASSPHRASE</label>
                 <input type="password" id="adminPass" placeholder="••••••••">
             </div>
             
-            <div id="loginError">[SYS_ERROR] Invalid credentials.</div>
+            <div id="loginError" data-en="[SYS_ERROR] Invalid credentials." data-es="[SYS_ERROR] Credenciales inválidas.">[SYS_ERROR] Invalid credentials.</div>
 
-            <a href="#" class="btn btn-primary" style="width: 100%; text-align: center;" id="executeLoginBtn">
+            <a href="#" class="btn btn-primary" style="width: 100%; text-align: center;" id="executeLoginBtn" data-en="[ VERIFY CLEARANCE ]" data-es="[ VERIFICAR AUTORIZACIÓN ]">
                 [ VERIFY CLEARANCE ]
             </a>
         </div>
@@ -436,9 +453,9 @@
     <div class="modal-overlay" id="dropModal">
         <div class="modal-content" style="max-width: 400px; border-color: var(--matrix-green); box-shadow: 0 0 30px rgba(0, 255, 65, 0.15);">
             <div class="close-modal" id="closeDropBtn">[ X ]</div>
-            <div class="calc-header" style="font-size: 2rem; color: var(--matrix-green); border-bottom-color: rgba(0, 255, 65, 0.2);">VAULT DECRYPTION</div>
+            <div class="calc-header" style="font-size: 2rem; color: var(--matrix-green); border-bottom-color: rgba(0, 255, 65, 0.2);" data-en="VAULT DECRYPTION" data-es="DESENCRIPTACIÓN DE LA BÓVEDA">VAULT DECRYPTION</div>
             
-            <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--steel-grey); margin-bottom: 1.5rem;">
+            <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--steel-grey); margin-bottom: 1.5rem;" data-en="Enter the access code provided by the Architect to unlock the Vault." data-es="Introduce el código de acceso proporcionado por el Arquitecto para desbloquear la Bóveda.">
                 Enter the access code provided by the Architect to unlock the Vault.
             </p>
 
@@ -446,11 +463,11 @@
                 <input type="text" id="dropPinInput" placeholder="••••" autocomplete="off" style="text-align: center; font-size: 1.5rem; letter-spacing: 5px; text-transform: uppercase; color: var(--matrix-green); border-color: var(--matrix-green);">
             </div>
             
-            <div id="dropErrorMsg" style="color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 1rem; text-align: center; display: none; font-weight: bold;">
+            <div id="dropErrorMsg" style="color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; margin-bottom: 1rem; text-align: center; display: none; font-weight: bold;" data-en="[SYS_ERROR] ACCESS DENIED." data-es="[SYS_ERROR] ACCESO DENEGADO.">
                 [SYS_ERROR] ACCESS DENIED.
             </div>
 
-            <a href="#" class="btn" style="width: 100%; text-align: center; background-color: var(--matrix-green); color: var(--vantablack); border: none;" id="executeDropBtn">
+            <a href="#" class="btn" style="width: 100%; text-align: center; background-color: var(--matrix-green); color: var(--vantablack); border: none;" id="executeDropBtn" data-en="[ VERIFY CLEARANCE ]" data-es="[ VERIFICAR AUTORIZACIÓN ]">
                 [ VERIFY CLEARANCE ]
             </a>
         </div>
@@ -460,28 +477,28 @@
     <div class="modal-overlay" id="vipModal">
         <div class="modal-content" style="max-width: 400px; border-color: var(--alert-gold); box-shadow: 0 0 30px rgba(255, 215, 0, 0.15);">
             <div class="close-modal" id="closeVipBtn">[ X ]</div>
-            <div class="calc-header" style="font-size: 2rem; color: var(--alert-gold); border-bottom-color: rgba(255, 215, 0, 0.2);">VIP DECRYPTION</div>
+            <div class="calc-header" style="font-size: 2rem; color: var(--alert-gold); border-bottom-color: rgba(255, 215, 0, 0.2);" data-en="VIP DECRYPTION" data-es="DESENCRIPTACIÓN VIP">VIP DECRYPTION</div>
             
             <div class="calc-group" style="margin-bottom: 1rem;">
-                <label style="color: var(--alert-gold);">> IDENTIFIER (EMAIL)</label>
-                <input type="email" id="vipEmail" placeholder="member@..." autocomplete="off" style="border-color: var(--alert-gold); color: var(--alert-gold);">
+                <label style="color: var(--alert-gold);" data-en="> IDENTIFIER (EMAIL)" data-es="> IDENTIFICADOR (EMAIL)">> IDENTIFIER (EMAIL)</label>
+                <input type="email" id="vipEmail" placeholder-en="member@..." placeholder-es="miembro@..." autocomplete="off" style="border-color: var(--alert-gold); color: var(--alert-gold);">
             </div>
             <div class="calc-group" style="margin-bottom: 1.5rem;">
-                <label style="color: var(--alert-gold);">> VIP PASSPHRASE</label>
+                <label style="color: var(--alert-gold);" data-en="> VIP PASSPHRASE" data-es="> CONTRASEÑA VIP">> VIP PASSPHRASE</label>
                 <input type="password" id="vipPass" placeholder="••••••••" style="border-color: var(--alert-gold); color: var(--alert-gold);">
             </div>
             
-            <div id="vipErrorMsg" style="color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; margin-bottom: 1rem; text-align: center; display: none; font-weight: bold;">
+            <div id="vipErrorMsg" style="color: var(--crimson-war); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; margin-bottom: 1rem; text-align: center; display: none; font-weight: bold;" data-en="[SYS_ERROR] ACCESS DENIED // NOT A VIP MEMBER." data-es="[SYS_ERROR] ACCESO DENEGADO // NO ERES MIEMBRO VIP.">
                 [SYS_ERROR] ACCESS DENIED // NOT A VIP MEMBER.
             </div>
 
-            <a href="#" class="btn" style="width: 100%; text-align: center; background-color: var(--alert-gold); color: var(--vantablack); border: none; font-weight: 800;" id="executeVipBtn">
+            <a href="#" class="btn" style="width: 100%; text-align: center; background-color: var(--alert-gold); color: var(--vantablack); border: none; font-weight: 800;" id="executeVipBtn" data-en="[ VERIFY CLEARANCE ]" data-es="[ VERIFICAR AUTORIZACIÓN ]">
                 [ VERIFY CLEARANCE ]
             </a>
 
             <div style="text-align: center; margin-top: 1.5rem;">
-                <p style="color: var(--steel-grey); font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 0.5rem;">NOT A VIP MEMBER YET?</p>
-                <a href="https://unfilteredalpha.gumroad.com/l/qoabdg" target="_blank" style="color: var(--electric-cyan); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: bold; text-decoration: underline; text-underline-offset: 4px;">
+                <p style="color: var(--steel-grey); font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 0.5rem;" data-en="NOT A VIP MEMBER YET?" data-es="¿AÚN NO ERES MIEMBRO VIP?">NOT A VIP MEMBER YET?</p>
+                <a href="https://unfilteredalpha.gumroad.com/l/qoabdg" target="_blank" style="color: var(--electric-cyan); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: bold; text-decoration: underline; text-underline-offset: 4px;" data-en="[ JOIN THE PROTOCOL HERE ]" data-es="[ ÚNETE AL PROTOCOLO AQUÍ ]">
                     [ JOIN THE PROTOCOL HERE ]
                 </a>
             </div>
@@ -509,7 +526,6 @@
         let currentDropCode = ""; 
         let countdownInterval; 
 
-        // --- HAMBURGER MENU LOGIC ---
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const hamburgerMenu = document.getElementById('hamburgerMenu');
         const closeMenuBtn = document.getElementById('closeMenuBtn');
@@ -519,7 +535,6 @@
             closeMenuBtn.addEventListener('click', () => { hamburgerMenu.classList.remove('open'); });
         }
 
-        // --- MOBILE BUTTON ROUTING LOGIC ---
         const MAIN_SCREEN_BUTTONS = ['btn-loss', 'btn-drop'];
 
         function routeButtonsForMobile() {
@@ -575,8 +590,9 @@
                     emergencyBanner.style.display = 'none';
                 }
 
-                // --- 2. DYNAMIC OFFER (SPOTS / TIMER) ---
+                // --- 2. DYNAMIC OFFER ---
                 const discountLog = data.find(log => log.log_type === 'discount_alert');
+                const userLang = localStorage.getItem('unfiltered_lang') || 'en';
 
                 if (discountLog && discountLog.value_text !== "0") {
                     let configData = {};
@@ -584,18 +600,25 @@
                         configData = JSON.parse(discountLog.value_text);
                     } catch(e) {
                         const parts = discountLog.value_text.split('|');
-                        configData = { mode: 'spots', value: parts[0], color: parts[1] || 'var(--hot-pink)', title: 'LIMITED ACCESS PROTOCOL' };
+                        configData = { mode: 'spots', value: parts[0], color: parts[1] || 'var(--hot-pink)', title_en: 'LIMITED ACCESS PROTOCOL', title_es: 'PROTOCOLO DE ACCESO LIMITADO' };
                     }
 
-                    discountTitle.innerText = configData.title || 'LIMITED ACCESS PROTOCOL';
-                    discountMsg.innerHTML = discountLog.action_text; 
+                    // Logica Bilingüe Supabase Action Text (JSON format)
+                    let actionStr = discountLog.action_text;
+                    try {
+                        let parsedAct = JSON.parse(actionStr);
+                        actionStr = userLang === 'es' ? (parsedAct.es || parsedAct.en) : parsedAct.en;
+                    } catch(e) {} // Fallback a texto normal
+
+                    discountTitle.innerText = userLang === 'es' ? (configData.title_es || configData.title || 'PROTOCOLO DE ACCESO LIMITADO') : (configData.title_en || configData.title || 'LIMITED ACCESS PROTOCOL');
+                    discountMsg.innerHTML = actionStr; 
                     discountBanner.style.backgroundColor = configData.color || 'var(--hot-pink)';
                     discountBanner.style.display = 'flex';
 
                     if (countdownInterval) clearInterval(countdownInterval);
 
                     if (configData.mode === 'spots') {
-                        discountTimer.innerText = `${configData.value} SPOTS LEFT`;
+                        discountTimer.innerText = `${configData.value} ${userLang === 'es' ? 'PLAZAS RESTANTES' : 'SPOTS LEFT'}`;
                     } else if (configData.mode === 'timer') {
                         const targetDate = new Date(configData.value).getTime();
                         
@@ -604,7 +627,7 @@
                             const distance = targetDate - now;
                             
                             if (distance < 0) {
-                                discountTimer.innerText = "OFFER EXPIRED";
+                                discountTimer.innerText = userLang === 'es' ? "OFERTA EXPIRADA" : "OFFER EXPIRED";
                                 clearInterval(countdownInterval);
                                 return;
                             }
@@ -624,7 +647,6 @@
                         updateTimer(); 
                         countdownInterval = setInterval(updateTimer, 1000); 
                     }
-
                 } else {
                     discountBanner.style.display = 'none';
                     if (countdownInterval) clearInterval(countdownInterval);
@@ -636,7 +658,7 @@
                     currentDropCode = dropCodeLog.value_text.toUpperCase().trim();
                 }
 
-                // --- 2.5 BUTTON VISIBILITY, COLOR OVERRIDE & ORDER ---
+                // --- 2.5 BUTTON VISIBILITY & ORDER ---
                 const orderLog = data.find(log => log.log_type === 'button_order');
                 if (orderLog && orderLog.value_text) {
                     try {
@@ -666,7 +688,6 @@
 
                 for (const [btnId, config] of Object.entries(buttonStates)) {
                     const btnElement = document.getElementById(btnId);
-                    
                     if (btnElement) {
                         try {
                             btnElement.style.display = config.state === 'show' ? 'inline-block' : 'none';
@@ -676,21 +697,15 @@
                                 if (!safeColor.startsWith('#') && /^[0-9A-Fa-f]{6}$/.test(safeColor)) {
                                     safeColor = '#' + safeColor;
                                 }
-                                
                                 btnElement.style.color = safeColor;
                                 btnElement.style.borderColor = safeColor;
-                                
                                 let shadowColor = safeColor;
-                                if (safeColor.startsWith('#') && safeColor.length === 7) {
-                                    shadowColor = safeColor + '33';
-                                }
-                                
+                                if (safeColor.startsWith('#') && safeColor.length === 7) shadowColor = safeColor + '33';
                                 btnElement.style.boxShadow = `inset 0 0 0 transparent, 0 0 10px ${shadowColor}`;
                                 
                                 btnElement.onmouseenter = function() {
                                     let hoverBg = safeColor;
                                     if (safeColor.startsWith('#') && safeColor.length === 7) hoverBg = safeColor + '1A';
-                                    
                                     this.style.backgroundColor = hoverBg; 
                                     this.style.boxShadow = `inset 0 0 10px ${shadowColor}, 0 0 15px ${shadowColor}`;
                                 };
@@ -699,34 +714,25 @@
                                     this.style.boxShadow = `inset 0 0 0 transparent, 0 0 10px ${shadowColor}`;
                                 };
                             } else if (!config.color && config.state === 'show') {
-                                // Limpia inlines para que el CSS por defecto funcione perfectamente
                                 btnElement.style.color = '';
                                 btnElement.style.borderColor = '';
                                 btnElement.style.boxShadow = '';
                                 btnElement.style.backgroundColor = '';
                                 btnElement.onmouseenter = null;
                                 btnElement.onmouseleave = null;
-                                
-                                // Si es un botón nuevo sin clase default, le damos la básica para que no quede gris
-                                if (!btnElement.className.includes('-default')) {
-                                    btnElement.classList.add('btn-dg-default');
-                                }
+                                if (!btnElement.className.includes('-default')) btnElement.classList.add('btn-dg-default');
                             }
-                        } catch(e) {
-                            console.error("Safeguard catch: error applying styles to button", e);
-                        }
+                        } catch(e) { console.error(e); }
                     }
                 }
 
-                // Llamamos a la función para enrutar los botones a donde toca (pantalla o menú)
                 routeButtonsForMobile();
 
                 // --- 3. TERMINAL ---
                 terminalOutput.innerHTML = ''; 
                 
-                // IGNORE HIDDEN CONFIG LOGS
                 const visibleData = data.filter(log => 
-                    !['news_alert', 'discount_alert', 'toast_alert', 'button_toggle', 'button_order', 'drop_code', 'drop_config', 'loss_config'].includes(log.log_type)
+                    !['news_alert', 'discount_alert', 'toast_alert', 'button_toggle', 'button_order', 'drop_code', 'drop_config', 'loss_config', 'vsl_config'].includes(log.log_type)
                 ).slice(0, 5); 
                 
                 const sortedData = visibleData.reverse();
@@ -737,10 +743,17 @@
                     else if (log.log_type === 'negative') valueClass = 't-error';
                     else valueClass = 't-time'; 
 
+                    // Parsing Bilingual Logs for Terminal
+                    let actionStr = log.action_text;
+                    try {
+                        let parsed = JSON.parse(actionStr);
+                        actionStr = userLang === 'es' ? (parsed.es || parsed.en) : parsed.en;
+                    } catch(e) {}
+
                     const logHTML = `
                         <div class="terminal-line">
                             <span class="t-time">${log.log_time}</span>
-                            <span class="t-action">${log.action_text}</span>
+                            <span class="t-action">${actionStr}</span>
                             ${log.value_text ? `<span class="${valueClass}">${log.value_text}</span>` : ''}
                         </div>
                     `;
@@ -767,8 +780,9 @@
                 fetchTerminalLogs(); 
                 
                 if (payload.eventType === 'INSERT') {
+                    const userLang = localStorage.getItem('unfiltered_lang') || 'en';
+                    const hiddenToastTypes = ['button_toggle', 'button_order', 'drop_code', 'drop_config', 'loss_config', 'vsl_config'];
                     
-                    const hiddenToastTypes = ['button_toggle', 'button_order', 'drop_code', 'drop_config', 'loss_config'];
                     if (payload.new && hiddenToastTypes.includes(payload.new.log_type)) {
                         return; 
                     }
@@ -779,15 +793,21 @@
                     
                     toastTitle.style.color = "var(--electric-cyan)";
                     toast.style.borderColor = "var(--electric-cyan)";
+
+                    let actionStr = payload.new.action_text;
+                    try {
+                        let parsed = JSON.parse(actionStr);
+                        actionStr = userLang === 'es' ? (parsed.es || parsed.en) : parsed.en;
+                    } catch(e) {}
                     
                     if (payload.new && payload.new.log_type === 'news_alert') {
                         toastTitle.style.color = "var(--crimson-war)";
                         toast.style.borderColor = "var(--crimson-war)";
-                        toastMsg.innerText = "CRITICAL: Macro Event Protocol Activated.";
+                        toastMsg.innerText = userLang === 'es' ? "CRÍTICO: Protocolo de Evento Macro Activado." : "CRITICAL: Macro Event Protocol Activated.";
                     } else if (payload.new && payload.new.log_type === 'discount_alert') {
                         toastTitle.style.color = "var(--vantablack)"; 
                         toast.style.borderColor = "var(--vantablack)";
-                        toastMsg.innerText = "PROTOCOL OFFER UPDATED.";
+                        toastMsg.innerText = userLang === 'es' ? "OFERTA DEL PROTOCOLO ACTUALIZADA." : "PROTOCOL OFFER UPDATED.";
                         try {
                             const configData = JSON.parse(payload.new.value_text);
                             if(configData.color) {
@@ -798,13 +818,12 @@
                     } else if (payload.new && payload.new.log_type === 'toast_alert') {
                         toastTitle.style.color = "#FFD700"; 
                         toast.style.borderColor = "#FFD700";
-                        toastMsg.innerText = payload.new.action_text;
+                        toastMsg.innerText = actionStr;
                     } else {
-                        toastMsg.innerText = "New institutional trace deployed to public protocol.";
+                        toastMsg.innerText = actionStr || (userLang === 'es' ? "Nuevo rastro institucional desplegado en protocolo público." : "New institutional trace deployed to public protocol.");
                     }
                     
                     toast.classList.add('show');
-                    
                     setTimeout(() => { toast.classList.remove('show'); }, 5000);
                 }
             })
@@ -871,7 +890,6 @@
         const resultBox = document.getElementById('resultBox');
         const upsellBtn = document.getElementById('upsellBtn');
 
-        // Event listeners for Modals
         openCalcBtn.addEventListener('click', (e) => { 
             e.preventDefault(); 
             if(hamburgerMenu) hamburgerMenu.classList.remove('open');
@@ -880,7 +898,6 @@
         });
         closeCalcBtn.addEventListener('click', () => { calcModal.style.display = 'none'; });
         
-        // Multi-trigger for AUTH login (desktop + mobile menu)
         const openLoginBtns = document.querySelectorAll('.open-login-trigger');
         openLoginBtns.forEach(btn => {
             btn.addEventListener('click', (e) => { 
@@ -931,11 +948,16 @@
             e.preventDefault();
             const email = document.getElementById('adminEmail').value.trim();
             const pass = document.getElementById('adminPass').value;
+            const userLang = localStorage.getItem('unfiltered_lang') || 'en';
             
-            if(!email || !pass) { loginErrorMsg.innerText = "[SYS_ERROR] Credentials required."; loginErrorMsg.style.display = 'block'; return; }
+            if(!email || !pass) { 
+                loginErrorMsg.innerText = userLang === 'es' ? "[SYS_ERROR] Credenciales requeridas." : "[SYS_ERROR] Credentials required."; 
+                loginErrorMsg.style.display = 'block'; 
+                return; 
+            }
 
             const originalText = executeLoginBtn.innerText;
-            executeLoginBtn.innerText = '[ VERIFYING... ]';
+            executeLoginBtn.innerText = userLang === 'es' ? '[ VERIFICANDO... ]' : '[ VERIFYING... ]';
             executeLoginBtn.style.pointerEvents = 'none';
             loginErrorMsg.style.display = 'none';
 
@@ -945,22 +967,22 @@
 
                 executeLoginBtn.style.borderColor = 'var(--electric-cyan)';
                 executeLoginBtn.style.color = 'var(--electric-cyan)';
-                executeLoginBtn.innerText = '[ ACCESS GRANTED ]';
+                executeLoginBtn.innerText = userLang === 'es' ? '[ ACCESO CONCEDIDO ]' : '[ ACCESS GRANTED ]';
                 
-                setTimeout(() => {
-                    window.location.href = 'admin.html';
-                }, 800);
+                setTimeout(() => { window.location.href = 'admin.html'; }, 800);
 
             } catch (error) {
-                loginErrorMsg.innerText = "[SYS_ERROR] Access denied."; loginErrorMsg.style.display = 'block';
+                loginErrorMsg.innerText = userLang === 'es' ? "[SYS_ERROR] Acceso denegado." : "[SYS_ERROR] Access denied."; 
+                loginErrorMsg.style.display = 'block';
                 executeLoginBtn.innerText = originalText; executeLoginBtn.style.pointerEvents = 'auto';
             }
         });
 
         executeVipBtn.addEventListener('click', (e) => {
             e.preventDefault();
+            const userLang = localStorage.getItem('unfiltered_lang') || 'en';
             const originalText = executeVipBtn.innerText;
-            executeVipBtn.innerText = '[ VERIFYING... ]';
+            executeVipBtn.innerText = userLang === 'es' ? '[ VERIFICANDO... ]' : '[ VERIFYING... ]';
             executeVipBtn.style.pointerEvents = 'none';
             vipErrorMsg.style.display = 'none';
 
@@ -973,22 +995,19 @@
 
         executeDropBtn.addEventListener('click', (e) => {
             e.preventDefault();
+            const userLang = localStorage.getItem('unfiltered_lang') || 'en';
             const intento = dropPinInput.value.toUpperCase().trim();
             
             if (intento === currentDropCode && currentDropCode !== "") {
                 dropErrorMsg.style.display = 'none';
-                executeDropBtn.innerText = '[ DECRYPTING... ]';
+                executeDropBtn.innerText = userLang === 'es' ? '[ DESENCRIPTANDO... ]' : '[ DECRYPTING... ]';
                 executeDropBtn.style.pointerEvents = 'none';
                 
-                if (typeof gtag === 'function') {
-                    gtag('event', 'unlock_drop', { 'event_category': 'engagement', 'event_label': 'Drop Unlocked via Popup' });
-                }
+                if (typeof gtag === 'function') { gtag('event', 'unlock_drop', { 'event_category': 'engagement', 'event_label': 'Drop Unlocked via Popup' }); }
 
                 sessionStorage.setItem('vault_auth', 'GRANTED');
 
-                setTimeout(() => {
-                    window.location.href = 'drop.html'; 
-                }, 800);
+                setTimeout(() => { window.location.href = 'drop.html'; }, 800);
             } else {
                 dropErrorMsg.style.display = 'block';
                 dropPinInput.value = '';
@@ -996,12 +1015,11 @@
         });
 
         dropPinInput.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                executeDropBtn.click();
-            }
+            if (e.key === 'Enter') { executeDropBtn.click(); }
         });
 
         function calculateExpectancy() {
+            const userLang = localStorage.getItem('unfiltered_lang') || 'en';
             const winRate = parseFloat(winRateInput.value) / 100;
             const lossRate = 1 - winRate;
             const risk = parseFloat(riskPctInput.value);
@@ -1015,19 +1033,19 @@
 
             if (expectancy <= 0) {
                 resultBox.classList.add('status-negative');
-                verdictText.innerText = '[ SYSTEM ERROR // LIQUIDITY CAPTURED ]';
+                verdictText.innerText = userLang === 'es' ? '[ ERROR DE SISTEMA // LIQUIDEZ CAPTURADA ]' : '[ SYSTEM ERROR // LIQUIDITY CAPTURED ]';
                 upsellBtn.style.display = 'block'; 
                 upsellBtn.style.borderColor = 'var(--crimson-war)'; upsellBtn.style.color = 'var(--crimson-war)';
-                upsellBtn.innerText = 'STOP BLEEDING. GET THE PROTOCOL ($27)';
+                upsellBtn.innerText = userLang === 'es' ? 'DEJA DE SANGRAR. OBTÉN EL PROTOCOLO ($27)' : 'STOP BLEEDING. GET THE PROTOCOL ($27)';
             } else if (expectancy > 0 && expectancy < 0.5) {
                 resultBox.classList.add('status-neutral');
-                verdictText.innerText = '[ LOW ALPHA // VULNERABLE SYSTEM ]';
+                verdictText.innerText = userLang === 'es' ? '[ ALFA BAJO // SISTEMA VULNERABLE ]' : '[ LOW ALPHA // VULNERABLE SYSTEM ]';
                 upsellBtn.style.display = 'block';
                 upsellBtn.style.borderColor = 'var(--electric-cyan)'; upsellBtn.style.color = 'var(--electric-cyan)';
-                upsellBtn.innerText = 'UPGRADE YOUR EDGE. GET THE PROTOCOL ($27)';
+                upsellBtn.innerText = userLang === 'es' ? 'MEJORA TU VENTAJA. OBTÉN EL PROTOCOLO ($27)' : 'UPGRADE YOUR EDGE. GET THE PROTOCOL ($27)';
             } else {
                 resultBox.classList.add('status-positive');
-                verdictText.innerText = '[ PROTOCOL ACTIVE // ALPHA ADVANTAGE ]';
+                verdictText.innerText = userLang === 'es' ? '[ PROTOCOLO ACTIVO // VENTAJA ALFA ]' : '[ PROTOCOL ACTIVE // ALPHA ADVANTAGE ]';
                 upsellBtn.style.display = 'none'; 
             }
         }

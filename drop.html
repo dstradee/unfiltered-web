@@ -20,6 +20,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+    <!-- MOTOR DE IDIOMAS UNFILTERED ALPHA -->
+    <script>
+        const lang = localStorage.getItem('unfiltered_lang') || 'en';
+        document.documentElement.lang = lang;
+
+        function applyTranslations() {
+            document.querySelectorAll('[data-en]').forEach(el => {
+                if (lang === 'es' && el.hasAttribute('data-es')) {
+                    el.innerHTML = el.getAttribute('data-es');
+                } else {
+                    el.innerHTML = el.getAttribute('data-en');
+                }
+            });
+            const langBtn = document.getElementById('langToggleBtn');
+            if (langBtn) langBtn.innerText = lang === 'en' ? '[ ES ]' : '[ EN ]';
+        }
+
+        function toggleLanguage() {
+            const current = localStorage.getItem('unfiltered_lang') || 'en';
+            localStorage.setItem('unfiltered_lang', current === 'en' ? 'es' : 'en');
+            window.location.reload();
+        }
+
+        document.addEventListener('DOMContentLoaded', applyTranslations);
+    </script>
+
     <style>
         :root {
             --obsidian-navy: #0B1A30;
@@ -42,7 +68,6 @@
             display: flex; flex-direction: column; overflow-x: hidden; position: relative;
         }
 
-        /* Base Styles (Background and Noise) */
         .blueprint-layer { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; 
             background-image: url('Gemini_Generated_Image_dofjdbdofjdbdofj.jpg'); 
@@ -59,13 +84,13 @@
         .brand-logo { display: flex; align-items: baseline; gap: 8px; font-size: 2rem; }
         .unfiltered-word { border-bottom: 2px solid var(--electric-cyan); padding-bottom: 2px; }
         
-        /* AUTH & BACK LINK */
         .auth-link, .back-link { font-family: 'JetBrains Mono', monospace; color: var(--steel-grey); text-decoration: none; font-size: 0.75rem; letter-spacing: 1px; transition: color 0.2s ease; cursor: pointer; }
         .auth-link:hover, .back-link:hover { color: var(--electric-cyan); }
+        .lang-link { color: var(--alert-gold); font-weight: bold; }
+        .lang-link:hover { color: var(--smoke-white); }
 
         .header-actions { display: flex; gap: 1.5rem; align-items: center; }
 
-        /* DISCOUNT INDICATOR */
         .discount-indicator { display: flex; align-items: center; gap: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--steel-grey); text-decoration: none; opacity: 0; transition: opacity 0.3s; }
         .discount-indicator.active { opacity: 1; }
         .pink-dot { width: 10px; height: 10px; background-color: var(--hot-pink); border-radius: 50% !important; animation: pulse-pink 1.5s infinite; }
@@ -73,7 +98,6 @@
 
         main { flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding-top: 2rem; padding-bottom: 15vh; } 
         
-        /* --- TAB SYSTEM UI --- */
         .drop-tabs { display: flex; gap: 0.5rem; width: 100%; max-width: 800px; margin-bottom: 1rem; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
         .drop-tabs::-webkit-scrollbar { display: none; }
         .drop-tab { background-color: var(--obsidian-navy); border: 1px solid var(--steel-grey); color: var(--steel-grey); padding: 0.8rem 1.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
@@ -91,12 +115,10 @@
         .video-container { position: relative; width: 100%; border: 1px solid rgba(148, 163, 184, 0.2); margin-bottom: 1.5rem; background-color: #000; }
         video { width: 100%; display: block; outline: none; }
 
-        /* Urgency Display */
         .urgency-display { display: none; margin-bottom: 1rem; padding: 0.8rem; border: 1px dashed var(--alert-gold); color: var(--alert-gold); font-family: 'JetBrains Mono', monospace; font-weight: bold; text-align: center; font-size: 1rem; letter-spacing: 2px; background: rgba(255, 215, 0, 0.05); transition: all 0.3s; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- MODALS (Login & Editor) --- */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(2, 6, 23, 0.85); backdrop-filter: blur(4px); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 1rem; }
         .modal-content { background-color: var(--obsidian-navy); border: 1px solid var(--electric-cyan); padding: 2.5rem; width: 100%; max-width: 600px; box-shadow: 0 0 30px rgba(0, 242, 255, 0.15); position: relative; max-height: 90vh; overflow-y: auto; }
         .close-modal { position: absolute; top: 1rem; right: 1.5rem; color: var(--steel-grey); font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; cursor: pointer; transition: color 0.2s; }
@@ -108,6 +130,11 @@
         .input-group input, .input-group textarea, .input-group select { width: 100%; background-color: var(--vantablack); border: 1px solid var(--steel-grey); color: var(--electric-cyan); padding: 0.8rem; font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; outline: none; }
         .input-group input:focus, .input-group textarea:focus, .input-group select:focus { border-color: var(--electric-cyan); }
         .input-group textarea { resize: vertical; min-height: 80px; line-height: 1.4; font-family: 'Inter', sans-serif; }
+
+        .bilingual-input { display: flex; gap: 0.5rem; margin-top: 0.2rem; }
+        .bilingual-input input { flex: 1; }
+        .bilingual-textarea { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.2rem; }
+        .bilingual-textarea textarea { width: 100%; }
 
         .checkbox-container { display: flex; align-items: center; gap: 0.8rem; padding: 1rem; border: 1px solid; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-weight: bold; }
         .checkbox-container input { width: 18px; height: 18px; cursor: pointer; }
@@ -125,6 +152,7 @@
             .header-actions { width: 100%; justify-content: space-between; }
             .terminal-box { padding: 1.5rem 1rem; }
             .btn-edit-float { bottom: 15px; right: 15px; padding: 0.8rem 1rem; font-size: 0.8rem; }
+            .bilingual-input { flex-direction: column; }
         }
     </style>
 </head>
@@ -140,12 +168,13 @@
             </div>
             
             <div class="header-actions">
-                <a href="index.html" class="back-link">[ BACK TO PROTOCOL ]</a>
+                <span class="auth-link lang-link" onclick="toggleLanguage()" id="langToggleBtn">[ ES ]</span>
+                <a href="index.html" class="back-link" data-en="[ BACK TO PROTOCOL ]" data-es="[ VOLVER AL PROTOCOLO ]">[ BACK TO PROTOCOL ]</a>
                 <a href="index.html" class="discount-indicator" id="discountDot">
                     <div class="pink-dot"></div>
-                    [ REVERT TO MAIN ]
+                    <span data-en="[ REVERT TO MAIN ]" data-es="[ VOLVER AL PRINCIPAL ]">[ REVERT TO MAIN ]</span>
                 </a>
-                <span class="auth-link" id="openLoginBtn">[ AUTH ]</span>
+                <span class="auth-link" id="openLoginBtn" data-en="[ AUTH ]" data-es="[ AUTENTICACIÓN ]">[ AUTH ]</span>
             </div>
         </header>
 
@@ -156,8 +185,8 @@
             <!-- DYNAMIC DROP CONTENT -->
             <div class="terminal-box" id="dropTerminalBox" style="display: none;">
                 <div class="terminal-header code-data" id="dropTerminalHeader">
-                    <span id="displayHeader1">> AWAITING_DATA</span>
-                    <span id="displayHeader2">[ SYSTEM_ONLINE ]</span>
+                    <span id="displayHeader1" data-en="> AWAITING_DATA" data-es="> ESPERANDO_DATOS">> AWAITING_DATA</span>
+                    <span id="displayHeader2" data-en="[ SYSTEM_ONLINE ]" data-es="[ SISTEMA_EN_LÍNEA ]">[ SYSTEM_ONLINE ]</span>
                 </div>
                 
                 <p id="displayText" style="margin-bottom: 1.5rem; color: var(--smoke-white); font-family: 'Inter', sans-serif; line-height: 1.6;"></p>
@@ -172,20 +201,20 @@
                 <!-- URGENCY DISPLAY -->
                 <div id="displayUrgency" class="urgency-display"></div>
 
-                <a href="#" target="_blank" id="displayBtn" class="btn" style="border: none;">
+                <a href="#" target="_blank" id="displayBtn" class="btn" style="border: none;" data-en="[ AWAITING DATA ]" data-es="[ ESPERANDO DATOS ]">
                     [ AWAITING DATA ]
                 </a>
             </div>
             
             <!-- FALLBACK MESSAGE -->
-            <div id="noDropsMessage" style="display: none; color: var(--steel-grey); font-family: 'JetBrains Mono', monospace; text-align: center; margin-top: 2rem;">
+            <div id="noDropsMessage" style="display: none; color: var(--steel-grey); font-family: 'JetBrains Mono', monospace; text-align: center; margin-top: 2rem;" data-en="[ NO PUBLIC TRANSMISSIONS AVAILABLE ]" data-es="[ NO HAY TRANSMISIONES PÚBLICAS DISPONIBLES ]">
                 [ NO PUBLIC TRANSMISSIONS AVAILABLE ]
             </div>
         </main>
     </div>
 
     <!-- FLOAT EDIT BUTTON -->
-    <button class="btn-edit-float" id="btnEditMode">[ ⚙️ EDIT DROP SYSTEM ]</button>
+    <button class="btn-edit-float" id="btnEditMode" data-en="[ ⚙️ EDIT DROP SYSTEM ]" data-es="[ ⚙️ EDITAR SISTEMA DROP ]">[ ⚙️ EDIT DROP SYSTEM ]</button>
 
     <!-- LOGIN MODAL -->
     <div class="modal-overlay" id="loginModal">
@@ -222,10 +251,12 @@
 
             <div class="input-group">
                 <label>> TAB NAME</label>
-                <input type="text" id="editTabName" placeholder="Ex: DROP 001">
+                <div class="bilingual-input">
+                    <input type="text" id="editTabName_en" placeholder="[EN] Ex: DROP 001">
+                    <input type="text" id="editTabName_es" placeholder="[ES] Ex: DROP 001">
+                </div>
             </div>
 
-            <!-- THEME COLORS (BOX + BUTTON TEXT) -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
                 <div class="input-group" style="border-left: 3px solid var(--electric-cyan); padding-left: 1rem; margin:0;">
                     <label>> THEME COLOR (HEX)</label>
@@ -244,7 +275,6 @@
                 </div>
             </div>
 
-            <!-- TOGGLES: VIDEO AND PRIVACY -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
                 <label class="checkbox-container" style="background: rgba(0, 242, 255, 0.05); border-color: var(--electric-cyan); color: var(--electric-cyan);">
                     <input type="checkbox" id="editHasVideo" onchange="toggleVideoSection()">
@@ -257,20 +287,28 @@
                 </label>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                <div class="input-group">
-                    <label>> TERMINAL HEADER 1</label>
-                    <input type="text" id="editHeader1" placeholder="Ex: > DROP_001_ACTIVE">
+            <div class="input-group">
+                <label>> TERMINAL HEADER 1</label>
+                <div class="bilingual-input">
+                    <input type="text" id="editHeader1_en" placeholder="[EN] Ex: > DROP_001_ACTIVE">
+                    <input type="text" id="editHeader1_es" placeholder="[ES] Ex: > DROP_001_ACTIVO">
                 </div>
-                <div class="input-group">
-                    <label>> TERMINAL HEADER 2</label>
-                    <input type="text" id="editHeader2" placeholder="Ex: [ SYSTEM_ONLINE ]">
+            </div>
+
+            <div class="input-group">
+                <label>> TERMINAL HEADER 2</label>
+                <div class="bilingual-input">
+                    <input type="text" id="editHeader2_en" placeholder="[EN] Ex: [ SYSTEM_ONLINE ]">
+                    <input type="text" id="editHeader2_es" placeholder="[ES] Ex: [ SISTEMA_ONLINE ]">
                 </div>
             </div>
 
             <div class="input-group">
                 <label>> MAIN PARAGRAPH TEXT</label>
-                <textarea id="editText" placeholder="Write your protocol transmission here..."></textarea>
+                <div class="bilingual-textarea">
+                    <textarea id="editText_en" placeholder="[ENGLISH] Write your protocol transmission here..."></textarea>
+                    <textarea id="editText_es" placeholder="[SPANISH] Escribe tu transmisión aquí..."></textarea>
+                </div>
             </div>
 
             <div class="input-group" id="videoUrlSection">
@@ -278,10 +316,13 @@
                 <input type="url" id="editVideo" placeholder="https://res.cloudinary.com/.../video.mp4">
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
                 <div class="input-group">
                     <label>> BUTTON TEXT</label>
-                    <input type="text" id="editBtnText" placeholder="Ex: [ INTEGRATE PROTOCOL ]">
+                    <div class="bilingual-input">
+                        <input type="text" id="editBtnText_en" placeholder="[EN] Ex: [ INTEGRATE PROTOCOL ]">
+                        <input type="text" id="editBtnText_es" placeholder="[ES] Ex: [ INTEGRAR PROTOCOLO ]">
+                    </div>
                 </div>
                 <div class="input-group">
                     <label>> BUTTON LINK (URL)</label>
@@ -289,7 +330,6 @@
                 </div>
             </div>
 
-            <!-- SCARCITY / URGENCY ENGINE -->
             <div class="input-group" style="margin-top: 1.5rem; border-top: 1px dashed var(--steel-grey); padding-top: 1.5rem;">
                 <label style="color: var(--alert-gold);">[ ⏳ ] SCARCITY / URGENCY ENGINE</label>
                 <select id="editUrgencyMode" onchange="toggleUrgencyInputs()" style="border-color: var(--alert-gold); color: var(--alert-gold);">
@@ -317,13 +357,11 @@
                 <input type="url" id="editBgImage" placeholder="Leave empty for default image">
             </div>
 
-            <!-- SAVE BUTTON -->
             <button type="button" class="btn" style="background-color: transparent; border: 1px solid var(--electric-cyan); color: var(--electric-cyan); margin-bottom: 1rem;" id="saveConfigBtn">
                 [ SAVE & DEPLOY TO PROTOCOL ]
             </button>
             <div id="saveFeedback" style="text-align: center; margin-bottom: 1rem; font-family: monospace; font-size: 0.85rem; height: 20px;"></div>
 
-            <!-- DANGER ZONE -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; border-top: 1px dashed var(--steel-grey); padding-top: 1rem;">
                 <button type="button" class="btn-outline" id="btnResetDrop" title="Restores this specific drop to its factory text.">[ RESET TO DEFAULT ]</button>
                 <button type="button" class="btn-outline btn-danger" id="btnDeleteDrop" title="Permanently deletes this drop.">[ DELETE DROP ]</button>
@@ -336,21 +374,25 @@
         const SUPABASE_KEY = 'sb_publishable_eA2g7-rTvcPcfz_dVl2aWg_Ca5P7t93';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // --- GLOBAL STATE ---
         let appState = { drops: [], activeIndex: 0 };
         let isAdmin = false;
         let countdownInterval = null;
 
         const defaultDropTemplate = {
-            tabName: "DROP 001",
+            tabName_en: "DROP 001",
+            tabName_es: "DROP 001",
             themeColor: "#00FF41",
             btnTextColor: "#FFFFFF",
-            header1: "> DROP_001_ACTIVE",
-            header2: "[ SYSTEM_ONLINE ]",
-            text: "[INITIATING TRANSMISSION] Retail market noise has been filtered out. What you are witnessing is the actual architecture behind institutional movements. Use this protocol at your own risk.",
+            header1_en: "> DROP_001_ACTIVE",
+            header1_es: "> DROP_001_ACTIVO",
+            header2_en: "[ SYSTEM_ONLINE ]",
+            header2_es: "[ SISTEMA_ONLINE ]",
+            text_en: "[INITIATING TRANSMISSION] Retail market noise has been filtered out. What you are witnessing is the actual architecture behind institutional movements. Use this protocol at your own risk.",
+            text_es: "[INICIANDO TRANSMISIÓN] El ruido del mercado retail ha sido filtrado. Lo que estás presenciando es la arquitectura real detrás de los movimientos institucionales. Usa este protocolo bajo tu propio riesgo.",
             hasVideo: true,
             video: "",
-            btnText: "[ INTEGRATE PROTOCOL ($27) ]",
+            btnText_en: "[ INTEGRATE PROTOCOL ($27) ]",
+            btnText_es: "[ INTEGRAR PROTOCOLO ($27) ]",
             btnLink: "https://unfilteredalpha.gumroad.com/l/qoabdg",
             bgImage: "",
             isPrivate: false,
@@ -360,7 +402,6 @@
             currentClicks: 0
         };
 
-        // --- UI ELEMENTS ---
         const dropTabsContainer = document.getElementById('dropTabsContainer');
         const dropTerminalBox = document.getElementById('dropTerminalBox');
         const dropTerminalHeader = document.getElementById('dropTerminalHeader');
@@ -376,7 +417,18 @@
         const elBtn = document.getElementById('displayBtn');
         const elBg = document.getElementById('pageBackground');
 
-        const inputTabName = document.getElementById('editTabName');
+        // Bilingual Inputs
+        const inputTabName_en = document.getElementById('editTabName_en');
+        const inputTabName_es = document.getElementById('editTabName_es');
+        const inputHeader1_en = document.getElementById('editHeader1_en');
+        const inputHeader1_es = document.getElementById('editHeader1_es');
+        const inputHeader2_en = document.getElementById('editHeader2_en');
+        const inputHeader2_es = document.getElementById('editHeader2_es');
+        const inputText_en = document.getElementById('editText_en');
+        const inputText_es = document.getElementById('editText_es');
+        const inputBtnText_en = document.getElementById('editBtnText_en');
+        const inputBtnText_es = document.getElementById('editBtnText_es');
+
         const inputThemeColorHex = document.getElementById('editThemeColorHex');
         const inputThemeColorPicker = document.getElementById('editThemeColorPicker');
         const inputBtnTextColorHex = document.getElementById('editBtnTextColorHex');
@@ -384,11 +436,7 @@
         const inputHasVideo = document.getElementById('editHasVideo');
         const inputIsPrivate = document.getElementById('editIsPrivate');
         const videoUrlSection = document.getElementById('videoUrlSection');
-        const inputHeader1 = document.getElementById('editHeader1');
-        const inputHeader2 = document.getElementById('editHeader2');
-        const inputText = document.getElementById('editText');
         const inputVideo = document.getElementById('editVideo');
-        const inputBtnText = document.getElementById('editBtnText');
         const inputBtnLink = document.getElementById('editBtnLink');
         const inputBgImage = document.getElementById('editBgImage');
         
@@ -411,7 +459,6 @@
         const loginErrorMsg = document.getElementById('loginError');
         const saveFeedback = document.getElementById('saveFeedback');
 
-        // Modal Logic
         openLoginBtn.addEventListener('click', () => { loginModal.style.display = 'flex'; loginErrorMsg.style.display = 'none'; });
         closeLoginBtn.addEventListener('click', () => { loginModal.style.display = 'none'; });
         btnEditMode.addEventListener('click', () => { populateEditor(appState.drops[appState.activeIndex]); editorModal.style.display = 'flex'; });
@@ -432,7 +479,6 @@
             }
         }
 
-        // --- 1. LOAD CONFIGURATION ---
         async function loadDropConfig() {
             try {
                 const { data: logsData } = await supabaseClient.from('logs').select('*').order('created_at', { ascending: false });
@@ -445,7 +491,7 @@
                         let parsed = JSON.parse(configLog.value_text);
                         if (!parsed.drops) {
                             parsed = { drops: [parsed] };
-                            parsed.drops[0].tabName = "DROP 001";
+                            parsed.drops[0].tabName_en = parsed.drops[0].tabName || "DROP 001";
                             parsed.drops[0].hasVideo = true;
                             parsed.drops[0].isPrivate = false;
                             parsed.drops[0].urgencyMode = "none";
@@ -481,6 +527,8 @@
 
         function renderTabs() {
             dropTabsContainer.innerHTML = '';
+            const userLang = localStorage.getItem('unfiltered_lang') || 'en';
+
             appState.drops.forEach((drop, index) => {
                 if (!isAdmin && drop.isPrivate) return;
                 const btn = document.createElement('button');
@@ -493,18 +541,14 @@
                     btn.style.boxShadow = `0 -2px 10px ${activeColor}33`;
                 }
 
-                btn.innerText = drop.tabName + (drop.isPrivate ? " 🔒" : "");
+                let currentTabName = userLang === 'es' ? (drop.tabName_es || drop.tabName_en || drop.tabName) : (drop.tabName_en || drop.tabName);
+                btn.innerText = currentTabName + (drop.isPrivate ? " 🔒" : "");
+                
                 btn.onclick = () => { 
                     appState.activeIndex = index; 
-                    
-                    // GA4 TRACKING: TAB CLICK
                     if (typeof gtag === 'function') {
-                        gtag('event', 'select_content', {
-                            'content_type': 'tab',
-                            'item_id': drop.tabName
-                        });
+                        gtag('event', 'select_content', { 'content_type': 'tab', 'item_id': currentTabName });
                     }
-
                     renderUI(); 
                 };
                 dropTabsContainer.appendChild(btn);
@@ -520,22 +564,24 @@
         }
 
         function applyConfigToPage(config) {
+            const userLang = localStorage.getItem('unfiltered_lang') || 'en';
+
             let themeColor = config.themeColor || '#00FF41'; 
             let btnTextColor = config.btnTextColor || '#FFFFFF';
             
             dropTerminalBox.style.borderColor = themeColor;
             dropTerminalHeader.style.color = themeColor;
             
-            // Apply Button Colors
             elBtn.style.backgroundColor = themeColor;
             elBtn.style.color = btnTextColor;
             elBtn.style.border = "none";
-            elBtn.style.pointerEvents = 'auto'; // Asegurar que sea clickeable por defecto
+            elBtn.style.pointerEvents = 'auto'; 
 
-            elHeader1.innerText = config.header1 || "";
-            elHeader2.innerText = config.header2 || "";
-            elText.innerText = config.text || "";
-            elBtn.innerText = config.btnText || "";
+            elHeader1.innerText = userLang === 'es' ? (config.header1_es || config.header1_en || config.header1 || "") : (config.header1_en || config.header1 || "");
+            elHeader2.innerText = userLang === 'es' ? (config.header2_es || config.header2_en || config.header2 || "") : (config.header2_en || config.header2 || "");
+            elText.innerText = userLang === 'es' ? (config.text_es || config.text_en || config.text || "") : (config.text_en || config.text || "");
+            elBtn.innerText = userLang === 'es' ? (config.btnText_es || config.btnText_en || config.btnText || "") : (config.btnText_en || config.btnText || "");
+            
             elBtn.href = config.btnLink || "#";
             elBg.style.backgroundImage = config.bgImage ? `url('${config.bgImage}')` : "url('Gemini_Generated_Image_dofjdbdofjdbdofj.jpg')";
             
@@ -546,10 +592,9 @@
                     elVideo.load(); 
                 }
 
-                // GA4 TRACKING: VIDEO PLAY
                 elVideo.onplay = () => {
                     if (typeof gtag === 'function') {
-                        gtag('event', 'video_start', { 'video_title': config.tabName });
+                        gtag('event', 'video_start', { 'video_title': config.tabName_en || config.tabName });
                     }
                 };
 
@@ -557,7 +602,6 @@
                 videoContainerWrapper.style.display = 'none';
             }
 
-            // URGENCY LOGIC
             clearInterval(countdownInterval);
             displayUrgency.style.display = 'none';
 
@@ -573,11 +617,11 @@
                     const dist = target - now;
                     if (dist <= 0) {
                         clearInterval(countdownInterval);
-                        displayUrgency.innerText = "[ TRANSMISSION TIME EXPIRED ]";
+                        displayUrgency.innerText = userLang === 'es' ? "[ TIEMPO DE TRANSMISIÓN EXPIRADO ]" : "[ TRANSMISSION TIME EXPIRED ]";
                         displayUrgency.style.color = "var(--crimson-war)";
                         displayUrgency.style.borderColor = "var(--crimson-war)";
                         
-                        elBtn.innerText = "[ DROP CLOSED ]";
+                        elBtn.innerText = userLang === 'es' ? "[ DROP CERRADO ]" : "[ DROP CLOSED ]";
                         elBtn.style.backgroundColor = "transparent";
                         elBtn.style.color = "var(--crimson-war)";
                         elBtn.style.border = "1px solid var(--crimson-war)";
@@ -589,7 +633,7 @@
                         const seconds = Math.floor((dist % (1000 * 60)) / 1000);
                         let timeStr = days > 0 ? `${days}D ` : "";
                         timeStr += `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
-                        displayUrgency.innerText = `[ CLOSING IN: ${timeStr} ]`;
+                        displayUrgency.innerText = userLang === 'es' ? `[ CIERRA EN: ${timeStr} ]` : `[ CLOSING IN: ${timeStr} ]`;
                     }
                 };
                 updateTimer();
@@ -602,31 +646,28 @@
                 const remaining = Math.max(0, max - current);
 
                 if (remaining === 0) {
-                    displayUrgency.innerText = "[ PROTOCOL CAPACITY REACHED ]";
+                    displayUrgency.innerText = userLang === 'es' ? "[ CAPACIDAD DEL PROTOCOLO ALCANZADA ]" : "[ PROTOCOL CAPACITY REACHED ]";
                     displayUrgency.style.color = "var(--crimson-war)";
                     displayUrgency.style.borderColor = "var(--crimson-war)";
                     
-                    elBtn.innerText = "[ DROP LOCKED ]";
+                    elBtn.innerText = userLang === 'es' ? "[ DROP BLOQUEADO ]" : "[ DROP LOCKED ]";
                     elBtn.style.backgroundColor = "transparent";
                     elBtn.style.color = "var(--crimson-war)";
                     elBtn.style.border = "1px solid var(--crimson-war)";
                     elBtn.style.pointerEvents = "none";
                 } else {
-                    displayUrgency.innerText = `[ SPOTS REMAINING: ${remaining} ]`;
+                    displayUrgency.innerText = userLang === 'es' ? `[ PLAZAS RESTANTES: ${remaining} ]` : `[ SPOTS REMAINING: ${remaining} ]`;
                     displayUrgency.style.color = themeColor;
                     displayUrgency.style.borderColor = themeColor;
                 }
             }
 
-            // --- NATIVE CLICK TRACKER & GA4 (FAST & RESPONSIVE) ---
             elBtn.onclick = (e) => {
-                
-                // GA4 TRACKING: MAIN CTA BUTTON
                 if (typeof gtag === 'function') {
                     gtag('event', 'generate_lead', {
                         'event_category': 'conversion',
                         'event_label': 'Drop CTA Click',
-                        'drop_name': config.tabName,
+                        'drop_name': config.tabName_en || config.tabName,
                         'urgency_mode': config.urgencyMode
                     });
                 }
@@ -635,36 +676,32 @@
                     const max = parseInt(config.maxSpots) || 0;
                     const current = parseInt(config.currentClicks) || 0;
                     
-                    // Si ya está lleno, aborta el click
                     if (current >= max) {
                         e.preventDefault(); 
                         return;
                     }
 
-                    // 1. UPDATE VISUAL INMEDIATAMENTE (Optimistic Update)
                     config.currentClicks = current + 1;
                     const remaining = Math.max(0, max - config.currentClicks);
                     
                     if(remaining === 0) {
-                        displayUrgency.innerText = "[ PROTOCOL CAPACITY REACHED ]";
+                        displayUrgency.innerText = userLang === 'es' ? "[ CAPACIDAD DEL PROTOCOLO ALCANZADA ]" : "[ PROTOCOL CAPACITY REACHED ]";
                         displayUrgency.style.color = "var(--crimson-war)";
                         displayUrgency.style.borderColor = "var(--crimson-war)";
-                        elBtn.innerText = "[ DROP LOCKED ]";
+                        elBtn.innerText = userLang === 'es' ? "[ DROP BLOQUEADO ]" : "[ DROP LOCKED ]";
                         elBtn.style.backgroundColor = "transparent";
                         elBtn.style.color = "var(--crimson-war)";
                         elBtn.style.border = "1px solid var(--crimson-war)";
                         elBtn.style.pointerEvents = "none";
                     } else {
-                        displayUrgency.innerText = `[ SPOTS REMAINING: ${remaining} ]`;
+                        displayUrgency.innerText = userLang === 'es' ? `[ PLAZAS RESTANTES: ${remaining} ]` : `[ SPOTS REMAINING: ${remaining} ]`;
                     }
 
-                    // 2. ENVÍA EL CLICK A LA BASE DE DATOS EN SEGUNDO PLANO
                     incrementSpotCountDB(appState.activeIndex);
                 }
             };
         }
 
-        // Helper para sumar clics sin bloquear el navegador
         async function incrementSpotCountDB(index) {
             try {
                 const { data, error } = await supabaseClient.from('logs').select('*').eq('log_type', 'drop_config').order('created_at', { ascending: false }).limit(1);
@@ -682,14 +719,14 @@
                         }]);
                     }
                 }
-            } catch(e) {
-                console.error("Click sync error:", e);
-            }
+            } catch(e) { console.error("Click sync error:", e); }
         }
 
         function populateEditor(config) {
             if(!config) return;
-            inputTabName.value = config.tabName || `DROP 00${appState.activeIndex + 1}`;
+            
+            inputTabName_en.value = config.tabName_en || config.tabName || `DROP 00${appState.activeIndex + 1}`;
+            inputTabName_es.value = config.tabName_es || config.tabName || `DROP 00${appState.activeIndex + 1}`;
             
             let themeColor = config.themeColor || '#00FF41';
             inputThemeColorHex.value = themeColor;
@@ -709,16 +746,19 @@
             toggleVideoSection();
             toggleUrgencyInputs();
 
-            inputHeader1.value = config.header1 || "";
-            inputHeader2.value = config.header2 || "";
-            inputText.value = config.text || "";
+            inputHeader1_en.value = config.header1_en || config.header1 || "";
+            inputHeader1_es.value = config.header1_es || config.header1 || "";
+            inputHeader2_en.value = config.header2_en || config.header2 || "";
+            inputHeader2_es.value = config.header2_es || config.header2 || "";
+            inputText_en.value = config.text_en || config.text || "";
+            inputText_es.value = config.text_es || config.text || "";
             inputVideo.value = config.video || "";
-            inputBtnText.value = config.btnText || "";
+            inputBtnText_en.value = config.btnText_en || config.btnText || "";
+            inputBtnText_es.value = config.btnText_es || config.btnText || "";
             inputBtnLink.value = config.btnLink || "";
             inputBgImage.value = config.bgImage || "";
         }
 
-        // --- 2. ARCHITECT ACTIONS ---
         async function checkSession() {
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
@@ -750,7 +790,7 @@
         });
 
         async function createNewDrop() {
-            const newDrop = { ...defaultDropTemplate, tabName: `DROP 00${appState.drops.length + 1}`, isPrivate: true };
+            const newDrop = { ...defaultDropTemplate, tabName_en: `DROP 00${appState.drops.length + 1}`, tabName_es: `DROP 00${appState.drops.length + 1}`, isPrivate: true };
             appState.drops.push(newDrop);
             appState.activeIndex = appState.drops.length - 1;
             await syncToCloud("[SYS_UPDATE] New Drop Added");
@@ -759,8 +799,8 @@
 
         btnResetDrop.addEventListener('click', () => {
             if(!confirm("⚠️ Reset this drop to default?")) return;
-            const currentTabName = inputTabName.value.trim() || `DROP 00${appState.activeIndex + 1}`;
-            const resetData = { ...defaultDropTemplate, tabName: currentTabName };
+            const currentTabName_en = inputTabName_en.value.trim() || `DROP 00${appState.activeIndex + 1}`;
+            const resetData = { ...defaultDropTemplate, tabName_en: currentTabName_en, tabName_es: currentTabName_en };
             populateEditor(resetData);
             document.getElementById('saveFeedback').innerText = "[ LOADED DEFAULTS. CLICK SAVE TO APPLY. ]";
             document.getElementById('saveFeedback').style.color = "var(--alert-gold)";
@@ -808,7 +848,8 @@
             const currentClicks = appState.drops[appState.activeIndex]?.currentClicks || 0;
 
             appState.drops[appState.activeIndex] = {
-                tabName: inputTabName.value.trim() || `DROP 00${appState.activeIndex + 1}`,
+                tabName_en: inputTabName_en.value.trim() || `DROP 00${appState.activeIndex + 1}`,
+                tabName_es: inputTabName_es.value.trim() || `DROP 00${appState.activeIndex + 1}`,
                 themeColor: safeColor,
                 btnTextColor: safeTxtColor,
                 hasVideo: inputHasVideo.checked,
@@ -817,11 +858,15 @@
                 timerEnd: inputTimerEnd.value,
                 maxSpots: parseInt(inputMaxSpots.value) || 0,
                 currentClicks: currentClicks,
-                header1: inputHeader1.value.trim(),
-                header2: inputHeader2.value.trim(),
-                text: inputText.value.trim(),
+                header1_en: inputHeader1_en.value.trim(),
+                header1_es: inputHeader1_es.value.trim(),
+                header2_en: inputHeader2_en.value.trim(),
+                header2_es: inputHeader2_es.value.trim(),
+                text_en: inputText_en.value.trim(),
+                text_es: inputText_es.value.trim(),
                 video: inputVideo.value.trim(),
-                btnText: inputBtnText.value.trim(),
+                btnText_en: inputBtnText_en.value.trim(),
+                btnText_es: inputBtnText_es.value.trim(),
                 btnLink: inputBtnLink.value.trim(),
                 bgImage: inputBgImage.value.trim()
             };
@@ -852,11 +897,9 @@
             } catch(e) { console.error(e); return false; }
         }
 
-        // Initialization
         loadDropConfig();
         checkSession();
 
-        // Realtime Listener
         supabaseClient.channel('public:drop')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'logs', filter: 'log_type=eq.drop_config' }, payload => {
                 if (payload.new && payload.new.value_text) {

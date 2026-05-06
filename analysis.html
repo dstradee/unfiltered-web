@@ -14,6 +14,32 @@
     <!-- SUPABASE PARA CONECTAR CON EL PANEL DE ADMIN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+    <!-- MOTOR DE IDIOMAS UNFILTERED ALPHA -->
+    <script>
+        const lang = localStorage.getItem('unfiltered_lang') || 'en';
+        document.documentElement.lang = lang;
+
+        function applyTranslations() {
+            document.querySelectorAll('[data-en]').forEach(el => {
+                if (lang === 'es' && el.hasAttribute('data-es')) {
+                    el.innerHTML = el.getAttribute('data-es');
+                } else {
+                    el.innerHTML = el.getAttribute('data-en');
+                }
+            });
+            const langBtn = document.getElementById('langToggleBtn');
+            if (langBtn) langBtn.innerText = lang === 'en' ? '[ ES ]' : '[ EN ]';
+        }
+
+        function toggleLanguage() {
+            const current = localStorage.getItem('unfiltered_lang') || 'en';
+            localStorage.setItem('unfiltered_lang', current === 'en' ? 'es' : 'en');
+            window.location.reload();
+        }
+
+        document.addEventListener('DOMContentLoaded', applyTranslations);
+    </script>
+
     <style>
         :root {
             --obsidian-navy: #0B1A30;
@@ -51,17 +77,20 @@
 
         /* --- TOP NAV (BACK TO HOME) --- */
         .top-nav {
-            position: fixed; top: 2rem; left: 2rem; z-index: 100;
+            position: fixed; top: 2rem; left: 2rem; z-index: 100; display: flex; gap: 10px; align-items: center;
         }
         .btn-back { 
             background: transparent; border: 1px solid var(--steel-grey); color: var(--steel-grey); 
             padding: 0.6rem 1.2rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; 
-            text-decoration: none; cursor: pointer; transition: all 0.2s; 
+            text-decoration: none; cursor: pointer; transition: all 0.2s; display: inline-block;
         }
         .btn-back:hover { 
             border-color: var(--electric-cyan); color: var(--electric-cyan); 
             background-color: rgba(0, 242, 255, 0.05); 
         }
+
+        .lang-link { color: var(--alert-gold); font-weight: bold; border-color: var(--alert-gold); }
+        .lang-link:hover { color: var(--smoke-white); border-color: var(--smoke-white); }
 
         /* --- EMERGENCY MACRO BANNER --- */
         .emergency-vignette { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 50; display: none; }
@@ -77,7 +106,7 @@
         /* --- MARQUEE SCROLLING BANNER (BOTTOM) --- */
         .marquee-container {
             position: fixed; bottom: 0; left: 0; width: 100%; padding: 0.6rem 0;
-            background-color: #FF007F; /* Cambia dinámicamente por JS */
+            background-color: #FF007F; 
             color: var(--vantablack); overflow: hidden; white-space: nowrap; z-index: 1000;
             box-shadow: 0 -5px 20px rgba(0,0,0,0.5); display: none;
         }
@@ -100,7 +129,6 @@
             transition: all 0.3s ease; position: relative;
         }
 
-        /* Red Trap State */
         .terminal-box.trap-active {
             border-color: var(--crimson-war);
             background-color: rgba(2, 6, 23, 0.95);
@@ -185,12 +213,13 @@
 <body>
 
     <!-- OVERLAYS DE EMERGENCIA -->
-    <div class="emergency-banner" id="emergencyBanner">[ HIGH IMPACT MACRO EVENT // TRADING RESTRICTED ]</div>
+    <div class="emergency-banner" id="emergencyBanner" data-en="[ HIGH IMPACT MACRO EVENT // TRADING RESTRICTED ]" data-es="[ ALERTA MACRO DE ALTO IMPACTO // TRADING RESTRINGIDO ]">[ HIGH IMPACT MACRO EVENT // TRADING RESTRICTED ]</div>
     <div class="emergency-vignette" id="redAlert"></div>
 
     <!-- BOTÓN VOLVER (NAV) -->
     <div class="top-nav">
-        <a href="index.html" class="btn-back">< BACK TO PROTOCOL ></a>
+        <span class="btn-back lang-link" onclick="toggleLanguage()" id="langToggleBtn">[ ES ]</span>
+        <a href="index.html" class="btn-back" data-en="< BACK TO PROTOCOL >" data-es="< VOLVER AL PROTOCOLO >">< BACK TO PROTOCOL ></a>
     </div>
 
     <!-- BACKGROUNDS -->
@@ -202,76 +231,76 @@
         <div class="terminal-box" id="terminalBox">
             
             <div class="terminal-header" id="tHeader">
-                <span>SYSTEM DIAGNOSTIC</span>
+                <span data-en="SYSTEM DIAGNOSTIC" data-es="DIAGNÓSTICO DEL SISTEMA">SYSTEM DIAGNOSTIC</span>
                 <span class="version">V.2.0</span>
             </div>
 
             <!-- STEP 1: THE FORM -->
             <div id="formState">
                 <div class="form-group">
-                    <label>> SELECT PRIMARY CONFIRMATION</label>
+                    <label data-en="> SELECT PRIMARY CONFIRMATION" data-es="> SELECCIONAR CONFIRMACIÓN PRINCIPAL">> SELECT PRIMARY CONFIRMATION</label>
                     <select id="q1">
-                        <option value="" disabled selected>-- Awaiting Selection --</option>
-                        <option value="rsi">RSI / Oscillators</option>
-                        <option value="macd">MACD</option>
-                        <option value="sr">Support / Resistance</option>
-                        <option value="trend">Trendlines / Patterns</option>
+                        <option value="" disabled selected data-en="-- Awaiting Selection --" data-es="-- Esperando Selección --">-- Awaiting Selection --</option>
+                        <option value="rsi" data-en="RSI / Oscillators" data-es="RSI / Osciladores">RSI / Oscillators</option>
+                        <option value="macd" data-en="MACD" data-es="MACD">MACD</option>
+                        <option value="sr" data-en="Support / Resistance" data-es="Soporte / Resistencia">Support / Resistance</option>
+                        <option value="trend" data-en="Trendlines / Patterns" data-es="Líneas de Tendencia / Patrones">Trendlines / Patterns</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label>> DAILY SCREEN TIME</label>
+                    <label data-en="> DAILY SCREEN TIME" data-es="> TIEMPO DIARIO EN PANTALLA">> DAILY SCREEN TIME</label>
                     <select id="q2">
-                        <option value="" disabled selected>-- Awaiting Selection --</option>
-                        <option value="low">1-2 Hours</option>
-                        <option value="mid">3-5 Hours</option>
-                        <option value="high">+8 Hours</option>
+                        <option value="" disabled selected data-en="-- Awaiting Selection --" data-es="-- Esperando Selección --">-- Awaiting Selection --</option>
+                        <option value="low" data-en="1-2 Hours" data-es="1-2 Horas">1-2 Hours</option>
+                        <option value="mid" data-en="3-5 Hours" data-es="3-5 Horas">3-5 Hours</option>
+                        <option value="high" data-en="+8 Hours" data-es="+8 Horas">+8 Hours</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label>> EXPECTED MONTHLY RETURN</label>
+                    <label data-en="> EXPECTED MONTHLY RETURN" data-es="> RETORNO MENSUAL ESPERADO">> EXPECTED MONTHLY RETURN</label>
                     <select id="q3">
-                        <option value="" disabled selected>-- Awaiting Selection --</option>
+                        <option value="" disabled selected data-en="-- Awaiting Selection --" data-es="-- Esperando Selección --">-- Awaiting Selection --</option>
                         <option value="low">1-5%</option>
                         <option value="mid">10-20%</option>
                         <option value="high">+50%</option>
                     </select>
                 </div>
 
-                <button class="btn btn-primary" id="btnRun">[ RUN DIAGNOSTIC ]</button>
+                <button class="btn btn-primary" id="btnRun" data-en="[ RUN DIAGNOSTIC ]" data-es="[ EJECUTAR DIAGNÓSTICO ]">[ RUN DIAGNOSTIC ]</button>
             </div>
 
             <!-- STEP 2: LOADING -->
             <div id="loadingState">
-                <div class="loading-line" id="line1">> Extracting market metrics...</div>
-                <div class="loading-line" id="line2">> Comparing against institutional volume...</div>
-                <div class="loading-line" id="line3">> Calculating mathematical expectancy...</div>
+                <div class="loading-line" id="line1" data-en="> Extracting market metrics..." data-es="> Extrayendo métricas del mercado...">> Extracting market metrics...</div>
+                <div class="loading-line" id="line2" data-en="> Comparing against institutional volume..." data-es="> Comparando contra volumen institucional...">> Comparing against institutional volume...</div>
+                <div class="loading-line" id="line3" data-en="> Calculating mathematical expectancy..." data-es="> Calculando esperanza matemática...">> Calculating mathematical expectancy...</div>
                 <div style="margin-top: 1rem; color: var(--electric-cyan);">
-                    <span id="loadStatus">Processing</span><span class="blinking-cursor"></span>
+                    <span id="loadStatus" data-en="Processing" data-es="Procesando">Processing</span><span class="blinking-cursor"></span>
                 </div>
             </div>
 
             <!-- STEP 3: THE TRAP (FINAL RESULT) -->
             <div id="finalState">
-                <div class="error-title">
+                <div class="error-title" data-en='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--crimson-war);"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>[SYSTEM ERROR // RETAIL TRAP DETECTED]' data-es='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--crimson-war);"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>[ERROR DE SISTEMA // TRAMPA RETAIL DETECTADA]'>
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--crimson-war);"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                     [SYSTEM ERROR // RETAIL TRAP DETECTED]
                 </div>
                 
                 <div class="diag-box">
                     <div class="diag-item">
-                        <span class="diag-label">> DIAGNOSIS:</span> 
-                        <span class="diag-text">Your trading system yields negative mathematical expectancy. You are institutional exit liquidity.</span>
+                        <span class="diag-label" data-en="> DIAGNOSIS:" data-es="> DIAGNÓSTICO:">> DIAGNOSIS:</span> 
+                        <span class="diag-text" data-en="Your trading system yields negative mathematical expectancy. You are institutional exit liquidity." data-es="Tu sistema de trading genera una esperanza matemática negativa. Eres la liquidez de salida institucional.">Your trading system yields negative mathematical expectancy. You are institutional exit liquidity.</span>
                     </div>
                     <div class="diag-item" style="margin-bottom: 0;">
-                        <span class="diag-label">> SOLUTION:</span> 
-                        <span class="diag-text">Unlearn retail theory. Protocol access required.</span>
+                        <span class="diag-label" data-en="> SOLUTION:" data-es="> SOLUCIÓN:">> SOLUTION:</span> 
+                        <span class="diag-text" data-en="Unlearn retail theory. Protocol access required." data-es="Desaprende la teoría retail. Se requiere acceso al protocolo.">Unlearn retail theory. Protocol access required.</span>
                     </div>
                 </div>
 
                 <!-- IMPORTANTE: Cambia el href a tu enlace de Telegram real -->
-                <a href="https://t.me/+QnV1lvp3DFc5NDNk" target="_blank" class="btn btn-cyan-pulse">
+                <a href="https://t.me/+QnV1lvp3DFc5NDNk" target="_blank" class="btn btn-cyan-pulse" data-en="[ UNLOCK THE BLUEPRINT (FREE) ]" data-es="[ DESBLOQUEAR EL MAPA (GRATIS) ]">
                     [ UNLOCK THE BLUEPRINT (FREE) ]
                 </a>
             </div>
@@ -298,16 +327,17 @@
         const line3 = document.getElementById('line3');
 
         btnRun.addEventListener('click', () => {
+            const userLang = localStorage.getItem('unfiltered_lang') || 'en';
             const q1 = document.getElementById('q1').value;
             const q2 = document.getElementById('q2').value;
             const q3 = document.getElementById('q3').value;
             
             if(!q1 || !q2 || !q3) {
-                btnRun.innerText = "[ ERROR: SELECT ALL FIELDS ]";
+                btnRun.innerText = userLang === 'es' ? "[ ERROR: SELECCIONA TODOS LOS CAMPOS ]" : "[ ERROR: SELECT ALL FIELDS ]";
                 btnRun.style.borderColor = "var(--crimson-war)";
                 btnRun.style.color = "var(--crimson-war)";
                 setTimeout(() => {
-                    btnRun.innerText = "[ RUN DIAGNOSTIC ]";
+                    btnRun.innerText = userLang === 'es' ? "[ EJECUTAR DIAGNÓSTICO ]" : "[ RUN DIAGNOSTIC ]";
                     btnRun.style.borderColor = "var(--electric-cyan)";
                     btnRun.style.color = "var(--electric-cyan)";
                 }, 1500);
@@ -344,6 +374,7 @@
 
         async function fetchSystemState() {
             try {
+                const userLang = localStorage.getItem('unfiltered_lang') || 'en';
                 const { data, error } = await supabaseClient
                     .from('logs')
                     .select('*')
@@ -385,15 +416,22 @@
                         configData = JSON.parse(discountLog.value_text);
                     } catch(e) {
                         const parts = discountLog.value_text.split('|');
-                        configData = { mode: 'spots', value: parts[0], color: parts[1] || 'var(--hot-pink)', title: 'LIMITED ACCESS PROTOCOL' };
+                        configData = { mode: 'spots', value: parts[0], color: parts[1] || 'var(--hot-pink)', title_en: 'LIMITED ACCESS PROTOCOL', title_es: 'PROTOCOLO DE ACCESO LIMITADO' };
                     }
 
+                    // Determinar el texto de la acción (Bilingüe DB parse)
+                    let actionStr = discountLog.action_text;
+                    try {
+                        let parsedAct = JSON.parse(actionStr);
+                        actionStr = userLang === 'es' ? (parsedAct.es || parsedAct.en) : parsedAct.en;
+                    } catch(e) {}
+
                     // Determinar el texto del banner
-                    let availabilityText = configData.mode === 'spots' ? `${configData.value} SPOTS LEFT` : `LIMITED TIME OFFER`;
-                    let title = configData.title || 'LIMITED ACCESS PROTOCOL';
+                    let availabilityText = configData.mode === 'spots' ? `${configData.value} ${userLang === 'es' ? 'PLAZAS RESTANTES' : 'SPOTS LEFT'}` : (userLang === 'es' ? 'OFERTA POR TIEMPO LIMITADO' : 'LIMITED TIME OFFER');
+                    let title = userLang === 'es' ? (configData.title_es || configData.title || 'PROTOCOLO DE ACCESO LIMITADO') : (configData.title_en || configData.title || 'LIMITED ACCESS PROTOCOL');
                     
                     // Crear un bloque de texto que se repetirá para rellenar la marquesina
-                    let singleBlock = ` [!] ${title} // ${discountLog.action_text.replace(/<[^>]*>?/gm, '')} // ${availabilityText} [!] `;
+                    let singleBlock = ` [!] ${title} // ${actionStr.replace(/<[^>]*>?/gm, '')} // ${availabilityText} [!] `;
                     
                     // Repetimos el bloque 8 veces para que llene bien la pantalla y fluya
                     marqueeText.innerText = singleBlock.repeat(8);
@@ -411,10 +449,8 @@
             }
         }
 
-        // Ejecutar al cargar la página
         fetchSystemState();
 
-        // Escuchar cambios en tiempo real por si el admin enciende algo de golpe
         supabaseClient.channel('public:logs:analysis')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'logs' }, payload => {
                 fetchSystemState(); 
